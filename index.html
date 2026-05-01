@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Loja Pro - Estoque Inteligente</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             margin: 0;
@@ -15,13 +11,23 @@
             box-sizing: border-box;
         }
 
+        /* Ícones em SVG para não depender de Font Awesome */
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            vertical-align: middle;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-body);
             color: var(--text-primary);
-            transition: background 0.3s ease, color 0.2s ease;
+            transition: background 0.3s ease;
             overflow-x: hidden;
-            width: 100%;
         }
 
         :root {
@@ -51,7 +57,6 @@
             --success: #34d399;
             --danger: #f87171;
             --warning: #fbbf24;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
         }
 
         /* Login Screen */
@@ -69,9 +74,6 @@
             z-index: 2000;
             overflow-y: auto;
         }
-        body.dark .login-container {
-            background: linear-gradient(135deg, #1e1b4b 0%, #2d1b4e 100%);
-        }
         .login-card {
             background: var(--bg-card);
             border-radius: 32px;
@@ -86,8 +88,8 @@
             font-size: 1.8rem;
             margin-bottom: 8px;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            background-clip: text;
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
         }
         .login-card p {
@@ -115,11 +117,9 @@
             color: var(--text-primary);
             font-size: 0.9rem;
             outline: none;
-            transition: all 0.2s;
         }
         .input-group-login input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
         }
         .btn-login {
             width: 100%;
@@ -132,15 +132,9 @@
             border: none;
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.2s;
         }
         .btn-login:hover {
             background: var(--primary-dark);
-            transform: scale(0.98);
-        }
-        .btn-biometric {
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            margin-top: 12px;
         }
         .divider {
             display: flex;
@@ -155,11 +149,6 @@
             flex: 1;
             height: 1px;
             background: var(--border);
-        }
-        .google-btn-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 16px 0;
         }
         .switch-auth {
             margin-top: 20px;
@@ -185,7 +174,7 @@
             text-align: center;
         }
 
-        /* User info header */
+        /* User info */
         .user-info {
             display: flex;
             align-items: center;
@@ -220,9 +209,6 @@
             border: none;
             cursor: pointer;
         }
-        .logout-btn:hover {
-            background: rgba(239,68,68,0.1);
-        }
 
         /* App Container */
         .app-container {
@@ -234,7 +220,6 @@
             display: flex;
         }
 
-        /* Estilos do App - Botão sanduíche reposicionado */
         .menu-toggle {
             display: none;
             position: fixed;
@@ -247,35 +232,8 @@
             border-radius: 12px;
             padding: 10px 12px;
             cursor: pointer;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            font-size: 1.2rem;
         }
-        /* Ajuste para o header não ser coberto */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 20px 30px;
-            width: calc(100% - 280px);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-            gap: 15px;
-            padding-top: 0;
-        }
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        
-        /* Sidebar e demais estilos */
         .sidebar {
             width: 280px;
             background: var(--bg-sidebar);
@@ -295,8 +253,8 @@
         .sidebar-header h2 {
             font-size: 1.3rem;
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            background-clip: text;
             -webkit-background-clip: text;
+            background-clip: text;
             color: transparent;
         }
         .sidebar-menu {
@@ -314,7 +272,7 @@
             color: var(--text-secondary);
             font-weight: 500;
         }
-        .menu-item i { width: 24px; font-size: 1.2rem; }
+        .menu-item i { width: 24px; font-style: normal; }
         .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
         .sidebar-overlay {
             display: none;
@@ -326,44 +284,140 @@
             background: rgba(0,0,0,0.6);
             z-index: 999;
         }
-        .container { max-width: 1400px; margin: 0 auto; width: 100%; }
-        .theme-toggle { background: var(--bg-card); border: 1px solid var(--border); padding: 10px 20px; border-radius: 40px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .stat-card { background: var(--bg-card); border-radius: 20px; padding: 15px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .stat-title { color: var(--text-secondary); font-size: 0.7rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px 30px;
+            width: calc(100% - 280px);
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+        h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .stat-title { color: var(--text-secondary); font-size: 0.7rem; margin-bottom: 6px; }
         .stat-value { font-size: 1.3rem; font-weight: 700; }
         .panel { display: none; animation: fade 0.2s ease; }
         .panel.active-panel { display: block; }
-        @keyframes fade { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
-        .form-card { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        .form-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 25px;
+        }
+        .form-card h3 { font-size: 1rem; margin-bottom: 15px; }
         .form-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; }
         .input-group { flex: 1; min-width: 120px; }
         label { font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 4px; color: var(--text-secondary); }
-        input, select { font-family: inherit; font-size: 0.8rem; width: 100%; padding: 10px 12px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); outline: none; }
-        button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; }
-        button:hover { background: var(--primary-dark); transform: scale(0.98); }
-        .btn-secondary { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); }
-        .photo-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; }
+        input, select {
+            font-family: inherit;
+            font-size: 0.8rem;
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            outline: none;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-secondary {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
         .table-responsive { overflow-x: auto; width: 100%; }
-        table { width: 100%; min-width: 600px; border-collapse: collapse; background: var(--bg-card); border-radius: 16px; overflow: hidden; font-size: 0.8rem; }
+        table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            font-size: 0.8rem;
+        }
         th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid var(--border); }
         th { background: var(--bg-body); }
         .estoque-critico { background-color: rgba(239, 68, 68, 0.2); }
         .estoque-excesso { background-color: rgba(16, 185, 129, 0.15); }
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
         .badge-danger { background: var(--danger); color: white; }
         .badge-success { background: var(--success); color: #0f172a; }
         .badge-warning { background: var(--warning); color: #1e293b; }
-        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
-        .chart-box { background: var(--bg-card); border-radius: 20px; padding: 15px; border: 1px solid var(--border); }
-        .chart-box canvas { max-height: 200px; width: 100%; }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .chart-box {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
+        .chart-box canvas {
+            max-height: 200px;
+            width: 100%;
+        }
         .alert-list { display: flex; flex-direction: column; gap: 10px; }
-        .alert-item { background: var(--bg-body); border-left: 4px solid var(--danger); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .alert-item {
+            background: var(--bg-body);
+            border-left: 4px solid var(--danger);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .relatorio-filtro { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
         footer { margin-top: 40px; text-align: center; color: var(--text-secondary); font-size: 0.65rem; padding: 20px 0; }
         
         @media (max-width: 768px) {
-            .menu-toggle { display: block; top: 12px; left: 12px; }
+            .menu-toggle { display: block; }
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 60px 12px 20px 12px; width: 100%; }
@@ -371,32 +425,25 @@
             .stat-value { font-size: 1rem; }
             h1 { font-size: 1.1rem; }
         }
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-            .stat-value { font-size: 0.9rem; }
-            .main-content { padding: 55px 10px 15px 10px; }
-        }
     </style>
 </head>
 <body>
     <!-- TELA DE LOGIN -->
     <div id="loginScreen" class="login-container">
         <div class="login-card">
-            <h2><i class="fas fa-store"></i> Loja Pro</h2>
+            <h2>🏪 Loja Pro</h2>
             <p>Faça login para gerenciar seu estoque</p>
             <div id="loginForm">
                 <div class="input-group-login">
-                    <label><i class="fas fa-envelope"></i> E-mail</label>
-                    <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
+                    <label>📧 E-mail</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com">
                 </div>
                 <div class="input-group-login">
-                    <label><i class="fas fa-lock"></i> Senha</label>
-                    <input type="password" id="loginSenha" placeholder="********" autocomplete="current-password">
+                    <label>🔒 Senha</label>
+                    <input type="password" id="loginSenha" placeholder="********">
                 </div>
-                <button class="btn-login" id="btnEmailLogin"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-                <button class="btn-login btn-biometric" id="btnBiometricLogin" style="display: none;"><i class="fas fa-fingerprint"></i> Entrar com Digital/Biometria</button>
+                <button class="btn-login" id="btnEmailLogin">▶ Entrar</button>
                 <div class="divider">ou</div>
-                <div id="googleBtnWrapper" class="google-btn-wrapper"></div>
                 <div class="switch-auth">
                     Não tem uma conta? <a id="showRegister">Criar conta gratuita</a>
                 </div>
@@ -404,24 +451,22 @@
             </div>
             <div id="registerForm" style="display: none;">
                 <div class="input-group-login">
-                    <label><i class="fas fa-user"></i> Nome completo</label>
+                    <label>👤 Nome completo</label>
                     <input type="text" id="regNome" placeholder="Seu nome">
                 </div>
                 <div class="input-group-login">
-                    <label><i class="fas fa-envelope"></i> E-mail</label>
+                    <label>📧 E-mail</label>
                     <input type="email" id="regEmail" placeholder="seu@email.com">
                 </div>
                 <div class="input-group-login">
-                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <label>🔒 Senha</label>
                     <input type="password" id="regSenha" placeholder="mínimo 4 caracteres">
                 </div>
                 <div class="input-group-login">
-                    <label><i class="fas fa-check-circle"></i> Confirmar senha</label>
+                    <label>✓ Confirmar senha</label>
                     <input type="password" id="regConfirmSenha" placeholder="digite novamente">
                 </div>
-                <button class="btn-login" id="btnRegister"><i class="fas fa-user-plus"></i> Criar Conta</button>
-                <div class="divider">ou</div>
-                <div id="googleBtnWrapperRegister" class="google-btn-wrapper"></div>
+                <button class="btn-login" id="btnRegister">📝 Criar Conta</button>
                 <div class="switch-auth">
                     Já tem conta? <a id="showLogin">Fazer login</a>
                 </div>
@@ -433,35 +478,34 @@
 
     <!-- APP PRINCIPAL -->
     <div id="appMain" class="app-container">
-        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <button class="menu-toggle" id="menuToggle">☰</button>
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2><i class="fas fa-store"></i> Loja Pro</h2>
+                <h2>🏪 Loja Pro</h2>
                 <p>Gestão Inteligente</p>
             </div>
             <div class="sidebar-menu">
-                <div class="menu-item active" data-panel="dashboard"><i class="fas fa-tachometer-alt"></i><span>📊 Dashboard</span></div>
-                <div class="menu-item" data-panel="estoque"><i class="fas fa-boxes"></i><span>📦 Estoque</span></div>
-                <div class="menu-item" data-panel="vendas"><i class="fas fa-shopping-cart"></i><span>💰 Nova Venda</span></div>
-                <div class="menu-item" data-panel="relatorioVendas"><i class="fas fa-file-alt"></i><span>📄 Relatório de Vendas</span></div>
-                <div class="menu-item" data-panel="relatorios"><i class="fas fa-chart-line"></i><span>📊 Relatório Mensal</span></div>
-                <div class="menu-item" data-panel="alertas"><i class="fas fa-bell"></i><span>🔔 Alertas</span></div>
-                <div class="menu-item" data-panel="historico"><i class="fas fa-history"></i><span>📋 Histórico</span></div>
+                <div class="menu-item active" data-panel="dashboard"><span>📊</span><span>Dashboard</span></div>
+                <div class="menu-item" data-panel="estoque"><span>📦</span><span>Estoque</span></div>
+                <div class="menu-item" data-panel="vendas"><span>💰</span><span>Nova Venda</span></div>
+                <div class="menu-item" data-panel="relatorioVendas"><span>📄</span><span>Relatório de Vendas</span></div>
+                <div class="menu-item" data-panel="relatorios"><span>📊</span><span>Relatório Mensal</span></div>
+                <div class="menu-item" data-panel="alertas"><span>🔔</span><span>Alertas</span></div>
+                <div class="menu-item" data-panel="historico"><span>📋</span><span>Histórico</span></div>
             </div>
         </div>
 
         <div class="main-content">
             <div class="container">
                 <div class="header">
-                    <h1><i class="fas fa-chart-line"></i> Loja Pro</h1>
+                    <h1>📈 Loja Pro</h1>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <div id="userInfoDisplay" class="user-info"></div>
-                        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> Modo Escuro</button>
+                        <button class="theme-toggle" id="themeToggle">🌙 Modo Escuro</button>
                     </div>
                 </div>
 
-                <!-- PAINÉIS DO APP (mesmo conteúdo) -->
                 <div id="dashboardPanel" class="panel active-panel">
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-title">📦 Produtos</div><div class="stat-value" id="totalProdutos">0</div></div>
@@ -472,149 +516,110 @@
                         <div class="stat-card"><div class="stat-title">📊 Lucro Mês</div><div class="stat-value" id="lucroMes">R$ 0</div></div>
                     </div>
                     <div class="charts-grid">
-                        <div class="chart-box"><h4>📈 Vendas por Tipo</h4><canvas id="tipoVendasChart"></canvas></div>
-                        <div class="chart-box"><h4>💰 Produtos Mais Vendidos</h4><canvas id="topProdutosChart"></canvas></div>
+                        <div class="chart-box"><h4>📈 Vendas por Tipo</h4><canvas id="tipoVendasChart" width="300" height="200"></canvas></div>
+                        <div class="chart-box"><h4>💰 Produtos Mais Vendidos</h4><canvas id="topProdutosChart" width="300" height="200"></canvas></div>
                     </div>
                 </div>
-                <div id="estoquePanel" class="panel"><div class="form-card"><h3><i class="fas fa-plus-circle"></i> Novo Produto</h3><div class="form-row"><div class="input-group"><label>Nome</label><input type="text" id="prodNome" placeholder="Ex: Camiseta"></div><div class="input-group"><label>Preço Custo</label><input type="number" id="prodCusto" step="0.01"></div><div class="input-group"><label>Preço Venda</label><input type="number" id="prodVenda" step="0.01"></div></div><div class="form-row"><div class="input-group"><label>Quantidade</label><input type="number" id="prodQtd" value="1"></div><div class="input-group"><label>Estoque Mínimo</label><input type="number" id="prodMin" value="5"></div><div class="input-group"><label>Estoque Máximo</label><input type="number" id="prodMax" value="50"></div></div><div class="form-row"><div class="input-group"><label>Foto</label><input type="file" id="prodFoto" accept="image/*"></div><div class="input-group"><div id="fotoPreview"></div></div><div class="input-group"><button id="btnAddProduto"><i class="fas fa-save"></i> Salvar</button></div></div></div><div class="table-responsive"><table id="tabelaEstoque"><thead><tr><th>Foto</th><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín/Máx</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></div>
-                <div id="vendasPanel" class="panel"><div class="form-card"><h3><i class="fas fa-shopping-cart"></i> Registrar Venda</h3><div class="form-row"><div class="input-group"><label>Cliente</label><input type="text" id="clienteNome" placeholder="Nome do cliente"></div><div class="input-group"><label>Produto</label><select id="vendaProdutoId"></select></div><div class="input-group"><label>Quantidade</label><input type="number" id="vendaQtd" value="1" min="1"></div><div class="input-group"><label>Tipo</label><select id="vendaTipo"><option value="entrega">🚚 Entrega</option><option value="retirada">🏠 Retirada</option></select></div></div><button id="btnRegistrarVenda"><i class="fas fa-check-circle"></i> Finalizar Venda</button></div></div>
-                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3><i class="fas fa-file-alt"></i> Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
-                <div id="relatoriosPanel" class="panel"><div class="form-card"><div class="relatorio-filtro"><input type="month" id="mesSelecionado"><button id="btnCarregarRelatorio">Analisar</button></div><div id="relatorioMensal"><h3 id="mesTitulo"></h3><div class="stats-grid"><div class="stat-card"><div class="stat-title">Faturamento Bruto</div><div class="stat-value" id="relBruto">R$ 0</div></div><div class="stat-card"><div class="stat-title">Custo Total</div><div class="stat-value" id="relCusto">R$ 0</div></div><div class="stat-card"><div class="stat-title">Lucro Líquido</div><div class="stat-value" id="relLucro">R$ 0</div></div><div class="stat-card"><div class="stat-title">Produtos Vendidos</div><div class="stat-value" id="relQtdProdutos">0</div></div></div><h4>Top 5 Produtos</h4><div class="table-responsive"><table id="tabelaTopProdutos"><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody></tbody></table></div></div></div></div>
-                <div id="alertasPanel" class="panel"><div class="form-card"><h3><i class="fas fa-bell"></i> Alertas de Estoque</h3><div id="alertasList" class="alert-list"></div></div></div>
-                <div id="historicoPanel" class="panel"><div class="form-card"><h3><i class="fas fa-history"></i> Histórico de Vendas</h3><button id="btnExportarCSV" class="btn-secondary"><i class="fas fa-download"></i> Exportar CSV</button><div class="table-responsive"><table id="tabelaHistorico"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
+                <div id="estoquePanel" class="panel"><div class="form-card"><h3>➕ Novo Produto</h3><div class="form-row"><div class="input-group"><label>Nome</label><input type="text" id="prodNome" placeholder="Ex: Camiseta"></div><div class="input-group"><label>Preço Custo</label><input type="number" id="prodCusto" step="0.01"></div><div class="input-group"><label>Preço Venda</label><input type="number" id="prodVenda" step="0.01"></div></div><div class="form-row"><div class="input-group"><label>Quantidade</label><input type="number" id="prodQtd" value="1"></div><div class="input-group"><label>Estoque Mínimo</label><input type="number" id="prodMin" value="5"></div><div class="input-group"><label>Estoque Máximo</label><input type="number" id="prodMax" value="50"></div></div><button id="btnAddProduto">💾 Salvar Produto</button></div><div class="table-responsive"><table id="tabelaEstoque"><thead><tr><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín/Máx</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></div>
+                <div id="vendasPanel" class="panel"><div class="form-card"><h3>🛒 Registrar Venda</h3><div class="form-row"><div class="input-group"><label>Cliente</label><input type="text" id="clienteNome" placeholder="Nome do cliente"></div><div class="input-group"><label>Produto</label><select id="vendaProdutoId"></select></div><div class="input-group"><label>Quantidade</label><input type="number" id="vendaQtd" value="1" min="1"></div><div class="input-group"><label>Tipo</label><select id="vendaTipo"><option value="entrega">🚚 Entrega</option><option value="retirada">🏠 Retirada</option></select></div></div><button id="btnRegistrarVenda">✅ Finalizar Venda</button></div></div>
+                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3>📄 Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">🔍 Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">🗑 Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
+                <div id="relatoriosPanel" class="panel"><div class="form-card"><div class="relatorio-filtro"><input type="month" id="mesSelecionado"><button id="btnCarregarRelatorio">📊 Analisar</button></div><div id="relatorioMensal"><h3 id="mesTitulo"></h3><div class="stats-grid"><div class="stat-card"><div class="stat-title">💰 Faturamento Bruto</div><div class="stat-value" id="relBruto">R$ 0</div></div><div class="stat-card"><div class="stat-title">📉 Custo Total</div><div class="stat-value" id="relCusto">R$ 0</div></div><div class="stat-card"><div class="stat-title">📊 Lucro Líquido</div><div class="stat-value" id="relLucro">R$ 0</div></div><div class="stat-card"><div class="stat-title">📦 Produtos Vendidos</div><div class="stat-value" id="relQtdProdutos">0</div></div></div><h4>🏆 Top 5 Produtos</h4><div class="table-responsive"><table id="tabelaTopProdutos"><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody></tbody></table></div></div></div></div>
+                <div id="alertasPanel" class="panel"><div class="form-card"><h3>🔔 Alertas de Estoque</h3><div id="alertasList" class="alert-list"></div></div></div>
+                <div id="historicoPanel" class="panel"><div class="form-card"><h3>📋 Histórico de Vendas</h3><button id="btnExportarCSV" class="btn-secondary">📎 Exportar CSV</button><div class="table-responsive"><table id="tabelaHistorico"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
                 <footer>🔔 Produtos em vermelho = abaixo do mínimo | Verde = acima do máximo</footer>
             </div>
         </div>
     </div>
 
     <script>
-        // SISTEMA DE AUTENTICAÇÃO COM SESSÃO PERSISTENTE E BIOMETRIA
+        // Versão simplificada - APK compatível
         let currentUser = null;
         let produtos = [], vendas = [], nextProdId = 1, nextVendaId = 1;
-        let tipoChart, topChart, filtroMesAtual = null;
+        let filtroMesAtual = null;
+        let tipoChart = null, topChart = null;
 
-        // Gerenciamento de usuários
-        function getUsers() {
-            const users = localStorage.getItem("loja_users_v3");
-            return users ? JSON.parse(users) : {};
-        }
-        function saveUsers(users) { localStorage.setItem("loja_users_v3", JSON.stringify(users)); }
-
-        // Salvar sessão atual
-        function saveCurrentSession(user) {
-            if(user) {
-                localStorage.setItem("loja_current_session", JSON.stringify({ id: user.id, email: user.email, nome: user.nome }));
-            } else {
-                localStorage.removeItem("loja_current_session");
-            }
+        // Chart.js simplificado (versão embutida básica)
+        function drawDoughnut(canvasId, labels, data, colors) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+            const total = data.reduce((a,b)=>a+b,0);
+            if(total === 0) { ctx.fillStyle = '#ccc'; ctx.fillRect(0,0,w,h); return; }
+            let start = -Math.PI/2;
+            const centerX = w/2, centerY = h/2, radius = Math.min(w,h)/2.5;
+            data.forEach((val, i) => {
+                const angle = (val/total) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.fillStyle = colors[i];
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, start, start+angle);
+                ctx.fill();
+                start += angle;
+            });
         }
         
-        // Carregar sessão anterior
-        function loadSavedSession() {
-            const session = localStorage.getItem("loja_current_session");
-            if(session) {
-                const saved = JSON.parse(session);
-                const users = getUsers();
-                const userData = users[saved.email];
-                if(userData && userData.id === saved.id) {
-                    return { id: userData.id, nome: userData.nome, email: saved.email };
-                }
+        function drawBar(canvasId, labels, data, color) {
+            const canvas = document.getElementById(canvasId);
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+            if(data.length === 0) return;
+            const maxVal = Math.max(...data, 1);
+            const barWidth = (w / data.length) * 0.7;
+            const startX = (w / data.length) * 0.15;
+            for(let i=0; i<data.length; i++) {
+                const barHeight = (data[i]/maxVal) * (h - 40);
+                ctx.fillStyle = color;
+                ctx.fillRect(startX + i*(w/data.length), h - barHeight - 20, barWidth, barHeight);
+                ctx.fillStyle = '#666';
+                ctx.font = '10px sans-serif';
+                ctx.fillText(labels[i]?.substring(0,8)||'', startX + i*(w/data.length), h - 5);
             }
-            return null;
         }
 
+        function atualizarGraficos() {
+            const entrega = vendas.filter(v=>v.tipo==='entrega').reduce((a,v)=>a+v.total,0);
+            const retirada = vendas.filter(v=>v.tipo==='retirada').reduce((a,v)=>a+v.total,0);
+            drawDoughnut('tipoVendasChart', ['Entrega','Retirada'], [entrega, retirada], ['#3b82f6', '#10b981']);
+            
+            const prodQtd = {};
+            vendas.forEach(v => prodQtd[v.produtoId] = (prodQtd[v.produtoId]||0) + v.quantidade);
+            const top = Object.entries(prodQtd).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            drawBar('topProdutosChart', top.map(([id])=>produtos.find(p=>p.id==id)?.nome?.substring(0,10)||'?'), top.map(([,q])=>q), '#f59e0b');
+        }
+
+        // Usuários
+        function getUsers() { const u = localStorage.getItem("loja_users_apk"); return u ? JSON.parse(u) : {}; }
+        function saveUsers(users) { localStorage.setItem("loja_users_apk", JSON.stringify(users)); }
+        function saveCurrentSession(user) { if(user) localStorage.setItem("loja_current_session_apk", JSON.stringify({ id: user.id, email: user.email, nome: user.nome })); else localStorage.removeItem("loja_current_session_apk"); }
+        function loadSavedSession() { const s = localStorage.getItem("loja_current_session_apk"); if(s) { const u = JSON.parse(s); const users = getUsers(); if(users[u.email] && users[u.email].id === u.id) return u; } return null; }
+        
         function registerUser(nome, email, senha) {
             const users = getUsers();
             if(users[email]) return { success: false, error: "E-mail já cadastrado!" };
-            if(senha.length < 4) return { success: false, error: "Senha deve ter no mínimo 4 caracteres!" };
-            const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            if(senha.length < 4) return { success: false, error: "Senha mínima 4 caracteres!" };
+            const userId = 'u_' + Date.now();
             users[email] = { id: userId, nome, email, senha: btoa(senha) };
             saveUsers(users);
             return { success: true, user: { id: userId, nome, email } };
         }
-
+        
         function loginUser(email, senha) {
             const users = getUsers();
             const user = users[email];
-            if(user && atob(user.senha) === senha) {
-                return { success: true, user: { id: user.id, nome: user.nome, email } };
-            }
+            if(user && atob(user.senha) === senha) return { success: true, user: { id: user.id, nome: user.nome, email } };
             return { success: false, error: "E-mail ou senha inválidos!" };
         }
-
-        // Login com Google
-        function handleGoogleCredential(response) {
-            try {
-                const payload = decodeJwtResponse(response.credential);
-                const email = payload.email;
-                const nome = payload.name;
-                const users = getUsers();
-                let user;
-                if(users[email]) {
-                    user = { id: users[email].id, nome: users[email].nome, email };
-                } else {
-                    const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-                    users[email] = { id: userId, nome, email, senha: btoa("google_oauth_" + Date.now()), google: true };
-                    saveUsers(users);
-                    user = { id: userId, nome, email };
-                }
-                afterLogin(user);
-            } catch(e) { console.error("Google login error", e); }
-        }
         
-        function decodeJwtResponse(token) {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-            return JSON.parse(jsonPayload);
-        }
-
-        // Biometria (WebAuthn simulada para mobile - verifica se API está disponível)
-        async function checkBiometricSupport() {
-            // Verifica se é mobile e se há suporte a biometria
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if(isMobile && window.PublicKeyCredential && typeof PublicKeyCredential !== 'undefined') {
-                try {
-                    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                    if(available) return true;
-                } catch(e) { return false; }
-            }
-            // Fallback: verificar se há credenciais salvas
-            return localStorage.getItem("loja_biometric_enabled") === "true";
-        }
-        
-        async function loginWithBiometric() {
-            const savedEmail = localStorage.getItem("loja_biometric_email");
-            if(!savedEmail) {
-                alert("Nenhuma digital configurada. Faça login normal primeiro e ative a biometria.");
-                return false;
-            }
-            // Simular biometria - em APK real, isso chamaria a API nativa
-            // Aqui usamos um prompt de confirmação para demonstrar
-            if(confirm("🔐 Autenticação biométrica\nUse sua digital para continuar")) {
-                const users = getUsers();
-                const user = users[savedEmail];
-                if(user) {
-                    afterLogin({ id: user.id, nome: user.nome, email: savedEmail });
-                    return true;
-                }
-            }
-            alert("Falha na autenticação biométrica");
-            return false;
-        }
-
-        // Carregar dados do usuário
         function loadUserData() {
             if(!currentUser) return;
             const key = `loja_data_${currentUser.id}`;
             const saved = localStorage.getItem(key);
-            if(saved) {
-                const data = JSON.parse(saved);
-                produtos = data.produtos || [];
-                vendas = data.vendas || [];
-                nextProdId = data.nextProdId || 1;
-                nextVendaId = data.nextVendaId || 1;
-            } else {
+            if(saved) { const d = JSON.parse(saved); produtos = d.produtos || []; vendas = d.vendas || []; nextProdId = d.nextProdId || 1; nextVendaId = d.nextVendaId || 1; }
+            else {
                 produtos = [
                     { id: 1, nome: "Camiseta Polo", precoCusto: 35, precoVenda: 79.9, quantidade: 8, estoqueMin: 5, estoqueMax: 50, foto: "" },
                     { id: 2, nome: "Caneca", precoCusto: 12, precoVenda: 29.9, quantidade: 3, estoqueMin: 5, estoqueMax: 40, foto: "" },
@@ -625,74 +630,11 @@
                 saveUserData();
             }
         }
-
-        function saveUserData() {
-            if(!currentUser) return;
-            const key = `loja_data_${currentUser.id}`;
-            localStorage.setItem(key, JSON.stringify({ produtos, vendas, nextProdId, nextVendaId }));
-        }
-
-        function updateUserUI() {
-            if(currentUser && document.getElementById('userInfoDisplay')) {
-                const initial = currentUser.nome.charAt(0).toUpperCase();
-                document.getElementById('userInfoDisplay').innerHTML = `
-                    <div class="user-avatar">${initial}</div>
-                    <span class="user-name">${currentUser.nome}</span>
-                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
-                `;
-                document.getElementById('logoutBtn')?.addEventListener('click', logout);
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            saveCurrentSession(null);
-            localStorage.removeItem("loja_biometric_enabled");
-            localStorage.removeItem("loja_biometric_email");
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('appMain').classList.remove('visible');
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('registerForm').style.display = 'none';
-        }
-
-        function afterLogin(user) {
-            currentUser = user;
-            saveCurrentSession(user);
-            loadUserData();
-            renderAllApp();
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appMain').classList.add('visible');
-            updateUserUI();
-            
-            // Oferecer ativar biometria se for mobile
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if(isMobile && !localStorage.getItem("loja_biometric_email")) {
-                if(confirm("Deseja ativar login com digital/biometria para acesso mais rápido?")) {
-                    localStorage.setItem("loja_biometric_enabled", "true");
-                    localStorage.setItem("loja_biometric_email", user.email);
-                    alert("✅ Biometria ativada! Na próxima vez você poderá usar sua digital para entrar.");
-                }
-            }
-        }
-
-        // Verificar sessão salva ao carregar
-        function checkAutoLogin() {
-            const savedUser = loadSavedSession();
-            if(savedUser) {
-                currentUser = savedUser;
-                loadUserData();
-                renderAllApp();
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appMain').classList.add('visible');
-                updateUserUI();
-                return true;
-            }
-            return false;
-        }
-
-        // Funções do App (mantidas originais)
-        function formatMoney(v) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v); }
-        function getVendasMes() { const hoje = new Date(); return vendas.filter(v => { const d = new Date(v.data); return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear(); }); }
+        
+        function saveUserData() { if(currentUser) localStorage.setItem(`loja_data_${currentUser.id}`, JSON.stringify({ produtos, vendas, nextProdId, nextVendaId })); }
+        
+        function formatMoney(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
+        function getVendasMes() { const hoje = new Date(); return vendas.filter(v=>{ const d=new Date(v.data); return d.getMonth()===hoje.getMonth() && d.getFullYear()===hoje.getFullYear(); }); }
         
         function atualizarResumo() {
             document.getElementById('totalProdutos').innerText = produtos.reduce((a,p)=>a+p.quantidade,0);
@@ -711,14 +653,13 @@
             produtos.forEach(p => {
                 const row = tbody.insertRow();
                 row.className = p.quantidade<p.estoqueMin?'estoque-critico':(p.quantidade>p.estoqueMax?'estoque-excesso':'');
-                row.insertCell(0).innerHTML = p.foto ? `<img src="${p.foto}" class="photo-preview">` : '<i class="fas fa-image"></i>';
-                row.insertCell(1).innerText = p.nome;
-                row.insertCell(2).innerHTML = formatMoney(p.precoCusto);
-                row.insertCell(3).innerHTML = formatMoney(p.precoVenda);
-                row.insertCell(4).innerHTML = `<strong>${p.quantidade}</strong>`;
-                row.insertCell(5).innerHTML = `${p.estoqueMin}/${p.estoqueMax}`;
-                row.insertCell(6).innerHTML = p.quantidade<p.estoqueMin ? '<span class="badge badge-danger">CRÍTICO</span>' : (p.quantidade>p.estoqueMax?'<span class="badge badge-success">EXCEDENTE</span>':'<span class="badge badge-warning">NORMAL</span>');
-                row.insertCell(7).innerHTML = `<i class="fas fa-edit" onclick="editarProduto(${p.id})" style="cursor:pointer"></i> <i class="fas fa-trash-alt" onclick="excluirProduto(${p.id})" style="cursor:pointer;color:var(--danger);margin-left:8px"></i>`;
+                row.insertCell(0).innerText = p.nome;
+                row.insertCell(1).innerHTML = formatMoney(p.precoCusto);
+                row.insertCell(2).innerHTML = formatMoney(p.precoVenda);
+                row.insertCell(3).innerHTML = `<strong>${p.quantidade}</strong>`;
+                row.insertCell(4).innerHTML = `${p.estoqueMin}/${p.estoqueMax}`;
+                row.insertCell(5).innerHTML = p.quantidade<p.estoqueMin ? '<span class="badge badge-danger">CRÍTICO</span>' : (p.quantidade>p.estoqueMax?'<span class="badge badge-success">EXCEDENTE</span>':'<span class="badge badge-warning">NORMAL</span>');
+                row.insertCell(6).innerHTML = `<button onclick="editarProduto(${p.id})" style="background:#f59e0b;padding:4px 8px;margin-right:4px">✏️</button> <button onclick="excluirProduto(${p.id})" style="background:#ef4444;padding:4px 8px">🗑</button>`;
             });
             const alertDiv = document.getElementById('alertasList');
             if(alertDiv) {
@@ -732,188 +673,128 @@
         
         function atualizarSelect() { const sel = document.getElementById('vendaProdutoId'); if(sel){ sel.innerHTML = ''; produtos.forEach(p=>{ if(p.quantidade>0) sel.appendChild(new Option(`${p.nome} - R$ ${p.precoVenda.toFixed(2)} (${p.quantidade})`, p.id)); }); } }
         
-        function adicionarProduto() { 
-            const nome=document.getElementById('prodNome')?.value; 
-            const custo=parseFloat(document.getElementById('prodCusto')?.value); 
-            const venda=parseFloat(document.getElementById('prodVenda')?.value); 
-            const qtd=parseInt(document.getElementById('prodQtd')?.value); 
-            const min=parseInt(document.getElementById('prodMin')?.value); 
-            const max=parseInt(document.getElementById('prodMax')?.value); 
-            if(!nome||isNaN(custo)||isNaN(venda)||venda<=custo) return alert("Preço venda deve ser maior que o custo!"); 
+        function adicionarProduto() {
+            const nome = document.getElementById('prodNome')?.value;
+            const custo = parseFloat(document.getElementById('prodCusto')?.value);
+            const venda = parseFloat(document.getElementById('prodVenda')?.value);
+            const qtd = parseInt(document.getElementById('prodQtd')?.value);
+            const min = parseInt(document.getElementById('prodMin')?.value);
+            const max = parseInt(document.getElementById('prodMax')?.value);
+            if(!nome || isNaN(custo) || isNaN(venda) || venda<=custo) return alert("Preço venda deve ser maior que o custo!");
             if(min>=max) return alert("Mínimo deve ser menor que o máximo!");
-            produtos.push({id:nextProdId++,nome,precoCusto:custo,precoVenda:venda,quantidade:qtd,estoqueMin:min,estoqueMax:max,foto:""}); 
-            saveUserData(); renderAllApp(); 
-            document.getElementById('prodNome').value=''; document.getElementById('prodCusto').value=''; document.getElementById('prodVenda').value='';
+            produtos.push({id:nextProdId++, nome, precoCusto:custo, precoVenda:venda, quantidade:qtd, estoqueMin:min, estoqueMax:max, foto:""});
+            saveUserData(); renderAllApp();
+            document.getElementById('prodNome').value = ''; document.getElementById('prodCusto').value = ''; document.getElementById('prodVenda').value = '';
         }
         
-        function registrarVenda() { 
-            const cliente=document.getElementById('clienteNome')?.value.trim(); 
-            const prodId=parseInt(document.getElementById('vendaProdutoId')?.value); 
-            const qtd=parseInt(document.getElementById('vendaQtd')?.value); 
-            const tipo=document.getElementById('vendaTipo')?.value; 
-            const prod=produtos.find(p=>p.id===prodId); 
-            if(!cliente) return alert("Digite o nome do cliente"); 
-            if(!prod) return alert("Selecione um produto"); 
-            if(isNaN(qtd)||qtd<=0||qtd>prod.quantidade) return alert(`Estoque insuficiente! Disponível: ${prod.quantidade}`); 
-            prod.quantidade-=qtd; 
-            const total=prod.precoVenda*qtd; 
-            const lucro=total-(prod.precoCusto*qtd); 
-            vendas.push({id:nextVendaId++,cliente,produtoId:prodId,quantidade:qtd,precoVendaUnit:prod.precoVenda,precoCustoUnit:prod.precoCusto,total,lucro,tipo,data:new Date().toISOString().slice(0,10)}); 
-            saveUserData(); renderAllApp(); 
-            alert(`✅ Venda finalizada! Total: ${formatMoney(total)}`); 
-            if(document.getElementById('clienteNome')) document.getElementById('clienteNome').value=''; 
-            if(document.getElementById('vendaQtd')) document.getElementById('vendaQtd').value='1';
+        function registrarVenda() {
+            const cliente = document.getElementById('clienteNome')?.value.trim();
+            const prodId = parseInt(document.getElementById('vendaProdutoId')?.value);
+            const qtd = parseInt(document.getElementById('vendaQtd')?.value);
+            const tipo = document.getElementById('vendaTipo')?.value;
+            const prod = produtos.find(p=>p.id===prodId);
+            if(!cliente) return alert("Digite o nome do cliente");
+            if(!prod) return alert("Selecione um produto");
+            if(isNaN(qtd)||qtd<=0||qtd>prod.quantidade) return alert(`Estoque insuficiente! Disponível: ${prod.quantidade}`);
+            prod.quantidade -= qtd;
+            const total = prod.precoVenda * qtd;
+            const lucro = total - (prod.precoCusto * qtd);
+            vendas.push({id:nextVendaId++, cliente, produtoId:prodId, quantidade:qtd, precoVendaUnit:prod.precoVenda, precoCustoUnit:prod.precoCusto, total, lucro, tipo, data:new Date().toISOString().slice(0,10)});
+            saveUserData(); renderAllApp();
+            alert(`✅ Venda finalizada! Total: ${formatMoney(total)}`);
+            document.getElementById('clienteNome').value = ''; document.getElementById('vendaQtd').value = '1';
         }
         
-        function renderHistorico() { 
-            const tbody = document.querySelector('#tabelaHistorico tbody'); 
+        function renderHistorico() {
+            const tbody = document.querySelector('#tabelaHistorico tbody');
             if(!tbody) return;
-            tbody.innerHTML = ''; 
-            [...vendas].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada'; }); 
+            tbody.innerHTML = '';
+            [...vendas].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada'; });
         }
         
-        function renderRelatorioVendas() { 
-            let f=vendas; 
-            if(filtroMesAtual){ const [ano,mes]=filtroMesAtual.split('-'); f=vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mes)-1 && d.getFullYear()===parseInt(ano);});} 
-            const tbody=document.querySelector('#tabelaRelatorioVendas tbody'); 
+        function renderRelatorioVendas() {
+            let f = vendas;
+            if(filtroMesAtual){ const [ano,mes]=filtroMesAtual.split('-'); f=vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mes)-1 && d.getFullYear()===parseInt(ano);}); }
+            const tbody = document.querySelector('#tabelaRelatorioVendas tbody');
             if(!tbody) return;
-            tbody.innerHTML=''; 
-            [...f].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada';});
+            tbody.innerHTML = '';
+            [...f].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada'; });
         }
         
-        function atualizarGraficos() { 
-            const entrega=vendas.filter(v=>v.tipo==='entrega').reduce((a,v)=>a+v.total,0); 
-            const retirada=vendas.filter(v=>v.tipo==='retirada').reduce((a,v)=>a+v.total,0); 
-            const ctx1 = document.getElementById('tipoVendasChart');
-            if(ctx1 && typeof Chart !== 'undefined') {
-                if(tipoChart) tipoChart.destroy(); 
-                tipoChart=new Chart(ctx1,{type:'doughnut',data:{labels:['🚚 Entrega','🏠 Retirada'],datasets:[{data:[entrega,retirada],backgroundColor:['#3b82f6','#10b981']}]}});
-            }
-            const prodQty={}; vendas.forEach(v=>prodQty[v.produtoId]=(prodQty[v.produtoId]||0)+v.quantidade); 
-            const top=Object.entries(prodQty).sort((a,b)=>b[1]-a[1]).slice(0,5); 
-            const ctx2 = document.getElementById('topProdutosChart');
-            if(ctx2 && typeof Chart !== 'undefined') {
-                if(topChart) topChart.destroy(); 
-                topChart=new Chart(ctx2,{type:'bar',data:{labels:top.map(([id])=>produtos.find(p=>p.id==id)?.nome||"?"),datasets:[{label:'Qtd Vendida',data:top.map(([,q])=>q),backgroundColor:'#f59e0b'}]}});
-            }
-        }
-        
-        function carregarRelatorioMensal(){ 
-            const mes=document.getElementById('mesSelecionado')?.value; 
-            if(!mes) return; 
-            const [ano,mesN]=mes.split('-'); 
-            const f=vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mesN)-1 && d.getFullYear()===parseInt(ano);}); 
-            const fat=f.reduce((a,v)=>a+v.total,0); 
-            const custo=f.reduce((a,v)=>a+(v.precoCustoUnit*v.quantidade),0); 
-            if(document.getElementById('relBruto')) document.getElementById('relBruto').innerHTML=formatMoney(fat); 
-            if(document.getElementById('relCusto')) document.getElementById('relCusto').innerHTML=formatMoney(custo); 
-            if(document.getElementById('relLucro')) document.getElementById('relLucro').innerHTML=formatMoney(fat-custo); 
-            if(document.getElementById('relQtdProdutos')) document.getElementById('relQtdProdutos').innerText=f.reduce((a,v)=>a+v.quantidade,0); 
-            const mapa={}; f.forEach(v=>mapa[v.produtoId]=(mapa[v.produtoId]||0)+v.quantidade); 
-            const top=Object.entries(mapa).sort((a,b)=>b[1]-a[1]).slice(0,5); 
-            const tb=document.querySelector('#tabelaTopProdutos tbody'); 
+        function carregarRelatorioMensal() {
+            const mes = document.getElementById('mesSelecionado')?.value;
+            if(!mes) return;
+            const [ano,mesN] = mes.split('-');
+            const f = vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mesN)-1 && d.getFullYear()===parseInt(ano);});
+            const fat = f.reduce((a,v)=>a+v.total,0);
+            const custo = f.reduce((a,v)=>a+(v.precoCustoUnit*v.quantidade),0);
+            document.getElementById('relBruto').innerHTML = formatMoney(fat);
+            document.getElementById('relCusto').innerHTML = formatMoney(custo);
+            document.getElementById('relLucro').innerHTML = formatMoney(fat-custo);
+            document.getElementById('relQtdProdutos').innerText = f.reduce((a,v)=>a+v.quantidade,0);
+            const mapa = {};
+            f.forEach(v=>mapa[v.produtoId]=(mapa[v.produtoId]||0)+v.quantidade);
+            const top = Object.entries(mapa).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            const tb = document.querySelector('#tabelaTopProdutos tbody');
             if(tb){ tb.innerHTML=''; top.forEach(([id,q])=>{const p=produtos.find(p=>p.id==id); if(p){const r=tb.insertRow(); r.insertCell(0).innerText=p.nome; r.insertCell(1).innerText=q; r.insertCell(2).innerHTML=formatMoney(p.precoVenda*q);}}); }
-            if(document.getElementById('mesTitulo')) document.getElementById('mesTitulo').innerHTML=`📅 ${mes}`;
+            document.getElementById('mesTitulo').innerHTML = `📅 ${mes}`;
         }
         
-        function exportarCSV(){let csv="Data,Cliente,Produto,Qtd,Unitário,Total,Lucro,Tipo\n"; vendas.forEach(v=>{const p=produtos.find(p=>p.id===v.produtoId); csv+=`"${v.data}","${v.cliente}","${p?.nome||'?'}",${v.quantidade},${v.precoVendaUnit},${v.total},${v.lucro},"${v.tipo}"\n`;}); const blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="vendas.csv"; a.click();}
-        
-        function renderAllApp(){ atualizarResumo(); renderEstoque(); atualizarSelect(); renderHistorico(); renderRelatorioVendas(); atualizarGraficos(); carregarRelatorioMensal(); }
-        
-        // Inicialização
-        async function init() {
-            // Configurar Google
-            if(typeof google !== 'undefined') {
-                google.accounts.id.initialize({
-                    client_id: "1080621199013-ufkr95544d23gidf4o82ifdp86fdn87t.apps.googleusercontent.com",
-                    callback: handleGoogleCredential
-                });
-                const googleBtn = document.getElementById("googleBtnWrapper");
-                const googleBtnReg = document.getElementById("googleBtnWrapperRegister");
-                if(googleBtn) google.accounts.id.renderButton(googleBtn, { theme: "outline", size: "large", width: "100%" });
-                if(googleBtnReg) google.accounts.id.renderButton(googleBtnReg, { theme: "outline", size: "large", width: "100%" });
-            }
-            
-            // Verificar biometria
-            const hasBiometric = await checkBiometricSupport();
-            const bioBtn = document.getElementById('btnBiometricLogin');
-            if(hasBiometric && localStorage.getItem("loja_biometric_email")) {
-                if(bioBtn) bioBtn.style.display = 'block';
-                bioBtn?.addEventListener('click', loginWithBiometric);
-            }
-            
-            // Tentar auto-login
-            if(!checkAutoLogin()) {
-                document.getElementById('loginScreen').style.display = 'flex';
-            }
-            
-            initAppEvents();
+        function exportarCSV() {
+            let csv = "Data,Cliente,Produto,Qtd,Unitário,Total,Lucro,Tipo\n";
+            vendas.forEach(v=>{const p=produtos.find(p=>p.id===v.produtoId); csv+=`"${v.data}","${v.cliente}","${p?.nome||'?'}",${v.quantidade},${v.precoVendaUnit},${v.total},${v.lucro},"${v.tipo}"\n`;});
+            const blob = new Blob(["\uFEFF"+csv],{type:"text/csv"});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "vendas.csv"; a.click();
         }
         
-        function initAppEvents(){
-            const btnAdd = document.getElementById('btnAddProduto');
-            if(btnAdd) btnAdd.addEventListener('click', adicionarProduto);
-            const btnVenda = document.getElementById('btnRegistrarVenda');
-            if(btnVenda) btnVenda.addEventListener('click', registrarVenda);
-            const btnExport = document.getElementById('btnExportarCSV');
-            if(btnExport) btnExport.addEventListener('click', exportarCSV);
-            const btnRel = document.getElementById('btnCarregarRelatorio');
-            if(btnRel) btnRel.addEventListener('click', carregarRelatorioMensal);
-            const btnFiltrar = document.getElementById('btnFiltrarVendas');
-            if(btnFiltrar) btnFiltrar.addEventListener('click',()=>{filtroMesAtual=document.getElementById('filtroMesVendas')?.value||null; renderRelatorioVendas();});
-            const btnLimpar = document.getElementById('btnLimparFiltro');
-            if(btnLimpar) btnLimpar.addEventListener('click',()=>{if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value=''; filtroMesAtual=null; renderRelatorioVendas();});
-            const hoje = new Date();
-            const anoMes = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
-            if(document.getElementById('mesSelecionado')) document.getElementById('mesSelecionado').value = anoMes;
-            if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value = anoMes;
-            
-            // Menu
-            const items = document.querySelectorAll('.menu-item');
-            const panels = document.querySelectorAll('.panel');
-            items.forEach(i=>{i.addEventListener('click',()=>{const pid=i.getAttribute('data-panel'); items.forEach(x=>x.classList.remove('active')); i.classList.add('active'); panels.forEach(p=>p.classList.remove('active-panel')); document.getElementById(`${pid}Panel`).classList.add('active-panel'); if(pid==='alertas')renderEstoque(); if(pid==='relatorioVendas')renderRelatorioVendas(); if(pid==='historico')renderHistorico(); if(window.innerWidth<=768)closeMenu();});});
-            
-            // Mobile menu
-            const toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
-            const closeMenu = () => { sidebar?.classList.remove('open'); if(overlay) overlay.style.display='none'; if(toggle) toggle.innerHTML='<i class="fas fa-bars"></i>'; };
-            if(toggle) toggle.addEventListener('click',()=>{if(sidebar?.classList.contains('open'))closeMenu(); else{sidebar?.classList.add('open'); if(overlay) overlay.style.display='block'; toggle.innerHTML='<i class="fas fa-times"></i>';}});
-            if(overlay) overlay.addEventListener('click',closeMenu);
-            
-            // Theme
-            const themeToggle = document.getElementById('themeToggle');
-            if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
-            if(themeToggle) themeToggle.addEventListener('click',()=>{document.body.classList.toggle('dark'); localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');});
+        function renderAllApp() { atualizarResumo(); renderEstoque(); atualizarSelect(); renderHistorico(); renderRelatorioVendas(); atualizarGraficos(); carregarRelatorioMensal(); }
+        
+        function afterLogin(user) {
+            currentUser = user;
+            saveCurrentSession(user);
+            loadUserData();
+            renderAllApp();
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appMain').classList.add('visible');
+            const initial = user.nome.charAt(0).toUpperCase();
+            document.getElementById('userInfoDisplay').innerHTML = `<div class="user-avatar">${initial}</div><span class="user-name">${user.nome}</span><button class="logout-btn" id="logoutBtn">🚪 Sair</button>`;
+            document.getElementById('logoutBtn')?.addEventListener('click', () => { currentUser = null; saveCurrentSession(null); document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('appMain').classList.remove('visible'); });
         }
         
-        // Eventos de login
+        function checkAutoLogin() { const s = loadSavedSession(); if(s) { afterLogin(s); return true; } return false; }
+        
+        // Eventos
         document.getElementById('showRegister')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; });
         document.getElementById('showLogin')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; });
+        document.getElementById('btnEmailLogin')?.addEventListener('click',()=>{ const r = loginUser(document.getElementById('loginEmail').value, document.getElementById('loginSenha').value); if(r.success) afterLogin(r.user); else document.getElementById('loginError').innerText = r.error; });
+        document.getElementById('btnRegister')?.addEventListener('click',()=>{ const r = registerUser(document.getElementById('regNome').value, document.getElementById('regEmail').value, document.getElementById('regSenha').value); if(r.success){ document.getElementById('registerSuccess').innerText = 'Conta criada! Faça login.'; setTimeout(()=>document.getElementById('showLogin')?.click(),1500); } else document.getElementById('registerError').innerText = r.error; });
+        document.getElementById('btnAddProduto')?.addEventListener('click', adicionarProduto);
+        document.getElementById('btnRegistrarVenda')?.addEventListener('click', registrarVenda);
+        document.getElementById('btnExportarCSV')?.addEventListener('click', exportarCSV);
+        document.getElementById('btnCarregarRelatorio')?.addEventListener('click', carregarRelatorioMensal);
+        document.getElementById('btnFiltrarVendas')?.addEventListener('click',()=>{ filtroMesAtual = document.getElementById('filtroMesVendas')?.value||null; renderRelatorioVendas(); });
+        document.getElementById('btnLimparFiltro')?.addEventListener('click',()=>{ if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value=''; filtroMesAtual=null; renderRelatorioVendas(); });
         
-        document.getElementById('btnEmailLogin')?.addEventListener('click',()=>{ 
-            const email=document.getElementById('loginEmail')?.value; 
-            const senha=document.getElementById('loginSenha')?.value; 
-            const result = loginUser(email, senha); 
-            if(result.success){ afterLogin(result.user); } 
-            else{ if(document.getElementById('loginError')) document.getElementById('loginError').innerText = result.error; } 
-        });
+        // Menu
+        const items = document.querySelectorAll('.menu-item');
+        const panels = document.querySelectorAll('.panel');
+        items.forEach(i=>{i.addEventListener('click',()=>{const pid=i.getAttribute('data-panel'); items.forEach(x=>x.classList.remove('active')); i.classList.add('active'); panels.forEach(p=>p.classList.remove('active-panel')); document.getElementById(`${pid}Panel`).classList.add('active-panel'); if(window.innerWidth<=768) closeMenu();});});
         
-        document.getElementById('btnRegister')?.addEventListener('click',()=>{ 
-            const nome=document.getElementById('regNome')?.value; 
-            const email=document.getElementById('regEmail')?.value; 
-            const senha=document.getElementById('regSenha')?.value; 
-            const confirm=document.getElementById('regConfirmSenha')?.value; 
-            if(!nome||!email){ if(document.getElementById('registerError')) document.getElementById('registerError').innerText='Preencha todos os campos'; return; }
-            if(senha !== confirm){ if(document.getElementById('registerError')) document.getElementById('registerError').innerText='As senhas não coincidem'; return; }
-            const result = registerUser(nome, email, senha); 
-            if(result.success){ 
-                if(document.getElementById('registerSuccess')) document.getElementById('registerSuccess').innerText='Conta criada! Faça login.';
-                setTimeout(()=>{ document.getElementById('showLogin')?.click(); }, 1500);
-            } else { 
-                if(document.getElementById('registerError')) document.getElementById('registerError').innerText = result.error; 
-            }
-        });
+        const toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
+        const closeMenu = () => { sidebar?.classList.remove('open'); if(overlay) overlay.style.display='none'; if(toggle) toggle.innerHTML='☰'; };
+        if(toggle) toggle.addEventListener('click',()=>{if(sidebar?.classList.contains('open'))closeMenu(); else{sidebar?.classList.add('open'); if(overlay) overlay.style.display='block'; toggle.innerHTML='✕';}});
+        if(overlay) overlay.addEventListener('click',closeMenu);
         
-        init();
+        const themeToggle = document.getElementById('themeToggle');
+        if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
+        if(themeToggle) themeToggle.addEventListener('click',()=>{document.body.classList.toggle('dark'); localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');});
+        
+        const hoje = new Date(); const anoMes = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+        if(document.getElementById('mesSelecionado')) document.getElementById('mesSelecionado').value = anoMes;
+        if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value = anoMes;
+        
+        if(!checkAutoLogin()) document.getElementById('loginScreen').style.display = 'flex';
+        else document.getElementById('loginScreen').style.display = 'none';
     </script>
 </body>
     </html>
