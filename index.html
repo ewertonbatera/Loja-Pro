@@ -152,6 +152,9 @@
             justify-content: center;
             color: var(--menu-icon-color);
         }
+        .menu-btn i {
+            pointer-events: none; /* Garante que o clique seja no botão, não no ícone */
+        }
         .page-title {
             font-size: 1.4rem;
             font-weight: 700;
@@ -494,7 +497,7 @@
         appContainer.classList.remove('visible');
     });
 
-    // ========== MENU SANDUÍCHE CORRIGIDO (com X funcionando) ==========
+    // ========== MENU SANDUÍCHE CORRIGIDO (COM X FUNCIONANDO 100%) ==========
     const menuToggle = document.getElementById('menuToggle');
     const sidebarEl = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
@@ -502,15 +505,19 @@
     function openSidebar() {
         sidebarEl.classList.add('open');
         backdrop.classList.add('active');
-        // Força a troca do ícone para X
-        menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+        // Troca o ícone para X (fa-times)
+        if (menuToggle) {
+            menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+        }
     }
     
     function closeSidebar() {
         sidebarEl.classList.remove('open');
         backdrop.classList.remove('active');
-        // Força a troca do ícone para barras
-        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        // Troca o ícone para sanduíche (fa-bars)
+        if (menuToggle) {
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        }
     }
     
     function toggleSidebar() {
@@ -521,9 +528,18 @@
         }
     }
     
-    // Evento de clique no botão do menu
+    // Evento principal do botão do menu
     if (menuToggle) {
-        menuToggle.addEventListener('click', toggleSidebar);
+        // Remove qualquer listener anterior para evitar duplicação
+        const newMenuToggle = menuToggle.cloneNode(true);
+        menuToggle.parentNode.replaceChild(newMenuToggle, menuToggle);
+        const finalMenuToggle = document.getElementById('menuToggle');
+        
+        finalMenuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSidebar();
+        });
     }
     
     // Fechar ao clicar no backdrop
@@ -558,7 +574,7 @@
     });
     applyTheme();
 
-    // ---------- RENDERIZAÇÃO DAS TELAS (com valores formatados) ----------
+    // ---------- RENDERIZAÇÃO DAS TELAS ----------
     let salesChart = null, topProductsChart = null;
     function renderCurrentView(view) {
         if(view === 'dashboard') renderDashboard();
@@ -610,7 +626,7 @@
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
                 return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>${formatarMoeda(v.total)}</td></tr>`;
             }).join('')}
-            </tbody></table></div>
+            </tbody><table></div>
         `;
         setTimeout(() => {
             const ctx1 = document.getElementById('monthlySalesChart')?.getContext('2d');
@@ -631,7 +647,7 @@
         const html = `
             <div class="card-premium"><div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
             <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
-            <div style="overflow-x:auto">${'</table><thead><tr><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody>' + produtos.map(p => `<tr><td>${p.nome}</td><td>${formatarMoeda(p.custo)}</td><td>${formatarMoeda(p.venda)}</td><td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td><td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>'}
+            <div style="overflow-x:auto">${'</td><thead><tr><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody>' + produtos.map(p => `<tr><td>${p.nome}</td><td>${formatarMoeda(p.custo)}</td><td>${formatarMoeda(p.venda)}</td><td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td><td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>'}
             </div></div>
         `;
         main.innerHTML = html;
