@@ -2,63 +2,65 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loja Pro - Gestão Inteligente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Loja Pro - Gestão Inteligente Premium</title>
+    <!-- Google Fonts + Font Awesome + Chart.js -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background 0.3s, color 0.2s;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
             color: var(--text-color);
-            padding: 20px;
+            padding: 24px;
+            transition: background 0.3s, color 0.2s;
         }
 
+        /* Temas premium */
         :root {
-            --bg-color: #f9fafb;
-            --card-bg: #ffffff;
-            --text-color: #111827;
-            --border-color: #e5e7eb;
-            --header-bg: #ffffff;
-            --button-bg: #f3f4f6;
-            --button-hover: #e5e7eb;
+            --bg-gradient: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%);
+            --card-bg: rgba(255,255,255,0.96);
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --header-bg: rgba(255,255,255,0.85);
             --sidebar-bg: #ffffff;
-            --login-overlay-bg: rgba(0,0,0,0.7);
-            --login-card-bg: #ffffff;
-            --input-border: #d1d5db;
-            --backdrop-bg: rgba(0,0,0,0.4);
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #8b5cf6;
+            --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --shadow-md: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02);
+            --backdrop-bg: rgba(0,0,0,0.3);
         }
 
         body.dark {
-            --bg-color: #1f2937;
-            --card-bg: #374151;
-            --text-color: #f9fafb;
-            --border-color: #4b5563;
-            --header-bg: #111827;
-            --button-bg: #374151;
-            --button-hover: #4b5563;
-            --sidebar-bg: #1f2937;
-            --login-card-bg: #374151;
-            --input-border: #4b5563;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: #1e293b;
+            --text-color: #e2e8f0;
+            --border-color: #334155;
+            --header-bg: #1e293bcc;
+            --sidebar-bg: #0f172a;
+            --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.3);
             --backdrop-bg: rgba(0,0,0,0.6);
         }
 
-        /* Login */
+        /* Login premium */
         .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--login-overlay-bg);
+            background: var(--bg-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -66,107 +68,264 @@
             backdrop-filter: blur(4px);
         }
         .login-card {
-            background: var(--login-card-bg);
-            border-radius: 32px;
-            padding: 32px 28px;
+            background: var(--card-bg);
+            border-radius: 40px;
+            padding: 40px;
             width: 90%;
-            max-width: 420px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            max-width: 460px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
         }
-        .login-card h2 { text-align: center; margin-bottom: 24px; }
+        .login-card h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 24px;
+        }
         .login-card input {
             width: 100%;
-            padding: 14px 16px;
-            margin: 10px 0;
-            border-radius: 28px;
-            border: 1px solid var(--input-border);
+            padding: 14px 18px;
+            margin: 12px 0;
+            border-radius: 60px;
+            border: 1px solid var(--border-color);
             background: var(--card-bg);
             color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            transition: 0.2s;
+        }
+        .login-card input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
         }
         .login-card button {
             width: 100%;
-            padding: 12px;
-            margin-top: 16px;
-            background: #3b82f6;
+            padding: 14px;
+            background: var(--primary);
             color: white;
+            font-weight: 600;
             border: none;
-            border-radius: 40px;
-            font-weight: bold;
+            border-radius: 60px;
             cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
         }
-        .login-message { text-align: center; margin-top: 12px; font-size: 0.85rem; color: var(--danger); }
-        .code-field { display: none; }
+        .login-card button:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .code-field { display: none; margin-top: 12px; }
         .code-field.visible { display: block; }
 
         /* App principal */
         .app-container { display: none; }
         .app-container.visible { display: block; }
 
-        /* Cabeçalho */
+        /* Header */
         .main-header {
             background: var(--header-bg);
-            border-radius: 20px;
-            padding: 12px 24px;
-            margin-bottom: 30px;
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 12px 28px;
+            margin-bottom: 32px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
         }
         .menu-btn {
-            background: var(--button-bg);
-            border: none;
-            font-size: 28px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            font-size: 24px;
             cursor: pointer;
             width: 48px;
             height: 48px;
             border-radius: 40px;
+            transition: 0.2s;
         }
         .page-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            background: var(--button-bg);
-            padding: 8px 24px;
-            border-radius: 60px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             flex-grow: 1;
-            margin: 0 16px;
+            text-align: center;
         }
-        .right-area { display: flex; gap: 20px; align-items: center; }
-        .user-area { display: flex; align-items: center; gap: 12px; background: var(--button-bg); padding: 6px 16px; border-radius: 40px; }
-        .avatar { width: 38px; height: 38px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
-        .theme-toggle, .logout-btn { background: var(--button-bg); border: none; padding: 8px 18px; border-radius: 40px; cursor: pointer; }
-        .logout-btn { background: var(--danger); color: white; }
+        .right-area { display: flex; gap: 16px; align-items: center; }
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            padding: 6px 20px 6px 12px;
+            border-radius: 60px;
+            border: 1px solid var(--border-color);
+        }
+        .avatar {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .theme-toggle, .logout-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .logout-btn { background: var(--danger); color: white; border: none; }
 
         /* Sidebar off-canvas */
-        .sidebar-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--backdrop-bg); z-index: 98; display: none; }
+        .sidebar-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--backdrop-bg); z-index: 98; display: none;
+        }
         .sidebar-backdrop.active { display: block; }
         .sidebar {
-            position: fixed; top: 0; left: 0; width: 280px; height: 100%;
+            position: fixed; top: 0; left: 0; width: 300px; height: 100%;
             background: var(--sidebar-bg); transform: translateX(-100%);
-            transition: transform 0.3s; z-index: 99; padding: 80px 0 20px;
-            overflow-y: auto; border-right: 1px solid var(--border-color);
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            z-index: 99; padding: 100px 0 32px;
+            border-right: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
         }
         .sidebar.open { transform: translateX(0); }
-        .sidebar ul { list-style: none; padding: 0 16px; }
-        .sidebar li { margin: 8px 0; padding: 12px 16px; border-radius: 16px; cursor: pointer; }
-        .sidebar li:hover { background: var(--button-bg); }
+        .sidebar ul { list-style: none; padding: 0 20px; }
+        .sidebar li {
+            margin: 12px 0;
+            padding: 14px 20px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 1rem;
+        }
+        .sidebar li:hover { background: var(--primary); color: white; transform: translateX(8px); }
+        .sidebar li i { width: 24px; }
 
-        /* Conteúdo principal */
-        .main-content { min-height: 500px; }
-        .card { background: var(--card-bg); border-radius: 20px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--border-color); }
-        .card-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 16px; }
-        .grid { display: flex; gap: 20px; flex-wrap: wrap; }
-        .stat-card { flex: 1; background: var(--card-bg); padding: 20px; border-radius: 20px; text-align: center; border: 1px solid var(--border-color); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        input, select, button { background: var(--button-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px; color: var(--text-color); }
-        button { cursor: pointer; }
-        .btn-primary { background: #3b82f6; color: white; border: none; }
-        .btn-danger { background: var(--danger); color: white; }
-        .alert { background: var(--warning); color: #1f2937; padding: 10px; border-radius: 12px; margin-bottom: 16px; }
-        @media (max-width: 640px) { .main-header { flex-direction: column; } .right-area { justify-content: flex-end; } }
+        /* Conteúdo principal -> estilo premium */
+        .main-content { min-height: 600px; }
+        .card-premium {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-premium:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .grid-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 24px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: 0.2s;
+        }
+        .stat-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 12px; }
+        .stat-card h3 { font-size: 1rem; font-weight: 500; opacity: 0.8; }
+        .stat-card p { font-size: 2rem; font-weight: 700; margin-top: 8px; }
+        .charts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .chart-box {
+            flex: 1;
+            min-width: 280px;
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th { font-weight: 600; color: var(--primary); }
+        button, input, select {
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary:hover { background: var(--primary-dark); transform: scale(1.02); }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-success { background: var(--success); color: white; }
+        .badge-warning { background: var(--warning); color: #1e293b; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--backdrop-bg);
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 40px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--border-color);
+        }
+        @media (max-width: 700px) {
+            body { padding: 16px; }
+            .main-header { flex-direction: column; align-items: stretch; }
+            .right-area { justify-content: flex-end; }
+        }
     </style>
 </head>
 <body>
@@ -174,59 +333,51 @@
 <!-- Login -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
-        <h2>🔐 Loja Pro</h2>
+        <h2><i class="fas fa-store"></i> Loja Pro</h2>
         <input type="text" id="loginName" placeholder="Nome completo">
         <input type="email" id="loginEmail" placeholder="E-mail">
         <input type="password" id="loginPassword" placeholder="Senha">
         <div id="codeField" class="code-field">
-            <input type="text" id="verificationCode" placeholder="Código de verificação">
+            <input type="text" id="verificationCode" placeholder="Código de 6 dígitos">
         </div>
-        <button id="doLoginBtn">Enviar código / Verificar</button>
-        <div id="loginMessage" class="login-message"></div>
-        <div class="switch-mode">🔓 Simulação: o código será exibido em um alerta</div>
+        <button id="doLoginBtn">Enviar código</button>
+        <div id="loginMessage" class="login-message" style="margin-top:16px; font-size:0.8rem;"></div>
+        <div style="text-align:center; margin-top:20px; opacity:0.7;"><i class="fas fa-envelope"></i> Simulação: código via alerta</div>
     </div>
 </div>
 
-<!-- App principal -->
 <div id="appContainer" class="app-container">
     <div class="main-header">
-        <button class="menu-btn" id="menuToggle">☰</button>
-        <div class="page-title">Loja Pro  Gestão Inteligente</div>
+        <button class="menu-btn" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div class="page-title"><i class="fas fa-chart-line"></i> Loja Pro • Gestão Inteligente</div>
         <div class="right-area">
             <div class="user-area"><div class="avatar" id="userAvatar">U</div><span id="userNameDisplay"></span></div>
-            <button class="theme-toggle" id="themeToggle">🌙</button>
-            <button class="logout-btn" id="logoutBtn">Sair</button>
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
     </div>
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     <div class="sidebar" id="sidebar">
         <ul>
-            <li data-view="dashboard">📊 Dashboard</li>
-            <li data-view="estoque">📦 Estoque</li>
-            <li data-view="venda">💰 Nova Venda</li>
-            <li data-view="relatorioVendas">📈 Relatório de Vendas</li>
-            <li data-view="relatorioMensal">📅 Relatório Mensal</li>
-            <li data-view="alertas">⚠️ Alertas</li>
-            <li data-view="historico">📜 Histórico</li>
+            <li data-view="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+            <li data-view="estoque"><i class="fas fa-boxes"></i> Estoque</li>
+            <li data-view="venda"><i class="fas fa-cash-register"></i> Nova Venda</li>
+            <li data-view="relatorioVendas"><i class="fas fa-chart-bar"></i> Relatório Vendas</li>
+            <li data-view="relatorioMensal"><i class="fas fa-calendar-alt"></i> Relatório Mensal</li>
+            <li data-view="alertas"><i class="fas fa-bell"></i> Alertas</li>
+            <li data-view="historico"><i class="fas fa-history"></i> Histórico</li>
         </ul>
     </div>
-    <div class="main-content" id="mainContent">
-        <!-- Conteúdo dinâmico -->
-    </div>
+    <div class="main-content" id="mainContent"></div>
 </div>
 
 <script>
-    // ---------- SIMULAÇÃO DE ENVIO DE CÓDIGO ----------
-    let pendingCode = null;
-    let pendingUserData = null;
-
-    // Dados persistentes
+    // ---------- DADOS PERSISTENTES ----------
     let users = JSON.parse(localStorage.getItem('lojapro_users')) || [];
     let produtos = JSON.parse(localStorage.getItem('lojapro_produtos')) || [];
     let vendas = JSON.parse(localStorage.getItem('lojapro_vendas')) || [];
     let currentSession = JSON.parse(localStorage.getItem('lojapro_session')) || null;
 
-    // Helper para salvar
     function saveAll() {
         localStorage.setItem('lojapro_users', JSON.stringify(users));
         localStorage.setItem('lojapro_produtos', JSON.stringify(produtos));
@@ -235,300 +386,293 @@
         else localStorage.removeItem('lojapro_session');
     }
 
-    // Se não houver produtos iniciais, criar alguns
+    // Produtos iniciais
     if (produtos.length === 0) {
         produtos = [
-            { id: 1, nome: "Smartphone X", custo: 800, venda: 1200, estoque: 5, estoqueMin: 3, estoqueMax: 30 },
-            { id: 2, nome: "Fone Bluetooth", custo: 50, venda: 120, estoque: 12, estoqueMin: 5, estoqueMax: 50 },
-            { id: 3, nome: "Carregador Rápido", custo: 30, venda: 70, estoque: 2, estoqueMin: 4, estoqueMax: 40 }
+            { id: 1, nome: "Smartphone X", custo: 800, venda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40 },
+            { id: 2, nome: "Fone Bluetooth Pro", custo: 45, venda: 149, estoque: 15, estoqueMin: 5, estoqueMax: 60 },
+            { id: 3, nome: "Carregador Turbo", custo: 28, venda: 79, estoque: 3, estoqueMin: 4, estoqueMax: 30 },
+            { id: 4, nome: "Smartwatch", custo: 150, venda: 299, estoque: 6, estoqueMin: 2, estoqueMax: 25 }
+        ];
+        saveAll();
+    }
+    if (vendas.length === 0) {
+        // criar algumas vendas demo
+        vendas = [
+            { id: Date.now(), produtoId: 1, quantidade: 2, total: 2598, data: new Date(2025,3,10).toISOString() },
+            { id: Date.now()+1, produtoId: 2, quantidade: 5, total: 745, data: new Date(2025,3,12).toISOString() },
+            { id: Date.now()+2, produtoId: 3, quantidade: 1, total: 79, data: new Date(2025,3,15).toISOString() },
+            { id: Date.now()+3, produtoId: 4, quantidade: 1, total: 299, data: new Date(2025,4,1).toISOString() }
         ];
         saveAll();
     }
 
-    // ----- LOGIN COM CÓDIGO -----
+    // ---------- LOGIN COM CÓDIGO ----------
+    let loginStep = 1, pendingCode = null, pendingUserData = null;
     const loginOverlay = document.getElementById('loginOverlay');
     const appContainer = document.getElementById('appContainer');
-    const loginName = document.getElementById('loginName');
-    const loginEmail = document.getElementById('loginEmail');
-    const loginPassword = document.getElementById('loginPassword');
-    const codeField = document.getElementById('codeField');
-    const verificationCodeInput = document.getElementById('verificationCode');
     const doLoginBtn = document.getElementById('doLoginBtn');
     const loginMsg = document.getElementById('loginMessage');
-    let loginStep = 1; // 1: enviar credenciais, 2: verificar código
+    const codeField = document.getElementById('codeField');
 
     doLoginBtn.addEventListener('click', () => {
         if (loginStep === 1) {
-            const name = loginName.value.trim();
-            const email = loginEmail.value.trim();
-            const password = loginPassword.value.trim();
-            if (!name || !email || !password) {
-                loginMsg.textContent = "Preencha todos os campos.";
-                return;
-            }
-            // Verifica se usuário existe ou cria
+            const name = document.getElementById('loginName').value.trim();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            if (!name || !email || !password) { loginMsg.innerText = "Preencha todos os campos"; return; }
             let user = users.find(u => u.email === email);
-            if (user) {
-                if (user.password !== password) {
-                    loginMsg.textContent = "Senha incorreta.";
-                    return;
-                }
-            } else {
+            if (user && user.password !== password) { loginMsg.innerText = "Senha incorreta"; return; }
+            if (!user) {
                 user = { name, email, password };
                 users.push(user);
                 saveAll();
             }
-            // Gerar código simulado (6 dígitos)
             pendingCode = Math.floor(100000 + Math.random() * 900000).toString();
             pendingUserData = user;
-            alert(`🔐 Código de verificação: ${pendingCode}\n(Simulação de e-mail)`);
-            loginMsg.textContent = `Código enviado para ${email}. Digite-o abaixo.`;
+            alert(`📧 Simulação: Seu código é ${pendingCode}`);
+            loginMsg.innerText = `Código enviado para ${email}`;
             codeField.classList.add('visible');
-            doLoginBtn.textContent = "Verificar código";
+            doLoginBtn.innerText = "Verificar código";
             loginStep = 2;
         } else {
-            const code = verificationCodeInput.value.trim();
+            const code = document.getElementById('verificationCode').value.trim();
             if (code === pendingCode) {
-                // Login bem-sucedido
                 currentSession = { name: pendingUserData.name, email: pendingUserData.email, avatar: pendingUserData.name.charAt(0).toUpperCase() };
                 saveAll();
-                updateAppUI();
+                document.getElementById('userAvatar').innerText = currentSession.avatar;
+                document.getElementById('userNameDisplay').innerText = currentSession.name;
                 loginOverlay.style.display = 'none';
                 appContainer.classList.add('visible');
                 applyTheme();
                 renderCurrentView('dashboard');
                 closeSidebar();
             } else {
-                loginMsg.textContent = "Código inválido. Tente novamente.";
+                loginMsg.innerText = "Código inválido";
             }
         }
     });
 
-    function updateAppUI() {
-        if (currentSession) {
-            document.getElementById('userAvatar').textContent = currentSession.avatar;
-            document.getElementById('userNameDisplay').textContent = currentSession.name;
-        }
-    }
-
-    // Verificar sessão ao carregar
     if (currentSession) {
         loginOverlay.style.display = 'none';
         appContainer.classList.add('visible');
-        updateAppUI();
+        document.getElementById('userAvatar').innerText = currentSession.avatar;
+        document.getElementById('userNameDisplay').innerText = currentSession.name;
         renderCurrentView('dashboard');
-    } else {
-        loginOverlay.style.display = 'flex';
     }
 
-    // Logout
     document.getElementById('logoutBtn').addEventListener('click', () => {
         currentSession = null;
         saveAll();
         loginStep = 1;
-        loginName.value = loginEmail.value = loginPassword.value = verificationCodeInput.value = '';
+        document.getElementById('loginName').value = '';
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('verificationCode').value = '';
         codeField.classList.remove('visible');
-        doLoginBtn.textContent = "Enviar código / Verificar";
-        loginMsg.textContent = "";
+        doLoginBtn.innerText = "Enviar código";
+        loginMsg.innerText = '';
         loginOverlay.style.display = 'flex';
         appContainer.classList.remove('visible');
     });
 
-    // ----- MENU SANDUÍCHE (off-canvas) -----
+    // Menu sanduíche
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
-    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
-    function openSidebar() { sidebar.classList.add('open'); sidebarBackdrop.classList.add('active'); menuToggle.innerHTML = '✕'; }
-    function closeSidebar() { sidebar.classList.remove('open'); sidebarBackdrop.classList.remove('active'); menuToggle.innerHTML = '☰'; }
-    function toggleSidebar() { if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); }
-    menuToggle.addEventListener('click', toggleSidebar);
-    sidebarBackdrop.addEventListener('click', closeSidebar);
-
-    // Navegação pelos itens do menu
-    document.querySelectorAll('.sidebar li').forEach(item => {
-        item.addEventListener('click', () => {
-            const view = item.getAttribute('data-view');
-            if (view) renderCurrentView(view);
+    const backdrop = document.getElementById('sidebarBackdrop');
+    function openSidebar() { sidebar.classList.add('open'); backdrop.classList.add('active'); menuToggle.innerHTML = '<i class="fas fa-times"></i>'; }
+    function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('active'); menuToggle.innerHTML = '<i class="fas fa-bars"></i>'; }
+    menuToggle.addEventListener('click', () => { if(sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); });
+    backdrop.addEventListener('click', closeSidebar);
+    document.querySelectorAll('.sidebar li').forEach(li => {
+        li.addEventListener('click', (e) => {
+            const view = li.getAttribute('data-view');
+            if(view) renderCurrentView(view);
             closeSidebar();
         });
     });
 
-    // ----- RENDERIZAÇÃO DAS TELAS -----
-    function renderCurrentView(view) {
-        const main = document.getElementById('mainContent');
-        if (view === 'dashboard') renderDashboard(main);
-        else if (view === 'estoque') renderEstoque(main);
-        else if (view === 'venda') renderVenda(main);
-        else if (view === 'relatorioVendas') renderRelatorioVendas(main);
-        else if (view === 'relatorioMensal') renderRelatorioMensal(main);
-        else if (view === 'alertas') renderAlertas(main);
-        else if (view === 'historico') renderHistorico(main);
-    }
-
-    // DASHBOARD
-    function renderDashboard(container) {
-        const totalVendas = vendas.reduce((acc, v) => acc + v.total, 0);
-        const totalProdutos = produtos.length;
-        const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
-        const lucroTotal = vendas.reduce((acc, venda) => {
-            const prod = produtos.find(p => p.id === venda.produtoId);
-            if (prod) return acc + (venda.quantidade * (prod.venda - prod.custo));
-            return acc;
-        }, 0);
-        const ultimasVendas = [...vendas].reverse().slice(0, 5);
-        container.innerHTML = `
-            <div class="grid">
-                <div class="stat-card"><h3>💰 Faturamento</h3><p style="font-size:2rem">R$ ${totalVendas.toFixed(2)}</p></div>
-                <div class="stat-card"><h3>📦 Produtos</h3><p style="font-size:2rem">${totalProdutos}</p></div>
-                <div class="stat-card"><h3>⚠️ Estoque baixo</h3><p style="font-size:2rem">${baixoEstoque}</p></div>
-                <div class="stat-card"><h3>📈 Lucro Líquido</h3><p style="font-size:2rem">R$ ${lucroTotal.toFixed(2)}</p></div>
-            </div>
-            <div class="card"><div class="card-title">Últimas vendas</div>
-            <table><tr><th>Produto</th><th>Qtd</th><th>Data</th><th>Total</th></tr>
-            ${ultimasVendas.map(v => {
-                const prod = produtos.find(p => p.id === v.produtoId);
-                return `<tr><td>${prod ? prod.nome : '-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
-            }).join('')}
-            </table></div>
-        `;
-    }
-
-    // ESTOQUE (CRUD com custo, venda, min, max)
-    function renderEstoque(container) {
-        function renderTable() {
-            container.innerHTML = `
-                <div class="card"><div class="card-title">📦 Gerenciar Produtos</div>
-                <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:16px">+ Novo Produto</button>
-                <table id="tabelaEstoque"><tr><th>Nome</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr>
-                ${produtos.map(p => `
-                    <tr>
-                        <td>${p.nome}</td><td>R$ ${p.custo}</td><td>R$ ${p.venda}</td>
-                        <td>${p.estoque}</td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td>
-                        <td><button class="editarProduto" data-id="${p.id}">✏️</button> <button class="deletarProduto" data-id="${p.id}">🗑️</button></td>
-                    </tr>
-                `).join('')}</table></div>
-            `;
-            document.getElementById('novoProdutoBtn')?.addEventListener('click', () => openProdutoModal());
-            document.querySelectorAll('.editarProduto').forEach(btn => btn.addEventListener('click', (e) => openProdutoModal(parseInt(e.target.dataset.id))));
-            document.querySelectorAll('.deletarProduto').forEach(btn => btn.addEventListener('click', (e) => {
-                if(confirm('Remover produto?')) {
-                    produtos = produtos.filter(p => p.id != e.target.dataset.id);
-                    saveAll();
-                    renderEstoque(container);
-                }
-            }));
-        }
-        function openProdutoModal(id = null) {
-            const prod = id ? produtos.find(p => p.id === id) : { nome: '', custo: 0, venda: 0, estoque: 0, estoqueMin: 0, estoqueMax: 0 };
-            const nomeForm = prompt('Nome:', prod.nome);
-            if (!nomeForm) return;
-            const custo = parseFloat(prompt('Custo (R$):', prod.custo));
-            const venda = parseFloat(prompt('Venda (R$):', prod.venda));
-            const estoque = parseInt(prompt('Estoque atual:', prod.estoque));
-            const min = parseInt(prompt('Estoque mínimo:', prod.estoqueMin));
-            const max = parseInt(prompt('Estoque máximo:', prod.estoqueMax));
-            if (isNaN(custo) || isNaN(venda) || isNaN(estoque) || isNaN(min) || isNaN(max)) return;
-            if (id) {
-                prod.nome = nomeForm; prod.custo = custo; prod.venda = venda; prod.estoque = estoque; prod.estoqueMin = min; prod.estoqueMax = max;
-            } else {
-                const newId = Date.now();
-                produtos.push({ id: newId, nome: nomeForm, custo, venda, estoque, estoqueMin: min, estoqueMax: max });
-            }
-            saveAll();
-            renderTable();
-        }
-        renderTable();
-    }
-
-    // NOVA VENDA
-    function renderVenda(container) {
-        container.innerHTML = `<div class="card"><div class="card-title">💰 Registrar Venda</div>
-            <select id="produtoVenda"><option value="">Selecione</option>${produtos.map(p => `<option value="${p.id}" data-preco="${p.venda}" data-estoque="${p.estoque}">${p.nome} - R$ ${p.venda} (Estoque: ${p.estoque})</option>`).join('')}</select>
-            <input type="number" id="qtdVenda" placeholder="Quantidade" min="1" step="1">
-            <button id="realizarVendaBtn" class="btn-primary">Vender</button>
-            <div id="vendaMsg"></div></div>`;
-        document.getElementById('realizarVendaBtn').addEventListener('click', () => {
-            const prodId = parseInt(document.getElementById('produtoVenda').value);
-            const qtd = parseInt(document.getElementById('qtdVenda').value);
-            const prod = produtos.find(p => p.id === prodId);
-            if (!prodId || !qtd) return alert('Selecione produto e quantidade');
-            if (qtd > prod.estoque) return alert('Estoque insuficiente');
-            prod.estoque -= qtd;
-            const total = qtd * prod.venda;
-            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date().toISOString() });
-            saveAll();
-            document.getElementById('vendaMsg').innerHTML = `<div class="alert">Venda realizada! Total: R$ ${total.toFixed(2)}</div>`;
-            renderVenda(container);
-        });
-    }
-
-    // RELATÓRIO DE VENDAS (geral)
-    function renderRelatorioVendas(container) {
-        container.innerHTML = `<div class="card"><div class="card-title">📈 Relatório de Vendas</div>
-            <table><tr><th>Produto</th><th>Qtd</th><th>Data</th><th>Total</th></tr>
-            ${vendas.map(v => {
-                const prod = produtos.find(p => p.id === v.produtoId);
-                return `<tr><td>${prod ? prod.nome : '-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
-            }).join('')}
-            </table><p><strong>Total Geral: R$ ${vendas.reduce((s,v)=>s+v.total,0).toFixed(2)}</strong></p></div>`;
-    }
-
-    // RELATÓRIO MENSAL (agrupado por mês/ano)
-    function renderRelatorioMensal(container) {
-        const porMes = {};
-        vendas.forEach(v => {
-            const data = new Date(v.data);
-            const chave = `${data.getMonth()+1}/${data.getFullYear()}`;
-            if (!porMes[chave]) porMes[chave] = 0;
-            porMes[chave] += v.total;
-        });
-        let html = `<div class="card"><div class="card-title">📅 Relatório Mensal</div><table><tr><th>Mês/Ano</th><th>Faturamento</th></tr>`;
-        for (let [mes, total] of Object.entries(porMes)) {
-            html += `<tr><td>${mes}</td><td>R$ ${total.toFixed(2)}</td></tr>`;
-        }
-        html += `</table></div>`;
-        container.innerHTML = html;
-    }
-
-    // ALERTAS: estoque abaixo do mínimo
-    function renderAlertas(container) {
-        const alertas = produtos.filter(p => p.estoque <= p.estoqueMin);
-        container.innerHTML = `<div class="card"><div class="card-title">⚠️ Alertas de Estoque</div>
-            ${alertas.length ? alertas.map(p => `<div class="alert">Produto "${p.nome}" está com ${p.estoque} unidades (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta no momento.</p>'}
-            </div>`;
-    }
-
-    // HISTÓRICO (todas as ações: vendas + alterações de estoque? Vamos mostrar vendas + edições de produto)
-    function renderHistorico(container) {
-        const historicoItens = [...vendas].reverse().map(v => {
-            const prod = produtos.find(p => p.id === v.produtoId);
-            return `Venda: ${prod?.nome} - ${v.quantidade} un. - R$ ${v.total} - ${new Date(v.data).toLocaleString()}`;
-        });
-        container.innerHTML = `<div class="card"><div class="card-title">📜 Histórico de Movimentações</div>
-            <ul>${historicoItens.map(h => `<li>📌 ${h}</li>`).join('')}</ul>
-            ${historicoItens.length === 0 ? '<p>Nenhuma movimentação registrada.</p>' : ''}
-            </div>`;
-    }
-
-    // Tema escuro/claro
+    // Tema
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     function applyTheme() {
-        const isDark = localStorage.getItem('theme') === 'dark';
-        if (isDark) body.classList.add('dark');
+        const dark = localStorage.getItem('theme') === 'dark';
+        if(dark) body.classList.add('dark');
         else body.classList.remove('dark');
-        themeToggle.innerHTML = isDark ? '☀️' : '🌙';
+        themeToggle.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
     themeToggle.addEventListener('click', () => {
         body.classList.toggle('dark');
         const isDark = body.classList.contains('dark');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        themeToggle.innerHTML = isDark ? '☀️' : '🌙';
+        applyTheme();
     });
     applyTheme();
 
-    // Inicializar
-    if (currentSession) renderCurrentView('dashboard');
+    // Renderização dinâmica com gráficos
+    let salesChart = null, topProductsChart = null;
+    function renderCurrentView(view) {
+        if(view === 'dashboard') renderDashboard();
+        else if(view === 'estoque') renderEstoque();
+        else if(view === 'venda') renderVenda();
+        else if(view === 'relatorioVendas') renderRelatorioVendas();
+        else if(view === 'relatorioMensal') renderRelatorioMensal();
+        else if(view === 'alertas') renderAlertas();
+        else if(view === 'historico') renderHistorico();
+    }
+
+    function renderDashboard() {
+        const main = document.getElementById('mainContent');
+        const totalFaturamento = vendas.reduce((s,v)=>s+v.total,0);
+        const lucroTotal = vendas.reduce((acc, v) => {
+            const p = produtos.find(prod => prod.id === v.produtoId);
+            return acc + (p ? v.quantidade * (p.venda - p.custo) : 0);
+        }, 0);
+        const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
+        // Dados para gráficos
+        const vendasPorMes = {};
+        vendas.forEach(v => {
+            const mes = new Date(v.data).toLocaleString('default', { month: 'short', year:'numeric' });
+            vendasPorMes[mes] = (vendasPorMes[mes] || 0) + v.total;
+        });
+        const labels = Object.keys(vendasPorMes);
+        const valores = Object.values(vendasPorMes);
+        // Produtos mais vendidos
+        const qtdPorProduto = {};
+        vendas.forEach(v => { qtdPorProduto[v.produtoId] = (qtdPorProduto[v.produtoId] || 0) + v.quantidade; });
+        const topProdutos = Object.entries(qtdPorProduto).sort((a,b)=>b[1]-a[1]).slice(0,3);
+        const topLabels = topProdutos.map(([id]) => { const p = produtos.find(prod=>prod.id==id); return p ? p.nome : '?'; });
+        const topQtde = topProdutos.map(([_,qtd])=>qtd);
+
+        main.innerHTML = `
+            <div class="grid-stats">
+                <div class="stat-card"><i class="fas fa-chart-line"></i><h3>Faturamento</h3><p>R$ ${totalFaturamento.toFixed(2)}</p></div>
+                <div class="stat-card"><i class="fas fa-coins"></i><h3>Lucro Líquido</h3><p>R$ ${lucroTotal.toFixed(2)}</p></div>
+                <div class="stat-card"><i class="fas fa-boxes"></i><h3>Produtos em Estoque</h3><p>${produtos.reduce((s,p)=>s+p.estoque,0)}</p></div>
+                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p class="${baixoEstoque>0?'text-warning':''}">${baixoEstoque}</p></div>
+            </div>
+            <div class="charts-row">
+                <div class="chart-box"><canvas id="monthlySalesChart" width="400" height="250"></canvas></div>
+                <div class="chart-box"><canvas id="topProductsChart" width="400" height="250"></canvas></div>
+            </div>
+            <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
+            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Data</th><th>Total</th></tr></thead><tbody>
+            ${[...vendas].reverse().slice(0,5).map(v => {
+                const p = produtos.find(prod=>prod.id===v.produtoId);
+                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
+            }).join('')}
+            </tbody></table></div>
+        `;
+        // gráficos após render
+        setTimeout(() => {
+            const ctx1 = document.getElementById('monthlySalesChart')?.getContext('2d');
+            const ctx2 = document.getElementById('topProductsChart')?.getContext('2d');
+            if(ctx1) {
+                if(salesChart) salesChart.destroy();
+                salesChart = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Faturamento (R$)', data: valores, backgroundColor: '#3b82f6', borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: true } });
+            }
+            if(ctx2) {
+                if(topProductsChart) topProductsChart.destroy();
+                topProductsChart = new Chart(ctx2, { type: 'doughnut', data: { labels: topLabels, datasets: [{ data: topQtde, backgroundColor: ['#3b82f6','#10b981','#f59e0b'] }] }, options: { responsive: true } });
+            }
+        }, 50);
+    }
+
+    function renderEstoque() {
+        const main = document.getElementById('mainContent');
+        const html = `
+            <div class="card-premium"><div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
+            <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
+            <div style="overflow-x:auto">${'<table><thead><tr><th>Produto</th><th>Custo (R$)</th><th>Venda (R$)</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody>' + produtos.map(p => `<tr><td>${p.nome}</td><td>${p.custo}</td><td>${p.venda}</td><td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td><td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>'}
+            </div></div>
+        `;
+        main.innerHTML = html;
+        document.getElementById('novoProdutoBtn')?.addEventListener('click', () => openProdutoModal());
+        document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', (e) => openProdutoModal(parseInt(e.target.closest('button').dataset.id))));
+        document.querySelectorAll('.delProd').forEach(btn => btn.addEventListener('click', (e) => {
+            if(confirm('Excluir produto?')) {
+                produtos = produtos.filter(p => p.id != e.target.closest('button').dataset.id);
+                saveAll();
+                renderEstoque();
+            }
+        }));
+    }
+    function openProdutoModal(id = null) {
+        const prod = id ? produtos.find(p => p.id===id) : { nome:'', custo:0, venda:0, estoque:0, estoqueMin:0, estoqueMax:0 };
+        const nome = prompt('Nome:', prod.nome);
+        if(!nome) return;
+        const custo = parseFloat(prompt('Custo (R$):', prod.custo));
+        const venda = parseFloat(prompt('Venda (R$):', prod.venda));
+        const estoque = parseInt(prompt('Estoque:', prod.estoque));
+        const min = parseInt(prompt('Estoque mínimo:', prod.estoqueMin));
+        const max = parseInt(prompt('Estoque máximo:', prod.estoqueMax));
+        if(isNaN(custo)||isNaN(venda)||isNaN(estoque)||isNaN(min)||isNaN(max)) return;
+        if(id) {
+            prod.nome=nome; prod.custo=custo; prod.venda=venda; prod.estoque=estoque; prod.estoqueMin=min; prod.estoqueMax=max;
+        } else {
+            produtos.push({ id: Date.now(), nome, custo, venda, estoque, estoqueMin: min, estoqueMax: max });
+        }
+        saveAll();
+        renderEstoque();
+    }
+
+    function renderVenda() {
+        const main = document.getElementById('mainContent');
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
+            <select id="produtoVenda" class="form-control" style="padding:12px; width:100%; margin-bottom:16px;">${produtos.map(p => `<option value="${p.id}" data-venda="${p.venda}" data-estoque="${p.estoque}">${p.nome} - R$ ${p.venda} (estoque: ${p.estoque})</option>`).join('')}</select>
+            <input type="number" id="qtdVenda" placeholder="Quantidade" style="width:100%; margin-bottom:16px; padding:12px;">
+            <button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button>
+            <div id="vendaMsg" style="margin-top:20px;"></div></div>`;
+        document.getElementById('venderBtn').addEventListener('click', () => {
+            const prodId = parseInt(document.getElementById('produtoVenda').value);
+            const qtd = parseInt(document.getElementById('qtdVenda').value);
+            const prod = produtos.find(p=>p.id===prodId);
+            if(!prod || qtd<=0) return alert('Selecione produto e quantidade válida');
+            if(qtd > prod.estoque) return alert('Estoque insuficiente');
+            prod.estoque -= qtd;
+            const total = qtd * prod.venda;
+            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date().toISOString() });
+            saveAll();
+            document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px; border-radius:60px;">✅ Venda realizada! Total R$ ${total.toFixed(2)}</div>`;
+            renderVenda();
+        });
+    }
+
+    function renderRelatorioVendas() {
+        const main = document.getElementById('mainContent');
+        const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-chart-simple"></i> Relatório de Vendas</div>
+            <table><thead><tr><th>Produto</th><th>Quantidade</th><th>Data</th><th>Total</th></tr></thead><tbody>
+            ${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`; }).join('')}
+            </tbody></table><div style="margin-top:20px;"><strong>Total Geral: R$ ${totalGeral.toFixed(2)}</strong></div></div>`;
+    }
+
+    function renderRelatorioMensal() {
+        const porMes = {};
+        vendas.forEach(v => {
+            const d = new Date(v.data);
+            const chave = `${d.getMonth()+1}/${d.getFullYear()}`;
+            porMes[chave] = (porMes[chave] || 0) + v.total;
+        });
+        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div><table><thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
+        for(let [mes, total] of Object.entries(porMes)) html += `<tr><td>${mes}</td><td>R$ ${total.toFixed(2)}</td></tr>`;
+        html += `</tbody></table></div>`;
+        document.getElementById('mainContent').innerHTML = html;
+    }
+
+    function renderAlertas() {
+        const alertas = produtos.filter(p => p.estoque <= p.estoqueMin);
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-bell"></i> Alertas de Estoque</div>
+            ${alertas.length ? alertas.map(p => `<div class="badge-warning" style="margin:8px 0; padding:12px; border-radius:60px;">⚠️ ${p.nome} está com ${p.estoque} unid. (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta ativo</p>'}</div>`;
+    }
+
+    function renderHistorico() {
+        const items = [...vendas].reverse().map(v => {
+            const p = produtos.find(prod=>prod.id===v.produtoId);
+            return `<li style="margin-bottom:12px;"><i class="fas fa-receipt"></i> Venda: ${p?.nome} - ${v.quantidade} un - R$ ${v.total} - ${new Date(v.data).toLocaleString()}</li>`;
+        });
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-history"></i> Histórico de Movimentações</div><ul>${items.length?items.join(''):'<li>Nenhuma venda registrada</li>'}</ul></div>`;
+    }
 </script>
 </body>
 </html>
