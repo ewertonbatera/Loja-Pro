@@ -18,10 +18,10 @@
         }
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%);
-            --card-bg: rgba(255,255,255,0.96);
+            --card-bg: #ffffff;
             --text-color: #1e293b;
             --border-color: #e2e8f0;
-            --header-bg: rgba(255,255,255,0.85);
+            --header-bg: #ffffff;
             --sidebar-bg: #ffffff;
             --primary: #3b82f6;
             --primary-dark: #2563eb;
@@ -39,14 +39,14 @@
             --card-bg: #1e293b;
             --text-color: #e2e8f0;
             --border-color: #334155;
-            --header-bg: #1e293bcc;
+            --header-bg: #1e293b;
             --sidebar-bg: #0f172a;
             --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.3);
             --backdrop-bg: rgba(0,0,0,0.6);
             --menu-icon-color: #ffffff;
         }
         
-        /* TELA DE LOGIN */
+        /* Login */
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-gradient); display: flex; align-items: center;
@@ -72,29 +72,26 @@
             background: var(--card-bg); color: var(--text-color);
             font-size: 1rem;
         }
-        .login-card .input-group input:focus {
-            outline: none; border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
-        }
         .login-card button {
             width: 100%; padding: 14px; background: var(--primary);
             color: white; font-weight: 600; border: none;
             border-radius: 60px; cursor: pointer; font-size: 1rem;
             margin-top: 12px;
         }
-        .login-card button:hover { background: var(--primary-dark); }
         .login-card .register-link { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-color); }
         .login-card .register-link span { color: var(--primary); cursor: pointer; font-weight: 600; }
-        .login-card .login-message { margin-top: 16px; font-size: 0.85rem; color: var(--danger); }
+        .login-message { margin-top: 16px; font-size: 0.85rem; color: var(--danger); }
         
+        /* App */
         .app-container { display: none; }
         .app-container.visible { display: block; }
+        
+        /* Header */
         .main-header {
-            background: var(--header-bg); backdrop-filter: blur(12px);
-            border-radius: 60px; padding: 12px 28px; margin-bottom: 32px;
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 16px; box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
+            background: var(--header-bg); border-radius: 60px; padding: 12px 28px;
+            margin-bottom: 32px; display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 16px;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
         }
         .menu-btn {
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -125,6 +122,8 @@
             padding: 10px 18px; border-radius: 40px; cursor: pointer;
         }
         .logout-btn { background: var(--danger); color: white; border: none; }
+        
+        /* Sidebar */
         .sidebar-backdrop {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--backdrop-bg); z-index: 98; display: none;
@@ -133,10 +132,8 @@
         .sidebar {
             position: fixed; top: 0; left: 0; width: 300px; height: 100%;
             background: var(--sidebar-bg); transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            z-index: 99; padding: 100px 0 32px;
+            transition: transform 0.3s; z-index: 99; padding: 100px 0 32px;
             border-right: 1px solid var(--border-color);
-            overflow-y: auto;
         }
         .sidebar.open { transform: translateX(0); }
         .sidebar ul { list-style: none; padding: 0 20px; }
@@ -146,25 +143,17 @@
             transition: 0.2s;
         }
         .sidebar li:hover { background: var(--primary); color: white; }
+        
+        /* Conteúdo */
         .main-content { min-height: 600px; }
-        .card-premium {
+        .card {
             background: var(--card-bg); border-radius: 32px; padding: 28px;
             margin-bottom: 28px; box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-color);
         }
-        .card-premium:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-        .card-title {
-            font-size: 1.5rem; font-weight: 600; margin-bottom: 20px;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .grid-stats {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 24px; margin-bottom: 32px;
-        }
-        .stat-card {
-            background: var(--card-bg); border-radius: 28px; padding: 24px;
-            text-align: center; border: 1px solid var(--border-color);
-        }
+        .card-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .stat-card { background: var(--card-bg); border-radius: 28px; padding: 24px; text-align: center; border: 1px solid var(--border-color); }
         .stat-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 12px; }
         .stat-card h3 { font-size: 1rem; font-weight: 500; opacity: 0.8; }
         .stat-card p { font-size: 2rem; font-weight: 700; margin-top: 8px; }
@@ -173,86 +162,44 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { color: var(--primary); }
-        .btn-primary {
-            background: var(--primary); color: white; border: none;
-            padding: 12px 24px; border-radius: 40px; cursor: pointer;
-        }
-        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 40px; cursor: pointer; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 60px; font-size: 0.75rem; font-weight: 600; }
         .badge-success { background: var(--success); color: white; }
         .badge-warning { background: var(--warning); color: #1e293b; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 12px; border-radius: 16px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg); color: var(--text-color);
-        }
-        .modal {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: var(--backdrop-bg);
-            align-items: center; justify-content: center; z-index: 200;
-        }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--backdrop-bg); align-items: center; justify-content: center; z-index: 200; }
         .modal.active { display: flex; }
-        .modal-content {
-            background: var(--card-bg); border-radius: 32px; padding: 32px;
-            width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto;
-        }
+        .modal-content { background: var(--card-bg); border-radius: 32px; padding: 32px; width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
         .flex-row { display: flex; gap: 16px; flex-wrap: wrap; }
         .flex-row .form-group { flex: 1; }
-        @media (max-width: 700px) {
-            body { padding: 16px; }
-            .main-header { flex-direction: column; }
-            .right-area { justify-content: flex-end; }
-        }
+        @media (max-width: 700px) { body { padding: 16px; } .main-header { flex-direction: column; } .right-area { justify-content: flex-end; } }
     </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
+<!-- Login -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
         <h2><i class="fas fa-store"></i> Loja Pro</h2>
-        <div class="input-group">
-            <label><i class="fas fa-envelope"></i> E-mail</label>
-            <input type="email" id="loginEmail" placeholder="seu@email.com">
-        </div>
-        <div class="input-group">
-            <label><i class="fas fa-lock"></i> Senha</label>
-            <input type="password" id="loginPassword" placeholder="••••••">
-        </div>
+        <div class="input-group"><label>E-mail</label><input type="email" id="loginEmail" placeholder="seu@email.com"></div>
+        <div class="input-group"><label>Senha</label><input type="password" id="loginPassword" placeholder="••••••"></div>
         <button id="doLoginBtn">Entrar</button>
-        <div class="register-link">
-            Não tem uma conta? <span id="showRegisterBtn">Cadastre-se</span>
-        </div>
+        <div class="register-link">Não tem uma conta? <span id="showRegisterBtn">Cadastre-se</span></div>
         <div id="loginMessage" class="login-message"></div>
     </div>
 </div>
 
-<!-- TELA DE CADASTRO -->
 <div id="registerOverlay" class="login-overlay" style="display: none;">
     <div class="login-card">
         <h2><i class="fas fa-user-plus"></i> Criar Conta</h2>
-        <div class="input-group">
-            <label><i class="fas fa-user"></i> Nome</label>
-            <input type="text" id="regName" placeholder="Seu nome completo">
-        </div>
-        <div class="input-group">
-            <label><i class="fas fa-envelope"></i> E-mail</label>
-            <input type="email" id="regEmail" placeholder="seu@email.com">
-        </div>
-        <div class="input-group">
-            <label><i class="fas fa-lock"></i> Senha</label>
-            <input type="password" id="regPassword" placeholder="Mínimo 3 caracteres">
-        </div>
-        <div class="input-group">
-            <label><i class="fas fa-check-circle"></i> Confirmar Senha</label>
-            <input type="password" id="regConfirmPassword" placeholder="Digite a senha novamente">
-        </div>
+        <div class="input-group"><label>Nome</label><input type="text" id="regName" placeholder="Seu nome completo"></div>
+        <div class="input-group"><label>E-mail</label><input type="email" id="regEmail" placeholder="seu@email.com"></div>
+        <div class="input-group"><label>Senha</label><input type="password" id="regPassword" placeholder="Mínimo 3 caracteres"></div>
+        <div class="input-group"><label>Confirmar Senha</label><input type="password" id="regConfirmPassword" placeholder="Digite a senha novamente"></div>
         <button id="doRegisterBtn">Cadastrar</button>
-        <div class="register-link">
-            Já tem uma conta? <span id="showLoginBtn">Faça login</span>
-        </div>
+        <div class="register-link">Já tem uma conta? <span id="showLoginBtn">Faça login</span></div>
         <div id="registerMessage" class="login-message"></div>
     </div>
 </div>
@@ -270,14 +217,14 @@
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     <div class="sidebar" id="sidebar">
         <ul>
-            <li id="menuDashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
-            <li id="menuEstoque"><i class="fas fa-boxes"></i> Estoque</li>
-            <li id="menuVenda"><i class="fas fa-cash-register"></i> Nova Venda</li>
-            <li id="menuRelatorioVendas"><i class="fas fa-chart-bar"></i> Relatório Vendas</li>
-            <li id="menuRelatorioMensal"><i class="fas fa-calendar-alt"></i> Relatório Mensal</li>
-            <li id="menuAlertas"><i class="fas fa-bell"></i> Alertas</li>
-            <li id="menuHistorico"><i class="fas fa-history"></i> Histórico</li>
-            <li id="menuClientes"><i class="fas fa-users"></i> Clientes</li>
+            <li onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+            <li onclick="showEstoque()"><i class="fas fa-boxes"></i> Estoque</li>
+            <li onclick="showVenda()"><i class="fas fa-cash-register"></i> Nova Venda</li>
+            <li onclick="showRelatorioVendas()"><i class="fas fa-chart-bar"></i> Relatório Vendas</li>
+            <li onclick="showRelatorioMensal()"><i class="fas fa-calendar-alt"></i> Relatório Mensal</li>
+            <li onclick="showAlertas()"><i class="fas fa-bell"></i> Alertas</li>
+            <li onclick="showHistorico()"><i class="fas fa-history"></i> Histórico</li>
+            <li onclick="showClientes()"><i class="fas fa-users"></i> Clientes</li>
         </ul>
     </div>
     <div class="main-content" id="mainContent"></div>
@@ -304,10 +251,10 @@
         else localStorage.removeItem('lojapro_session');
     }
 
-    // Produtos iniciais
+    // Dados iniciais
     if (produtos.length === 0) {
         produtos = [
-            { id: 1, nome: "Smartphone X", descricao: "Smartphone de última geração com 128GB", codigoBarras: "7891234567890", precoCompra: 800, precoVenda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40, dataEntrada: "2025-01-15" },
+            { id: 1, nome: "Smartphone X", descricao: "Smartphone de última geração", codigoBarras: "7891234567890", precoCompra: 800, precoVenda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40, dataEntrada: "2025-01-15" },
             { id: 2, nome: "Fone Bluetooth Pro", descricao: "Fone com cancelamento de ruído", codigoBarras: "7891234567891", precoCompra: 45, precoVenda: 149, estoque: 15, estoqueMin: 5, estoqueMax: 60, dataEntrada: "2025-02-10" },
             { id: 3, nome: "Carregador Turbo", descricao: "Carregador rápido 65W", codigoBarras: "7891234567892", precoCompra: 28, precoVenda: 79, estoque: 3, estoqueMin: 4, estoqueMax: 30, dataEntrada: "2025-01-20" },
             { id: 4, nome: "Smartwatch", descricao: "Relógio inteligente com GPS", codigoBarras: "7891234567893", precoCompra: 150, precoVenda: 299, estoque: 6, estoqueMin: 2, estoqueMax: 25, dataEntrada: "2025-03-01" }
@@ -316,11 +263,9 @@
     }
     
     if (vendas.length === 0 && produtos.length > 0) {
-        const prod1 = produtos.find(p => p.id === 1);
-        const prod2 = produtos.find(p => p.id === 2);
         vendas = [
-            { id: Date.now(), produtoId: 1, quantidade: 2, total: 2 * prod1.precoVenda, data: new Date(2025,3,10).toISOString(), clienteId: null, formaPagamento: "Dinheiro" },
-            { id: Date.now()+1, produtoId: 2, quantidade: 5, total: 5 * prod2.precoVenda, data: new Date(2025,3,12).toISOString(), clienteId: null, formaPagamento: "Cartão" }
+            { id: Date.now(), produtoId: 1, quantidade: 2, total: 2 * 1299, data: new Date().toISOString(), clienteId: null, formaPagamento: "Dinheiro" },
+            { id: Date.now()+1, produtoId: 2, quantidade: 5, total: 5 * 149, data: new Date().toISOString(), clienteId: null, formaPagamento: "Cartão" }
         ];
         saveAll();
     }
@@ -333,491 +278,234 @@
         saveAll();
     }
 
-    // Elementos de tela
+    // Login
     const loginOverlay = document.getElementById('loginOverlay');
     const registerOverlay = document.getElementById('registerOverlay');
     const appContainer = document.getElementById('appContainer');
-    const loginEmail = document.getElementById('loginEmail');
-    const loginPassword = document.getElementById('loginPassword');
-    const doLoginBtn = document.getElementById('doLoginBtn');
-    const loginMessage = document.getElementById('loginMessage');
-    const showRegisterBtn = document.getElementById('showRegisterBtn');
-    const showLoginBtn = document.getElementById('showLoginBtn');
-    const doRegisterBtn = document.getElementById('doRegisterBtn');
-    const regName = document.getElementById('regName');
-    const regEmail = document.getElementById('regEmail');
-    const regPassword = document.getElementById('regPassword');
-    const regConfirmPassword = document.getElementById('regConfirmPassword');
-    const registerMessage = document.getElementById('registerMessage');
 
-    showRegisterBtn.addEventListener('click', () => {
-        loginOverlay.style.display = 'none';
-        registerOverlay.style.display = 'flex';
-    });
-
-    showLoginBtn.addEventListener('click', () => {
-        registerOverlay.style.display = 'none';
-        loginOverlay.style.display = 'flex';
-    });
-
-    function doLogin(email, password) {
-        if (!email || !password) { loginMessage.innerText = "Preencha todos os campos"; return null; }
+    document.getElementById('showRegisterBtn').onclick = () => { loginOverlay.style.display = 'none'; registerOverlay.style.display = 'flex'; };
+    document.getElementById('showLoginBtn').onclick = () => { registerOverlay.style.display = 'none'; loginOverlay.style.display = 'flex'; };
+    
+    document.getElementById('doLoginBtn').onclick = () => {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
         const user = users.find(u => u.email === email);
-        if (!user) { loginMessage.innerText = "E-mail não cadastrado"; return null; }
-        if (user.password !== password) { loginMessage.innerText = "Senha incorreta"; return null; }
-        return user;
-    }
-
-    function doRegister(name, email, password, confirmPassword) {
-        if (!name || !email || !password || !confirmPassword) { registerMessage.innerText = "Preencha todos os campos"; return false; }
-        if (password.length < 3) { registerMessage.innerText = "A senha deve ter pelo menos 3 caracteres"; return false; }
-        if (password !== confirmPassword) { registerMessage.innerText = "As senhas não coincidem"; return false; }
-        if (users.find(u => u.email === email)) { registerMessage.innerText = "Este e-mail já está cadastrado"; return false; }
-        const newUser = { name, email, password };
-        users.push(newUser);
+        if (!user) { document.getElementById('loginMessage').innerText = "E-mail não cadastrado"; return; }
+        if (user.password !== password) { document.getElementById('loginMessage').innerText = "Senha incorreta"; return; }
+        currentSession = { name: user.name, email: user.email, avatar: user.name.charAt(0).toUpperCase() };
         saveAll();
-        return true;
-    }
-
-    doLoginBtn.addEventListener('click', () => {
-        const email = loginEmail.value.trim();
-        const password = loginPassword.value.trim();
-        const user = doLogin(email, password);
-        if (user) {
-            currentSession = { name: user.name, email: user.email, avatar: user.name.charAt(0).toUpperCase() };
-            saveAll();
-            document.getElementById('userAvatar').innerText = currentSession.avatar;
-            document.getElementById('userNameDisplay').innerText = currentSession.name;
-            loginOverlay.style.display = 'none';
-            appContainer.classList.add('visible');
-            applyTheme();
-            renderDashboard();
-            closeSidebar();
-        }
-    });
-
-    doRegisterBtn.addEventListener('click', () => {
-        const name = regName.value.trim();
-        const email = regEmail.value.trim();
-        const password = regPassword.value.trim();
-        const confirmPassword = regConfirmPassword.value.trim();
-        if (doRegister(name, email, password, confirmPassword)) {
-            registerMessage.innerText = "Cadastro realizado! Faça login.";
-            registerMessage.style.color = "var(--success)";
-            setTimeout(() => {
-                registerOverlay.style.display = 'none';
-                loginOverlay.style.display = 'flex';
-                loginEmail.value = email;
-                registerMessage.innerText = '';
-            }, 1500);
-        }
-    });
-
+        document.getElementById('userAvatar').innerText = currentSession.avatar;
+        document.getElementById('userNameDisplay').innerText = currentSession.name;
+        loginOverlay.style.display = 'none';
+        appContainer.classList.add('visible');
+        showDashboard();
+        closeSidebar();
+    };
+    
+    document.getElementById('doRegisterBtn').onclick = () => {
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value.trim();
+        const confirm = document.getElementById('regConfirmPassword').value.trim();
+        if (!name || !email || !password || !confirm) { document.getElementById('registerMessage').innerText = "Preencha todos os campos"; return; }
+        if (password.length < 3) { document.getElementById('registerMessage').innerText = "Senha mínima 3 caracteres"; return; }
+        if (password !== confirm) { document.getElementById('registerMessage').innerText = "Senhas não coincidem"; return; }
+        if (users.find(u => u.email === email)) { document.getElementById('registerMessage').innerText = "E-mail já cadastrado"; return; }
+        users.push({ name, email, password });
+        saveAll();
+        document.getElementById('registerMessage').innerText = "Cadastro realizado! Faça login.";
+        setTimeout(() => { registerOverlay.style.display = 'none'; loginOverlay.style.display = 'flex'; }, 1500);
+    };
+    
     if (currentSession) {
         loginOverlay.style.display = 'none';
         appContainer.classList.add('visible');
         document.getElementById('userAvatar').innerText = currentSession.avatar;
         document.getElementById('userNameDisplay').innerText = currentSession.name;
-        applyTheme();
-        renderDashboard();
+        showDashboard();
     }
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
+    
+    document.getElementById('logoutBtn').onclick = () => {
         currentSession = null;
         saveAll();
-        loginEmail.value = '';
-        loginPassword.value = '';
         loginOverlay.style.display = 'flex';
         registerOverlay.style.display = 'none';
         appContainer.classList.remove('visible');
-    });
-
-    // Menu sanduíche
+    };
+    
+    // Menu
     const menuToggle = document.getElementById('menuToggle');
-    const sidebarEl = document.getElementById('sidebar');
+    const sidebar = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
+    function openSidebar() { sidebar.classList.add('open'); backdrop.classList.add('active'); menuToggle.innerHTML = '<i class="fas fa-times"></i>'; }
+    function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('active'); menuToggle.innerHTML = '<i class="fas fa-bars"></i>'; }
+    menuToggle.onclick = () => { if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); };
+    backdrop.onclick = closeSidebar;
     
-    function openSidebar() {
-        sidebarEl.classList.add('open');
-        backdrop.classList.add('active');
-        menuToggle.innerHTML = '<i class="fas fa-times"></i>';
-    }
-    
-    function closeSidebar() {
-        sidebarEl.classList.remove('open');
-        backdrop.classList.remove('active');
-        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-    }
-    
-    menuToggle.addEventListener('click', () => {
-        if (sidebarEl.classList.contains('open')) closeSidebar();
-        else openSidebar();
-    });
-    backdrop.addEventListener('click', closeSidebar);
-    
-    // ========== NAVEGAÇÃO CORRIGIDA ==========
-    // Funções de navegação
-    function goToDashboard() { renderDashboard(); closeSidebar(); }
-    function goToEstoque() { renderEstoque(); closeSidebar(); }
-    function goToVenda() { renderVenda(); closeSidebar(); }
-    function goToRelatorioVendas() { renderRelatorioVendas(); closeSidebar(); }
-    function goToRelatorioMensal() { renderRelatorioMensal(); closeSidebar(); }
-    function goToAlertas() { renderAlertas(); closeSidebar(); }
-    function goToHistorico() { renderHistorico(); closeSidebar(); }
-    function goToClientes() { renderClientes(); closeSidebar(); }
-    
-    // Atribuir eventos diretamente aos elementos do menu por ID
-    document.getElementById('menuDashboard').addEventListener('click', goToDashboard);
-    document.getElementById('menuEstoque').addEventListener('click', goToEstoque);
-    document.getElementById('menuVenda').addEventListener('click', goToVenda);
-    document.getElementById('menuRelatorioVendas').addEventListener('click', goToRelatorioVendas);
-    document.getElementById('menuRelatorioMensal').addEventListener('click', goToRelatorioMensal);
-    document.getElementById('menuAlertas').addEventListener('click', goToAlertas);
-    document.getElementById('menuHistorico').addEventListener('click', goToHistorico);
-    document.getElementById('menuClientes').addEventListener('click', goToClientes);
-    // ========================================
-
     // Tema
-    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
-    function applyTheme() {
-        const dark = localStorage.getItem('theme') === 'dark';
-        if(dark) body.classList.add('dark');
-        else body.classList.remove('dark');
-        themeToggleBtn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    }
-    themeToggleBtn.addEventListener('click', () => { 
-        body.classList.toggle('dark'); 
-        localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light'); 
-        applyTheme(); 
-    });
+    function applyTheme() { const dark = localStorage.getItem('theme') === 'dark'; if(dark) body.classList.add('dark'); else body.classList.remove('dark'); themeToggle.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; }
+    themeToggle.onclick = () => { body.classList.toggle('dark'); localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light'); applyTheme(); };
     applyTheme();
 
-    // Modal para cadastro de produto
-    let produtoModal = null;
-
-    function abrirModalProduto(produto = null) {
-        if(produtoModal) produtoModal.remove();
-        
-        const isEditing = produto !== null;
-        const modalDiv = document.createElement('div');
-        modalDiv.className = 'modal active';
-        modalDiv.innerHTML = `
-            <div class="modal-content">
-                <h3 style="margin-bottom:24px;">${isEditing ? '✏️ Editar Produto' : '➕ Novo Produto'}</h3>
-                <div class="form-group">
-                    <label>Nome do Produto *</label>
-                    <input type="text" id="prodNome" value="${produto ? produto.nome : ''}" placeholder="Ex: Smartphone X">
-                </div>
-                <div class="form-group">
-                    <label>Descrição</label>
-                    <textarea id="prodDescricao" rows="3" placeholder="Descrição detalhada do produto...">${produto ? (produto.descricao || '') : ''}</textarea>
-                </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label>Código de Barras</label>
-                        <input type="text" id="prodCodigoBarras" value="${produto ? (produto.codigoBarras || '') : ''}" placeholder="7891234567890">
-                    </div>
-                    <div class="form-group">
-                        <label>Data de Entrada</label>
-                        <input type="date" id="prodDataEntrada" value="${produto ? (produto.dataEntrada || new Date().toISOString().slice(0,10)) : new Date().toISOString().slice(0,10)}">
-                    </div>
-                </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label>Preço de Compra (R$)</label>
-                        <input type="number" id="prodPrecoCompra" step="0.01" value="${produto ? produto.precoCompra : ''}" placeholder="0,00">
-                    </div>
-                    <div class="form-group">
-                        <label>Preço de Venda (R$) *</label>
-                        <input type="number" id="prodPrecoVenda" step="0.01" value="${produto ? produto.precoVenda : ''}" placeholder="0,00">
-                    </div>
-                </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label>Estoque Atual</label>
-                        <input type="number" id="prodEstoque" value="${produto ? produto.estoque : '0'}" placeholder="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Estoque Mínimo</label>
-                        <input type="number" id="prodEstoqueMin" value="${produto ? produto.estoqueMin : '0'}" placeholder="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Estoque Máximo</label>
-                        <input type="number" id="prodEstoqueMax" value="${produto ? produto.estoqueMax : '0'}" placeholder="0">
-                    </div>
-                </div>
-                <div style="display: flex; gap: 12px; margin-top: 24px;">
-                    <button id="salvarProdutoBtn" class="btn-primary">💾 Salvar Produto</button>
-                    <button id="cancelarModalBtn" style="background: var(--danger); color: white; border: none; padding: 12px 24px; border-radius: 40px; cursor: pointer;">Cancelar</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modalDiv);
-        produtoModal = modalDiv;
-        
-        document.getElementById('salvarProdutoBtn').addEventListener('click', () => {
-            const nome = document.getElementById('prodNome').value.trim();
-            const descricao = document.getElementById('prodDescricao').value.trim();
-            const codigoBarras = document.getElementById('prodCodigoBarras').value.trim();
-            const dataEntrada = document.getElementById('prodDataEntrada').value;
-            const precoCompra = parseFloat(document.getElementById('prodPrecoCompra').value) || 0;
-            const precoVenda = parseFloat(document.getElementById('prodPrecoVenda').value);
-            const estoque = parseInt(document.getElementById('prodEstoque').value) || 0;
-            const estoqueMin = parseInt(document.getElementById('prodEstoqueMin').value) || 0;
-            const estoqueMax = parseInt(document.getElementById('prodEstoqueMax').value) || 0;
-            
-            if(!nome) { alert('Nome do produto é obrigatório!'); return; }
-            if(isNaN(precoVenda) || precoVenda <= 0) { alert('Preço de venda deve ser maior que zero!'); return; }
-            
-            if(isEditing) {
-                produto.nome = nome;
-                produto.descricao = descricao;
-                produto.codigoBarras = codigoBarras;
-                produto.dataEntrada = dataEntrada;
-                produto.precoCompra = precoCompra;
-                produto.precoVenda = precoVenda;
-                produto.estoque = estoque;
-                produto.estoqueMin = estoqueMin;
-                produto.estoqueMax = estoqueMax;
-            } else {
-                produtos.push({
-                    id: Date.now(),
-                    nome: nome,
-                    descricao: descricao,
-                    codigoBarras: codigoBarras,
-                    dataEntrada: dataEntrada,
-                    precoCompra: precoCompra,
-                    precoVenda: precoVenda,
-                    estoque: estoque,
-                    estoqueMin: estoqueMin,
-                    estoqueMax: estoqueMax
-                });
-            }
-            saveAll();
-            modalDiv.remove();
-            renderEstoque();
-        });
-        
-        document.getElementById('cancelarModalBtn').addEventListener('click', () => modalDiv.remove());
-    }
-
-    // Renderização das telas
     let salesChart = null, topProductsChart = null;
-    
+
+    // Funções Globais do Menu
+    window.showDashboard = function() { renderDashboard(); closeSidebar(); };
+    window.showEstoque = function() { renderEstoque(); closeSidebar(); };
+    window.showVenda = function() { renderVenda(); closeSidebar(); };
+    window.showRelatorioVendas = function() { renderRelatorioVendas(); closeSidebar(); };
+    window.showRelatorioMensal = function() { renderRelatorioMensal(); closeSidebar(); };
+    window.showAlertas = function() { renderAlertas(); closeSidebar(); };
+    window.showHistorico = function() { renderHistorico(); closeSidebar(); };
+    window.showClientes = function() { renderClientes(); closeSidebar(); };
+
     function renderDashboard() {
         const main = document.getElementById('mainContent');
         const totalFaturamento = vendas.reduce((s,v) => s + v.total, 0);
         let lucroTotal = 0;
         for (const venda of vendas) {
             const produto = produtos.find(p => p.id === venda.produtoId);
-            if (produto) {
-                const custoTotal = venda.quantidade * (produto.precoCompra || 0);
-                lucroTotal += (venda.total - custoTotal);
-            }
+            if (produto) lucroTotal += venda.total - (venda.quantidade * produto.precoCompra);
         }
         const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
-        
         const vendasPorMes = {};
-        vendas.forEach(v => {
-            const mes = new Date(v.data).toLocaleString('default', { month: 'short', year:'numeric' });
-            vendasPorMes[mes] = (vendasPorMes[mes] || 0) + v.total;
-        });
+        vendas.forEach(v => { const mes = new Date(v.data).toLocaleString('default', { month: 'short', year:'numeric' }); vendasPorMes[mes] = (vendasPorMes[mes] || 0) + v.total; });
         const labels = Object.keys(vendasPorMes);
         const valores = Object.values(vendasPorMes);
         
-        const qtdPorProduto = {};
-        vendas.forEach(v => { qtdPorProduto[v.produtoId] = (qtdPorProduto[v.produtoId] || 0) + v.quantidade; });
-        const topProdutos = Object.entries(qtdPorProduto).sort((a,b)=>b[1]-a[1]).slice(0,3);
-        const topLabels = topProdutos.map(([id]) => { const p = produtos.find(prod=>prod.id==id); return p ? p.nome : '?'; });
-        const topQtde = topProdutos.map(([_,qtd])=>qtd);
-
         main.innerHTML = `
             <div class="grid-stats">
                 <div class="stat-card"><i class="fas fa-chart-line"></i><h3>Faturamento</h3><p>${formatarMoeda(totalFaturamento)}</p></div>
                 <div class="stat-card"><i class="fas fa-coins"></i><h3>Lucro Líquido</h3><p>${formatarMoeda(lucroTotal)}</p></div>
                 <div class="stat-card"><i class="fas fa-boxes"></i><h3>Produtos em Estoque</h3><p>${produtos.reduce((s,p)=>s+p.estoque,0)}</p></div>
-                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p>${baixoEstoque}</p></div>
+                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas</h3><p>${baixoEstoque}</p></div>
             </div>
-            <div class="charts-row">
-                <div class="chart-box"><canvas id="monthlySalesChart"></canvas></div>
-                <div class="chart-box"><canvas id="topProductsChart"></canvas></div>
-            </div>
-            <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
-            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
-            ${[...vendas].reverse().slice(0,5).map(v => {
-                const p = produtos.find(prod=>prod.id===v.produtoId);
-                const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>${formatarMoeda(v.total)}</td></tr>`;
-            }).join('')}
+            <div class="charts-row"><div class="chart-box"><canvas id="monthlySalesChart"></canvas></div><div class="chart-box"><canvas id="topProductsChart"></canvas></div></div>
+            <div class="card"><div class="card-title">Últimas Vendas</div><table><thead><tr><th>Produto</th><th>Qtd</th><th>Total</th><th>Data</th></tr></thead><tbody>
+            ${vendas.slice(-5).reverse().map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${formatarMoeda(v.total)}</td><td>${new Date(v.data).toLocaleDateString()}</td></tr>`; }).join('')}
             </tbody></table></div>
         `;
-        
         setTimeout(() => {
             const ctx1 = document.getElementById('monthlySalesChart')?.getContext('2d');
-            const ctx2 = document.getElementById('topProductsChart')?.getContext('2d');
-            if(ctx1) {
-                if(salesChart) salesChart.destroy();
-                salesChart = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Faturamento (R$)', data: valores, backgroundColor: '#3b82f6', borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: true } });
-            }
-            if(ctx2) {
-                if(topProductsChart) topProductsChart.destroy();
-                topProductsChart = new Chart(ctx2, { type: 'doughnut', data: { labels: topLabels, datasets: [{ data: topQtde, backgroundColor: ['#3b82f6','#10b981','#f59e0b'] }] }, options: { responsive: true } });
-            }
+            if(ctx1) { if(salesChart) salesChart.destroy(); salesChart = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Faturamento', data: valores, backgroundColor: '#3b82f6' }] }, options: { responsive: true } }); }
         }, 100);
     }
 
     function renderEstoque() {
         const main = document.getElementById('mainContent');
         main.innerHTML = `
-            <div class="card-premium">
-                <div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
-                <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
-                <div style="overflow-x:auto">
-                    <table>
-                        <thead><tr><th>Produto</th><th>Código Barras</th><th>Compra</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Entrada</th><th>Ações</th></td></thead>
-                        <tbody>${produtos.map(p => `
-                            <tr>
-                                <td><strong>${p.nome}</strong><br><small style="opacity:0.7;">${(p.descricao || '').substring(0,30)}${(p.descricao || '').length>30 ? '...' : ''}</small></td>
-                                <td>${p.codigoBarras || '-'}</td>
-                                <td>${formatarMoeda(p.precoCompra)}</td>
-                                <td>${formatarMoeda(p.precoVenda)}</td>
-                                <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
-                                <td>${p.estoqueMin}</td>
-                                <td>${p.estoqueMax}</td>
-                                <td>${p.dataEntrada ? new Date(p.dataEntrada).toLocaleDateString() : '-'}</td>
-                                <td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td>
-                            </tr>`).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div class="card"><div class="card-title">Gestão de Estoque</div>
+            <button class="btn-primary" onclick="abrirModalProduto()" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
+            <table><thead><tr><th>Produto</th><th>Preço Compra</th><th>Preço Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody>
+            ${produtos.map(p => `<tr><td><strong>${p.nome}</strong><br><small>${p.codigoBarras || ''}</small></td><td>${formatarMoeda(p.precoCompra)}</td><td>${formatarMoeda(p.precoVenda)}</td><td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td><td><button class="btn-primary" onclick="editarProduto(${p.id})"><i class="fas fa-pen"></i></button> <button class="btn-primary" style="background:var(--danger)" onclick="excluirProduto(${p.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('')}
+            </tbody></table></div>
         `;
-        document.getElementById('novoProdutoBtn')?.addEventListener('click', () => abrirModalProduto());
-        document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', (e) => {
-            const id = parseInt(e.target.closest('button').dataset.id);
-            const produto = produtos.find(p => p.id === id);
-            if(produto) abrirModalProduto(produto);
-        }));
-        document.querySelectorAll('.delProd').forEach(btn => btn.addEventListener('click', (e) => {
-            if(confirm('Excluir produto?')) {
-                const id = parseInt(e.target.closest('button').dataset.id);
-                produtos = produtos.filter(p => p.id !== id);
-                saveAll();
-                renderEstoque();
-            }
-        }));
     }
+
+    window.abrirModalProduto = function(produto = null) {
+        const isEditing = produto !== null;
+        const modal = document.createElement('div');
+        modal.className = 'modal active';
+        modal.innerHTML = `<div class="modal-content"><h3>${isEditing ? 'Editar' : 'Novo'} Produto</h3>
+            <div class="form-group"><label>Nome</label><input type="text" id="prodNome" value="${produto ? produto.nome : ''}"></div>
+            <div class="form-group"><label>Descrição</label><textarea id="prodDescricao" rows="2">${produto ? (produto.descricao || '') : ''}</textarea></div>
+            <div class="flex-row"><div class="form-group"><label>Código Barras</label><input type="text" id="prodCodigo" value="${produto ? (produto.codigoBarras || '') : ''}"></div>
+            <div class="form-group"><label>Data Entrada</label><input type="date" id="prodData" value="${produto ? (produto.dataEntrada || new Date().toISOString().slice(0,10)) : new Date().toISOString().slice(0,10)}"></div></div>
+            <div class="flex-row"><div class="form-group"><label>Preço Compra</label><input type="number" id="prodCompra" step="0.01" value="${produto ? produto.precoCompra : ''}"></div>
+            <div class="form-group"><label>Preço Venda</label><input type="number" id="prodVenda" step="0.01" value="${produto ? produto.precoVenda : ''}"></div></div>
+            <div class="flex-row"><div class="form-group"><label>Estoque</label><input type="number" id="prodEstoque" value="${produto ? produto.estoque : '0'}"></div>
+            <div class="form-group"><label>Estoque Mín</label><input type="number" id="prodMin" value="${produto ? produto.estoqueMin : '0'}"></div>
+            <div class="form-group"><label>Estoque Máx</label><input type="number" id="prodMax" value="${produto ? produto.estoqueMax : '0'}"></div></div>
+            <div style="display:flex; gap:12px; margin-top:20px;"><button class="btn-primary" id="salvarProduto">Salvar</button><button id="fecharModal" style="background:var(--danger); color:white; border:none; padding:12px; border-radius:40px;">Cancelar</button></div>
+        </div>`;
+        document.body.appendChild(modal);
+        document.getElementById('fecharModal').onclick = () => modal.remove();
+        document.getElementById('salvarProduto').onclick = () => {
+            const nome = document.getElementById('prodNome').value.trim();
+            if(!nome) return alert('Nome obrigatório');
+            const precoVenda = parseFloat(document.getElementById('prodVenda').value);
+            if(isNaN(precoVenda)) return alert('Preço venda inválido');
+            if(isEditing) {
+                produto.nome = nome;
+                produto.descricao = document.getElementById('prodDescricao').value;
+                produto.codigoBarras = document.getElementById('prodCodigo').value;
+                produto.dataEntrada = document.getElementById('prodData').value;
+                produto.precoCompra = parseFloat(document.getElementById('prodCompra').value) || 0;
+                produto.precoVenda = precoVenda;
+                produto.estoque = parseInt(document.getElementById('prodEstoque').value) || 0;
+                produto.estoqueMin = parseInt(document.getElementById('prodMin').value) || 0;
+                produto.estoqueMax = parseInt(document.getElementById('prodMax').value) || 0;
+            } else {
+                produtos.push({ id: Date.now(), nome, descricao: document.getElementById('prodDescricao').value, codigoBarras: document.getElementById('prodCodigo').value, dataEntrada: document.getElementById('prodData').value, precoCompra: parseFloat(document.getElementById('prodCompra').value) || 0, precoVenda: precoVenda, estoque: parseInt(document.getElementById('prodEstoque').value) || 0, estoqueMin: parseInt(document.getElementById('prodMin').value) || 0, estoqueMax: parseInt(document.getElementById('prodMax').value) || 0 });
+            }
+            saveAll();
+            modal.remove();
+            renderEstoque();
+        };
+    };
+    
+    window.editarProduto = function(id) { const produto = produtos.find(p => p.id === id); if(produto) abrirModalProduto(produto); };
+    window.excluirProduto = function(id) { if(confirm('Excluir produto?')) { produtos = produtos.filter(p => p.id !== id); saveAll(); renderEstoque(); } };
 
     function renderVenda() {
         const main = document.getElementById('mainContent');
-        const clientesOptions = clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
         main.innerHTML = `
-            <div class="card-premium">
-                <div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
-                <div class="form-group">
-                    <label>Cliente</label>
-                    <select id="clienteVenda">
-                        <option value="">-- Selecione um cliente --</option>
-                        ${clientesOptions}
-                        <option value="novo">+ Novo Cliente</option>
-                    </select>
-                    <button id="btnNovoClienteRapido" class="btn-primary" style="margin-top:8px">Cadastrar Cliente</button>
-                </div>
-                <div id="novoClienteFields" style="display:none; margin-top:12px;">
-                    <input type="text" id="novoClienteNome" placeholder="Nome do cliente">
-                    <input type="email" id="novoClienteEmail" placeholder="E-mail">
-                    <input type="tel" id="novoClienteTelefone" placeholder="Telefone">
-                    <button id="salvarNovoCliente" class="btn-primary">Salvar Cliente</button>
-                </div>
-                <div class="form-group"><label>Produto</label><select id="produtoVenda">${produtos.map(p => `<option value="${p.id}">${p.nome} - ${formatarMoeda(p.precoVenda)} (${p.estoque} un)</option>`).join('')}</select></div>
-                <div class="form-group"><label>Quantidade</label><input type="number" id="qtdVenda" min="1" value="1"></div>
-                <div class="form-group"><label>Data da Venda</label><input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}"></div>
-                <div class="form-group"><label>Forma de Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option><option>Pix</option><option>Boleto</option></select></div>
-                <button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button>
-                <div id="vendaMsg" style="margin-top:20px;"></div>
-            </div>
+            <div class="card"><div class="card-title">Nova Venda</div>
+            <div class="form-group"><label>Cliente</label><select id="clienteVenda"><option value="">-- Selecione --</option>${clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('')}<option value="novo">+ Novo Cliente</option></select></div>
+            <div class="form-group"><label>Produto</label><select id="produtoVenda">${produtos.map(p => `<option value="${p.id}">${p.nome} - ${formatarMoeda(p.precoVenda)} (${p.estoque} un)</option>`).join('')}</select></div>
+            <div class="form-group"><label>Quantidade</label><input type="number" id="qtdVenda" value="1" min="1"></div>
+            <div class="form-group"><label>Forma Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão</option><option>Pix</option></select></div>
+            <button class="btn-primary" id="venderBtn">Registrar Venda</button>
+            <div id="vendaMsg" style="margin-top:20px;"></div></div>
         `;
-        
-        const clienteSelect = document.getElementById('clienteVenda');
-        const novoClienteDiv = document.getElementById('novoClienteFields');
-        const btnNovo = document.getElementById('btnNovoClienteRapido');
-        
-        btnNovo.addEventListener('click', () => { novoClienteDiv.style.display = 'block'; });
-        
-        document.getElementById('salvarNovoCliente')?.addEventListener('click', () => {
-            const nome = document.getElementById('novoClienteNome').value.trim();
-            const email = document.getElementById('novoClienteEmail').value.trim();
-            const telefone = document.getElementById('novoClienteTelefone').value.trim();
-            if(!nome) return alert('Nome é obrigatório');
-            const novoId = Date.now();
-            clientes.push({ id: novoId, nome, email, telefone });
-            saveAll();
-            const option = new Option(nome, novoId);
-            clienteSelect.add(option, 'novo');
-            clienteSelect.value = novoId;
-            novoClienteDiv.style.display = 'none';
-            alert('Cliente cadastrado!');
-        });
-        
-        document.getElementById('venderBtn').addEventListener('click', () => {
-            let clienteId = parseInt(document.getElementById('clienteVenda').value);
-            if(isNaN(clienteId)) clienteId = null;
+        document.getElementById('venderBtn').onclick = () => {
+            const clienteId = parseInt(document.getElementById('clienteVenda').value);
             const prodId = parseInt(document.getElementById('produtoVenda').value);
             const qtd = parseInt(document.getElementById('qtdVenda').value);
-            const dataVenda = document.getElementById('dataVenda').value;
-            const formaPagamento = document.getElementById('formaPagamento').value;
-            const prod = produtos.find(p=>p.id===prodId);
-            if(!prod || qtd<=0) return alert('Selecione produto válido');
+            const prod = produtos.find(p => p.id === prodId);
+            if(!prod) return alert('Selecione produto');
             if(qtd > prod.estoque) return alert('Estoque insuficiente');
             prod.estoque -= qtd;
             const total = qtd * prod.precoVenda;
-            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date(dataVenda).toISOString(), clienteId, formaPagamento });
+            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date().toISOString(), clienteId: isNaN(clienteId) ? null : clienteId, formaPagamento: document.getElementById('formaPagamento').value });
             saveAll();
             document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px;">✅ Venda realizada! Total ${formatarMoeda(total)}</div>`;
-            setTimeout(() => { renderVenda(); }, 1500);
-        });
+            setTimeout(() => renderVenda(), 1500);
+        };
     }
 
     function renderRelatorioVendas() {
-        const main = document.getElementById('mainContent');
-        const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-chart-simple"></i> Relatório de Vendas</div> <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>${vendas.map(v => {
-            const p = produtos.find(prod=>prod.id===v.produtoId);
-            const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-            return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente?cliente.nome:'N/C'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento}</td><td>${formatarMoeda(v.total)}</td></tr>`;
-        }).join('')}</tbody></table><div style="margin-top:20px;"><strong>Total: ${formatarMoeda(totalGeral)}</strong></div></div>`;
+        const total = vendas.reduce((s,v)=>s+v.total,0);
+        document.getElementById('mainContent').innerHTML = `<div class="card"><div class="card-title">Relatório de Vendas</div> table<thead><tr><th>Produto</th><th>Qtd</th><th>Data</th><th>Total</th></tr></thead><tbody>${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>${formatarMoeda(v.total)}</td></tr>`; }).join('')}</tbody></table><p><strong>Total: ${formatarMoeda(total)}</strong></p></div>`;
     }
 
     function renderRelatorioMensal() {
-        const porMes = {};
-        vendas.forEach(v => { const d = new Date(v.data); const chave = `${d.getMonth()+1}/${d.getFullYear()}`; porMes[chave] = (porMes[chave]||0)+v.total; });
-        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div> <table><thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
-        for(let [mes, total] of Object.entries(porMes)) html += `<tr><td>${mes}</td><td>${formatarMoeda(total)}</td></tr>`;
+        const meses = {};
+        vendas.forEach(v => { const d = new Date(v.data); const chave = `${d.getMonth()+1}/${d.getFullYear()}`; meses[chave] = (meses[chave]||0)+v.total; });
+        let html = `<div class="card"><div class="card-title">Relatório Mensal</div> table<thead><tr><th>Mês</th><th>Total</th></tr></thead><tbody>`;
+        for(let [mes, total] of Object.entries(meses)) html += `<tr><td>${mes}</td><td>${formatarMoeda(total)}</td></tr>`;
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
     }
 
     function renderAlertas() {
         const alertas = produtos.filter(p => p.estoque <= p.estoqueMin);
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-bell"></i> Alertas de Estoque</div>${alertas.length ? alertas.map(p => `<div class="badge-warning" style="margin:8px 0; padding:12px;">⚠️ ${p.nome}: ${p.estoque} un (mín: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta</p>'}</div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card"><div class="card-title">Alertas de Estoque</div>${alertas.length ? alertas.map(p => `<div class="badge-warning" style="margin:10px 0; padding:12px;">⚠️ ${p.nome}: ${p.estoque} un (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta</p>'}</div>`;
     }
 
     function renderHistorico() {
-        const items = [...vendas].reverse().map(v => {
-            const p = produtos.find(prod=>prod.id===v.produtoId);
-            const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-            return `<li>📌 ${p?.nome} - ${v.quantidade} un - ${formatarMoeda(v.total)} - ${new Date(v.data).toLocaleString()} - Cliente: ${cliente?cliente.nome:'N/C'} - ${v.formaPagamento}</li>`;
-        });
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-history"></i> Histórico</div><ul>${items.join('')}</ul></div>`;
+        const items = vendas.slice().reverse().map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); return `<li>📌 ${p?.nome} - ${v.quantidade} un - ${formatarMoeda(v.total)} - ${new Date(v.data).toLocaleString()}</li>`; });
+        document.getElementById('mainContent').innerHTML = `<div class="card"><div class="card-title">Histórico</div><ul>${items.join('')}</ul></div>`;
     }
 
     function renderClientes() {
-        const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button><table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
-        document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome:'); if(nome){ clientes.push({ id:Date.now(), nome, email:prompt('Email:')||'', telefone:prompt('Telefone:')||'' }); saveAll(); renderClientes(); } });
-        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover?')){ clientes = clientes.filter(c => c.id != e.target.closest('button').dataset.id); saveAll(); renderClientes(); } }));
+        document.getElementById('mainContent').innerHTML = `<div class="card"><div class="card-title">Clientes</div><button class="btn-primary" onclick="novoCliente()" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Cliente</button> table<thead><tr><th>Nome</th><th>Email</th><th>Telefone</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td></tr>`).join('')}</tbody></table></div>`;
     }
+    window.novoCliente = function() {
+        const nome = prompt('Nome do cliente:'); if(nome) { clientes.push({ id: Date.now(), nome, email: prompt('Email:')||'', telefone: prompt('Telefone:')||'' }); saveAll(); renderClientes(); }
+    };
 </script>
 </body>
 </html>
