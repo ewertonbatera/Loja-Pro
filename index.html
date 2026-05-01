@@ -118,6 +118,18 @@
             cursor: pointer;
             font-size: 1rem;
         }
+        .btn-google {
+            background: #fff;
+            color: #444;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-google:hover {
+            background: #f1f1f1;
+        }
         .divider {
             display: flex;
             align-items: center;
@@ -191,6 +203,7 @@
         }
         .app-container.visible { display: flex; }
 
+        /* Botão sanduíche reposicionado para não sobrepor o título */
         .menu-toggle {
             display: none;
             position: fixed;
@@ -261,6 +274,8 @@
             width: calc(100% - 280px);
         }
         .container { max-width: 1400px; margin: 0 auto; }
+
+        /* Cabeçalho com margem superior para evitar sobreposição do botão sanduíche no mobile */
         .header {
             display: flex;
             justify-content: space-between;
@@ -268,6 +283,7 @@
             flex-wrap: wrap;
             margin-bottom: 30px;
             gap: 15px;
+            margin-top: 0;
         }
         h1 {
             font-size: 1.5rem;
@@ -276,6 +292,9 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         .theme-toggle {
             background: var(--bg-card);
@@ -395,17 +414,28 @@
         }
         .relatorio-filtro { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
         footer { margin-top: 40px; text-align: center; color: var(--text-secondary); font-size: 0.65rem; padding: 20px 0; }
-        
+
         @media (max-width: 768px) {
-            .menu-toggle { display: block; }
+            .menu-toggle { display: block; top: 12px; left: 12px; }
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 60px 12px 20px 12px; width: 100%; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .stat-value { font-size: 1rem; }
             h1 { font-size: 1.2rem; }
+            /* Ajuste no cabeçalho para o botão não cobrir o título */
+            .header {
+                margin-top: 8px;
+                padding-left: 40px;
+            }
+        }
+        @media (max-width: 480px) {
+            .header { padding-left: 35px; }
+            h1 { font-size: 1rem; }
         }
     </style>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <!-- TELA DE LOGIN -->
@@ -424,6 +454,9 @@
                 </div>
                 <button class="btn-login" id="btnEmailLogin">▶ Entrar</button>
                 <div class="divider">ou</div>
+                <button class="btn-login btn-google" id="btnGoogleLogin">
+                    <span style="font-size:1.2rem;">G</span> Continuar com Google
+                </button>
                 <div class="switch-auth">
                     Não tem uma conta? <a id="showRegister">Criar conta gratuita</a>
                 </div>
@@ -488,12 +521,12 @@
 
                 <div id="dashboardPanel" class="panel active-panel">
                     <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-title">📦 Produtos</div><div class="stat-value" id="totalProdutos">0</div></div>
-                        <div class="stat-card"><div class="stat-title">💰 Estoque (custo)</div><div class="stat-value" id="valorEstoqueCusto">R$ 0</div></div>
+                        <div class="stat-card"><div class="stat-title">📦 Produtos em estoque</div><div class="stat-value" id="totalProdutos">0</div></div>
+                        <div class="stat-card"><div class="stat-title">💰 Valor total (custo)</div><div class="stat-value" id="valorEstoqueCusto">R$ 0</div></div>
                         <div class="stat-card"><div class="stat-title">⚠️ Produtos Críticos</div><div class="stat-value" id="prodCriticos">0</div></div>
                         <div class="stat-card"><div class="stat-title">📈 Vendas (mês)</div><div class="stat-value" id="vendasMes">0</div></div>
-                        <div class="stat-card"><div class="stat-title">💵 Faturamento</div><div class="stat-value" id="faturamentoMes">R$ 0</div></div>
-                        <div class="stat-card"><div class="stat-title">📊 Lucro Mês</div><div class="stat-value" id="lucroMes">R$ 0</div></div>
+                        <div class="stat-card"><div class="stat-title">💵 Faturamento (mês)</div><div class="stat-value" id="faturamentoMes">R$ 0</div></div>
+                        <div class="stat-card"><div class="stat-title">📊 Lucro (mês)</div><div class="stat-value" id="lucroMes">R$ 0</div></div>
                     </div>
                     <div class="charts-grid">
                         <div class="chart-box"><h4>📈 Vendas por Tipo</h4><canvas id="tipoVendasChart" width="400" height="250" style="width:100%; height:auto; max-width:400px; margin:0 auto;"></canvas></div>
@@ -502,7 +535,7 @@
                 </div>
                 <div id="estoquePanel" class="panel"><div class="form-card"><h3>➕ Novo Produto</h3><div class="form-row"><div class="input-group"><label>Nome</label><input type="text" id="prodNome" placeholder="Ex: Camiseta"></div><div class="input-group"><label>Preço Custo (R$)</label><input type="number" id="prodCusto" step="0.01"></div><div class="input-group"><label>Preço Venda (R$)</label><input type="number" id="prodVenda" step="0.01"></div></div><div class="form-row"><div class="input-group"><label>Quantidade</label><input type="number" id="prodQtd" value="1"></div><div class="input-group"><label>Estoque Mínimo</label><input type="number" id="prodMin" value="5"></div><div class="input-group"><label>Estoque Máximo</label><input type="number" id="prodMax" value="50"></div></div><button id="btnAddProduto">💾 Salvar Produto</button></div><div class="table-responsive"><table id="tabelaEstoque"><thead><tr><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín/Máx</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></div>
                 <div id="vendasPanel" class="panel"><div class="form-card"><h3>🛒 Registrar Venda</h3><div class="form-row"><div class="input-group"><label>Cliente</label><input type="text" id="clienteNome" placeholder="Nome do cliente"></div><div class="input-group"><label>Produto</label><select id="vendaProdutoId"></select></div><div class="input-group"><label>Quantidade</label><input type="number" id="vendaQtd" value="1" min="1"></div><div class="input-group"><label>Tipo</label><select id="vendaTipo"><option value="entrega">🚚 Entrega</option><option value="retirada">🏠 Retirada</option></select></div></div><button id="btnRegistrarVenda">✅ Finalizar Venda</button></div></div>
-                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3>📄 Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">🔍 Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">🗑 Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody><tr></div></div></div>
+                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3>📄 Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">🔍 Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">🗑 Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
                 <div id="relatoriosPanel" class="panel"><div class="form-card"><div class="relatorio-filtro"><input type="month" id="mesSelecionado"><button id="btnCarregarRelatorio">📊 Analisar</button></div><div id="relatorioMensal"><h3 id="mesTitulo"></h3><div class="stats-grid"><div class="stat-card"><div class="stat-title">💰 Faturamento Bruto</div><div class="stat-value" id="relBruto">R$ 0</div></div><div class="stat-card"><div class="stat-title">📉 Custo Total</div><div class="stat-value" id="relCusto">R$ 0</div></div><div class="stat-card"><div class="stat-title">📊 Lucro Líquido</div><div class="stat-value" id="relLucro">R$ 0</div></div><div class="stat-card"><div class="stat-title">📦 Produtos Vendidos</div><div class="stat-value" id="relQtdProdutos">0</div></div></div><h4>🏆 Top 5 Produtos</h4><div class="table-responsive"><table id="tabelaTopProdutos"><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody></tbody></table></div></div></div></div>
                 <div id="alertasPanel" class="panel"><div class="form-card"><h3>🔔 Alertas de Estoque</h3><div id="alertasList" class="alert-list"></div></div></div>
                 <div id="historicoPanel" class="panel"><div class="form-card"><h3>📋 Histórico de Vendas</h3><button id="btnExportarCSV" class="btn-secondary">📎 Exportar CSV</button><div class="table-responsive"><table id="tabelaHistorico"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
@@ -512,12 +545,12 @@
     </div>
 
     <script>
-        // ===================== SISTEMA COMPLETO E CORRIGIDO =====================
+        // ===================== SISTEMA COMPLETO COM LOGIN GOOGLE =====================
         let currentUser = null;
         let produtos = [], vendas = [], nextProdId = 1, nextVendaId = 1;
         let filtroMesAtual = null;
 
-        // ---------- Gráficos robustos (sem dependências externas) ----------
+        // ---------- Gráficos robustos ----------
         function drawDoughnut(canvasId, labels, data, colors) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
@@ -525,7 +558,6 @@
             const w = canvas.clientWidth, h = canvas.clientHeight;
             canvas.width = w;
             canvas.height = h;
-            
             ctx.clearRect(0, 0, w, h);
             const total = data.reduce((a,b)=>a+b,0);
             if (total === 0) {
@@ -547,9 +579,8 @@
                 ctx.fill();
                 start += angle;
             });
-            // legenda simples
+            // legenda
             ctx.font = "10px sans-serif";
-            ctx.fillStyle = "#333";
             let y = h - 20;
             for (let i=0; i<labels.length; i++) {
                 ctx.fillStyle = colors[i];
@@ -568,7 +599,6 @@
             canvas.width = w;
             canvas.height = h;
             ctx.clearRect(0, 0, w, h);
-            
             if (!data.length || data.every(v=>v===0)) {
                 ctx.font = "14px sans-serif";
                 ctx.fillStyle = "#999";
@@ -587,7 +617,7 @@
                 ctx.font = "10px sans-serif";
                 ctx.textAlign = "center";
                 let label = labels[i] || "";
-                if (label.length > 10) label = label.substr(0,8)+"...";
+                if (label.length > 12) label = label.substr(0,10)+"...";
                 ctx.fillText(label, startX + i*(w/data.length) + barWidth/2, h - 8);
             }
         }
@@ -608,11 +638,11 @@
             }, 50);
         }
 
-        // ---------- Gerenciamento de usuários e dados ----------
-        function getUsers() { const u = localStorage.getItem("loja_users_apk2"); return u ? JSON.parse(u) : {}; }
-        function saveUsers(users) { localStorage.setItem("loja_users_apk2", JSON.stringify(users)); }
-        function saveCurrentSession(user) { if(user) localStorage.setItem("loja_session_apk2", JSON.stringify({ id: user.id, email: user.email, nome: user.nome })); else localStorage.removeItem("loja_session_apk2"); }
-        function loadSavedSession() { const s = localStorage.getItem("loja_session_apk2"); if(s) { const u = JSON.parse(s); const users = getUsers(); if(users[u.email] && users[u.email].id === u.id) return u; } return null; }
+        // ---------- Gerenciamento de usuários ----------
+        function getUsers() { const u = localStorage.getItem("loja_users_apk3"); return u ? JSON.parse(u) : {}; }
+        function saveUsers(users) { localStorage.setItem("loja_users_apk3", JSON.stringify(users)); }
+        function saveCurrentSession(user) { if(user) localStorage.setItem("loja_session_apk3", JSON.stringify({ id: user.id, email: user.email, nome: user.nome })); else localStorage.removeItem("loja_session_apk3"); }
+        function loadSavedSession() { const s = localStorage.getItem("loja_session_apk3"); if(s) { const u = JSON.parse(s); const users = getUsers(); if(users[u.email] && users[u.email].id === u.id) return u; } return null; }
         
         function registerUser(nome, email, senha) {
             const users = getUsers();
@@ -631,6 +661,59 @@
             return { success: false, error: "E-mail ou senha inválidos!" };
         }
         
+        // Login com Google
+        function handleGoogleCredential(response) {
+            try {
+                const payload = decodeJwtResponse(response.credential);
+                const email = payload.email;
+                const nome = payload.name;
+                const users = getUsers();
+                let user;
+                if(users[email]) {
+                    user = { id: users[email].id, nome: users[email].nome, email };
+                } else {
+                    const userId = 'g_' + Date.now();
+                    users[email] = { id: userId, nome, email, senha: btoa('google_auth_' + Date.now()), google: true };
+                    saveUsers(users);
+                    user = { id: userId, nome, email };
+                }
+                afterLogin(user);
+            } catch(e) { console.error(e); alert("Erro ao fazer login com Google: " + e.message); }
+        }
+        
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            return JSON.parse(jsonPayload);
+        }
+        
+        function initGoogleLogin() {
+            if (typeof google === 'undefined') {
+                console.warn("Google Identity Services não carregado");
+                return;
+            }
+            try {
+                // IMPORTANTE: substitua pelo seu Client ID do Google OAuth 2.0 para Android/Web
+                // Você precisa criar um projeto no Google Cloud Console, ativar a API Identity,
+                // e criar uma credencial OAuth 2.0 para "Aplicativo da Web" com origem autorizada.
+                const clientId = "SEU_CLIENT_ID_GOOGLE.apps.googleusercontent.com"; // <--- SUBSTITUA AQUI
+                google.accounts.id.initialize({
+                    client_id: clientId,
+                    callback: handleGoogleCredential,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
+                const googleBtn = document.getElementById("btnGoogleLogin");
+                if (googleBtn) {
+                    googleBtn.addEventListener('click', () => {
+                        google.accounts.id.prompt(); // mostra o popup do Google
+                    });
+                }
+            } catch(e) { console.error("Erro ao inicializar Google:", e); }
+        }
+        
+        // ---------- Dados do app ----------
         function loadUserData() {
             if(!currentUser) return;
             const key = `loja_data_${currentUser.id}`;
@@ -819,11 +902,15 @@
         if(document.getElementById('mesSelecionado')) document.getElementById('mesSelecionado').value = anoMes;
         if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value = anoMes;
         
+        // Inicializa login com Google (substitua SEU_CLIENT_ID_GOOGLE)
+        initGoogleLogin();
+        
         if(!checkAutoLogin()) document.getElementById('loginScreen').style.display = 'flex';
         else document.getElementById('loginScreen').style.display = 'none';
         
-        // Redesenha gráficos ao redimensionar a tela (responsivo)
         window.addEventListener('resize', () => { if(currentUser) atualizarGraficos(); });
     </script>
+    <!-- AVISO: Para o login com Google funcionar, você deve substituir "SEU_CLIENT_ID_GOOGLE" pelo Client ID do seu projeto no Google Cloud Console. 
+         Caso contrário, o botão "Continuar com Google" não abrirá o popup. O restante do sistema (login por e-mail) continuará funcionando normal. -->
 </body>
-    </html>
+</html>
