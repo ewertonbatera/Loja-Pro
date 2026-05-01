@@ -271,13 +271,18 @@
         ];
         saveAll();
     }
+    
+    // Vendas iniciais com cálculo correto do total
     if (vendas.length === 0) {
+        const prod1 = produtos.find(p => p.id === 1);
+        const prod2 = produtos.find(p => p.id === 2);
         vendas = [
-            { id: Date.now(), produtoId: 1, quantidade: 2, total: 2598, data: new Date(2025,3,10).toISOString(), clienteId: null, formaPagamento: "Dinheiro" },
-            { id: Date.now()+1, produtoId: 2, quantidade: 5, total: 745, data: new Date(2025,3,12).toISOString(), clienteId: null, formaPagamento: "Cartão" }
+            { id: Date.now(), produtoId: 1, quantidade: 2, total: 2 * prod1.precoVenda, data: new Date(2025,3,10).toISOString(), clienteId: null, formaPagamento: "Dinheiro" },
+            { id: Date.now()+1, produtoId: 2, quantidade: 5, total: 5 * prod2.precoVenda, data: new Date(2025,3,12).toISOString(), clienteId: null, formaPagamento: "Cartão" }
         ];
         saveAll();
     }
+    
     if (clientes.length === 0) {
         clientes = [
             { id: 1, nome: "João Silva", email: "joao@email.com", telefone: "11999999999" },
@@ -324,7 +329,10 @@
                 loginOverlay.style.display = 'none';
                 appContainer.classList.add('visible');
                 applyTheme();
-                renderCurrentView('dashboard');
+                // Força a abertura do dashboard
+                setTimeout(() => {
+                    renderDashboard();
+                }, 100);
                 closeSidebar();
             } else {
                 loginMsg.innerText = "Código inválido";
@@ -337,7 +345,8 @@
         appContainer.classList.add('visible');
         document.getElementById('userAvatar').innerText = currentSession.avatar;
         document.getElementById('userNameDisplay').innerText = currentSession.name;
-        renderCurrentView('dashboard');
+        applyTheme();
+        renderDashboard();
     }
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -372,32 +381,36 @@
         if(menuToggle) menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
     }
     
-    function toggleSidebar() {
+    if(menuToggle) menuToggle.addEventListener('click', () => {
         if(sidebarEl.classList.contains('open')) closeSidebar();
         else openSidebar();
-    }
-    
-    if(menuToggle) menuToggle.addEventListener('click', toggleSidebar);
+    });
     if(backdrop) backdrop.addEventListener('click', closeSidebar);
     
-    // Garantir que todos os itens do menu tenham evento de clique
-    function attachMenuEvents() {
-        document.querySelectorAll('.sidebar li').forEach(li => {
-            // Remove eventos antigos para evitar duplicação
-            li.removeEventListener('click', li._handler);
-            const handler = () => {
-                const view = li.getAttribute('data-view');
-                if(view) {
-                    renderCurrentView(view);
-                    closeSidebar();
-                }
-            };
-            li._handler = handler;
-            li.addEventListener('click', handler);
-        });
-    }
+    // Função global para navegação - CORRIGIDA
+    window.navigateTo = function(view) {
+        closeSidebar();
+        if(view === 'dashboard') renderDashboard();
+        else if(view === 'estoque') renderEstoque();
+        else if(view === 'venda') renderVenda();
+        else if(view === 'relatorioVendas') renderRelatorioVendas();
+        else if(view === 'relatorioMensal') renderRelatorioMensal();
+        else if(view === 'alertas') renderAlertas();
+        else if(view === 'historico') renderHistorico();
+        else if(view === 'clientes') renderClientes();
+    };
     
-    attachMenuEvents();
+    // Adiciona eventos aos itens do menu
+    document.querySelectorAll('.sidebar li').forEach(li => {
+        const view = li.getAttribute('data-view');
+        if(view) {
+            li.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.navigateTo(view);
+            });
+        }
+    });
 
     // Tema
     const themeToggleBtn = document.getElementById('themeToggle');
@@ -415,7 +428,7 @@
     });
     applyTheme();
 
-    // Modal para cadastro/edição de produto
+    // Modal para cadastro de produto
     let produtoModal = null;
 
     function abrirModalProduto(produto = null) {
@@ -527,33 +540,25 @@
     // Renderização das telas
     let salesChart = null, topProductsChart = null;
     
-    function renderCurrentView(view) {
-        if(view === 'dashboard') renderDashboard();
-        else if(view === 'estoque') renderEstoque();
-        else if(view === 'venda') renderVenda();
-        else if(view === 'relatorioVendas') renderRelatorioVendas();
-        else if(view === 'relatorioMensal') renderRelatorioMensal();
-        else if(view === 'alertas') renderAlertas();
-        else if(view === 'historico') renderHistorico();
-        else if(view === 'clientes') renderClientes();
-    }
-
     function renderDashboard() {
         const main = document.getElementById('mainContent');
-        const totalFaturamento = vendas.reduce((s,v)=>s+v.total,0);
+        
+        // Cálculo do faturamento total
+        const totalFaturamento = vendas.reduce((s,v) => s + v.total, 0);
         
         // CÁLCULO CORRETO DO LUCRO LÍQUIDO
-        const lucroTotal = vendas.reduce((acc, venda) => {
+        let lucroTotal = 0;
+        for (const venda of vendas) {
             const produto = produtos.find(p => p.id === venda.produtoId);
-            if(produto) {
+            if (produto) {
                 const custoTotal = venda.quantidade * (produto.precoCompra || 0);
-                const lucroVenda = venda.total - custoTotal;
-                return acc + lucroVenda;
+                lucroTotal += (venda.total - custoTotal);
             }
-            return acc;
-        }, 0);
+        }
         
         const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
+        
+        // Dados para gráficos
         const vendasPorMes = {};
         vendas.forEach(v => {
             const mes = new Date(v.data).toLocaleString('default', { month: 'short', year:'numeric' });
@@ -561,6 +566,7 @@
         });
         const labels = Object.keys(vendasPorMes);
         const valores = Object.values(vendasPorMes);
+        
         const qtdPorProduto = {};
         vendas.forEach(v => { qtdPorProduto[v.produtoId] = (qtdPorProduto[v.produtoId] || 0) + v.quantidade; });
         const topProdutos = Object.entries(qtdPorProduto).sort((a,b)=>b[1]-a[1]).slice(0,3);
@@ -579,7 +585,7 @@
                 <div class="chart-box"><canvas id="topProductsChart"></canvas></div>
             </div>
             <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
-            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
+             table<thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
             ${[...vendas].reverse().slice(0,5).map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
@@ -587,6 +593,7 @@
             }).join('')}
             </tbody></table></div>
         `;
+        
         setTimeout(() => {
             const ctx1 = document.getElementById('monthlySalesChart')?.getContext('2d');
             const ctx2 = document.getElementById('topProductsChart')?.getContext('2d');
@@ -614,7 +621,7 @@
                             <tr>
                                 <td><strong>${p.nome}</strong><br><small style="opacity:0.7;">${(p.descricao || '').substring(0,30)}${(p.descricao || '').length>30 ? '...' : ''}</small></td>
                                 <td>${p.codigoBarras || '-'}</td>
-                                <td>${formatarMoeda(p.precoCompra)}</td>${p.precoCompra ? '' : ''}
+                                <td>${formatarMoeda(p.precoCompra)}</td>
                                 <td>${formatarMoeda(p.precoVenda)}</td>
                                 <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
                                 <td>${p.estoqueMin}</td>
@@ -722,7 +729,7 @@
         const main = document.getElementById('mainContent');
         const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
         main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-chart-simple"></i> Relatório de Vendas</div>
-            </td><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
+             table<thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
             ${vendas.map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
@@ -756,7 +763,7 @@
 
     function renderClientes() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button></td><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button> table<thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
         document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome do cliente:'); if(nome){ const email = prompt('E-mail (opcional):'); const telefone = prompt('Telefone (opcional):'); clientes.push({ id:Date.now(), nome, email:email||'', telefone:telefone||'' }); saveAll(); renderClientes(); } });
         document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover cliente?')){ const id = parseInt(e.target.closest('button').dataset.id); clientes = clientes.filter(c => c.id !== id); saveAll(); renderClientes(); } }));
     }
