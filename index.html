@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             margin: 0;
@@ -67,6 +66,7 @@
             right: 0;
             bottom: 0;
             z-index: 2000;
+            overflow-y: auto;
         }
         body.dark .login-container {
             background: linear-gradient(135deg, #1e1b4b 0%, #2d1b4e 100%);
@@ -79,6 +79,7 @@
             max-width: 420px;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
             text-align: center;
+            margin: 20px;
         }
         .login-card h2 {
             font-size: 1.8rem;
@@ -99,7 +100,7 @@
         }
         .input-group-login label {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             margin-bottom: 6px;
             color: var(--text-secondary);
@@ -113,9 +114,11 @@
             color: var(--text-primary);
             font-size: 0.9rem;
             outline: none;
+            transition: all 0.2s;
         }
         .input-group-login input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
         }
         .btn-login {
             width: 100%;
@@ -125,6 +128,14 @@
             border-radius: 40px;
             font-weight: 600;
             margin-top: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .btn-login:hover {
+            background: var(--primary-dark);
+            transform: scale(0.98);
         }
         .divider {
             display: flex;
@@ -140,11 +151,6 @@
             height: 1px;
             background: var(--border);
         }
-        .google-btn-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 16px 0;
-        }
         .switch-auth {
             margin-top: 20px;
             font-size: 0.8rem;
@@ -158,10 +164,18 @@
         }
         .error-msg {
             color: var(--danger);
-            font-size: 0.7rem;
-            margin-top: 8px;
+            font-size: 0.75rem;
+            margin-top: 12px;
             text-align: center;
         }
+        .success-msg {
+            color: var(--success);
+            font-size: 0.75rem;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* User info header */
         .user-info {
             display: flex;
             align-items: center;
@@ -175,7 +189,13 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            object-fit: cover;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
         }
         .user-name {
             font-size: 0.8rem;
@@ -187,12 +207,14 @@
             padding: 6px 12px;
             border-radius: 30px;
             font-size: 0.7rem;
+            border: none;
+            cursor: pointer;
         }
         .logout-btn:hover {
             background: rgba(239,68,68,0.1);
         }
 
-        /* App Container (hidden until login) */
+        /* App Container */
         .app-container {
             display: none;
             min-height: 100vh;
@@ -202,7 +224,7 @@
             display: flex;
         }
 
-        /* Restante do estilo do app (mantido original) */
+        /* Estilos do App */
         .menu-toggle {
             display: none;
             position: fixed;
@@ -291,7 +313,7 @@
         label { font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 4px; color: var(--text-secondary); }
         input, select { font-family: inherit; font-size: 0.8rem; width: 100%; padding: 10px 12px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); outline: none; }
         button { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; }
-        button:hover { background: var(--primary-dark); }
+        button:hover { background: var(--primary-dark); transform: scale(0.98); }
         .btn-secondary { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary); }
         .photo-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 10px; }
         .table-responsive { overflow-x: auto; width: 100%; }
@@ -306,6 +328,7 @@
         .badge-warning { background: var(--warning); color: #1e293b; }
         .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
         .chart-box { background: var(--bg-card); border-radius: 20px; padding: 15px; border: 1px solid var(--border); }
+        .chart-box canvas { max-height: 200px; width: 100%; }
         .alert-list { display: flex; flex-direction: column; gap: 10px; }
         .alert-item { background: var(--bg-body); border-left: 4px solid var(--danger); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
         .relatorio-filtro { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
@@ -315,7 +338,12 @@
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 55px 12px 20px 12px; width: 100%; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-value { font-size: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat-value { font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -327,44 +355,47 @@
             <p>Faça login para gerenciar seu estoque</p>
             <div id="loginForm">
                 <div class="input-group-login">
-                    <label>E-mail</label>
-                    <input type="email" id="loginEmail" placeholder="seu@email.com">
+                    <label><i class="fas fa-envelope"></i> E-mail</label>
+                    <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email">
                 </div>
                 <div class="input-group-login">
-                    <label>Senha</label>
-                    <input type="password" id="loginSenha" placeholder="********">
+                    <label><i class="fas fa-lock"></i> Senha</label>
+                    <input type="password" id="loginSenha" placeholder="********" autocomplete="current-password">
                 </div>
                 <button class="btn-login" id="btnEmailLogin"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-                <div class="divider">ou</div>
-                <div id="googleBtnWrapper" class="google-btn-wrapper"></div>
                 <div class="switch-auth">
-                    Não tem uma conta? <a id="showRegister">Criar conta</a>
+                    Não tem uma conta? <a id="showRegister">Criar conta gratuita</a>
                 </div>
                 <div id="loginError" class="error-msg"></div>
             </div>
             <div id="registerForm" style="display: none;">
                 <div class="input-group-login">
-                    <label>Nome</label>
+                    <label><i class="fas fa-user"></i> Nome completo</label>
                     <input type="text" id="regNome" placeholder="Seu nome">
                 </div>
                 <div class="input-group-login">
-                    <label>E-mail</label>
+                    <label><i class="fas fa-envelope"></i> E-mail</label>
                     <input type="email" id="regEmail" placeholder="seu@email.com">
                 </div>
                 <div class="input-group-login">
-                    <label>Senha</label>
+                    <label><i class="fas fa-lock"></i> Senha</label>
                     <input type="password" id="regSenha" placeholder="mínimo 4 caracteres">
+                </div>
+                <div class="input-group-login">
+                    <label><i class="fas fa-check-circle"></i> Confirmar senha</label>
+                    <input type="password" id="regConfirmSenha" placeholder="digite novamente">
                 </div>
                 <button class="btn-login" id="btnRegister"><i class="fas fa-user-plus"></i> Criar Conta</button>
                 <div class="switch-auth">
                     Já tem conta? <a id="showLogin">Fazer login</a>
                 </div>
                 <div id="registerError" class="error-msg"></div>
+                <div id="registerSuccess" class="success-msg"></div>
             </div>
         </div>
     </div>
 
-    <!-- APP PRINCIPAL (mesmo conteúdo original adaptado) -->
+    <!-- APP PRINCIPAL -->
     <div id="appMain" class="app-container">
         <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -394,7 +425,7 @@
                     </div>
                 </div>
 
-                <!-- Painéis (mesmo conteúdo original) -->
+                <!-- PAINÉIS DO APP -->
                 <div id="dashboardPanel" class="panel active-panel">
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-title">📦 Produtos</div><div class="stat-value" id="totalProdutos">0</div></div>
@@ -409,22 +440,48 @@
                         <div class="chart-box"><h4>💰 Produtos Mais Vendidos</h4><canvas id="topProdutosChart"></canvas></div>
                     </div>
                 </div>
-                <div id="estoquePanel" class="panel"><div class="form-card"><h3><i class="fas fa-plus-circle"></i> Novo Produto</h3><div class="form-row"><div class="input-group"><label>Nome</label><input type="text" id="prodNome"></div><div class="input-group"><label>Preço Custo</label><input type="number" id="prodCusto" step="0.01"></div><div class="input-group"><label>Preço Venda</label><input type="number" id="prodVenda" step="0.01"></div></div><div class="form-row"><div class="input-group"><label>Quantidade</label><input type="number" id="prodQtd" value="1"></div><div class="input-group"><label>Estoque Mínimo</label><input type="number" id="prodMin" value="5"></div><div class="input-group"><label>Estoque Máximo</label><input type="number" id="prodMax" value="50"></div></div><div class="form-row"><div class="input-group"><label>Foto</label><input type="file" id="prodFoto" accept="image/*"></div><div class="input-group"><div id="fotoPreview"></div></div><div class="input-group"><button id="btnAddProduto"><i class="fas fa-save"></i> Salvar</button></div></div></div><div class="table-responsive"><table id="tabelaEstoque"><thead><tr><th>Foto</th><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín/Máx</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></div>
-                <div id="vendasPanel" class="panel"><div class="form-card"><h3><i class="fas fa-shopping-cart"></i> Registrar Venda</h3><div class="form-row"><div class="input-group"><label>Cliente</label><input type="text" id="clienteNome"></div><div class="input-group"><label>Produto</label><select id="vendaProdutoId"></select></div><div class="input-group"><label>Quantidade</label><input type="number" id="vendaQtd" value="1"></div><div class="input-group"><label>Tipo</label><select id="vendaTipo"><option value="entrega">🚚 Entrega</option><option value="retirada">🏠 Retirada</option></select></div></div><button id="btnRegistrarVenda"><i class="fas fa-check"></i> Finalizar Venda</button></div></div>
-                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3>Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
+                <div id="estoquePanel" class="panel"><div class="form-card"><h3><i class="fas fa-plus-circle"></i> Novo Produto</h3><div class="form-row"><div class="input-group"><label>Nome</label><input type="text" id="prodNome" placeholder="Ex: Camiseta"></div><div class="input-group"><label>Preço Custo</label><input type="number" id="prodCusto" step="0.01"></div><div class="input-group"><label>Preço Venda</label><input type="number" id="prodVenda" step="0.01"></div></div><div class="form-row"><div class="input-group"><label>Quantidade</label><input type="number" id="prodQtd" value="1"></div><div class="input-group"><label>Estoque Mínimo</label><input type="number" id="prodMin" value="5"></div><div class="input-group"><label>Estoque Máximo</label><input type="number" id="prodMax" value="50"></div></div><div class="form-row"><div class="input-group"><label>Foto</label><input type="file" id="prodFoto" accept="image/*"></div><div class="input-group"><div id="fotoPreview"></div></div><div class="input-group"><button id="btnAddProduto"><i class="fas fa-save"></i> Salvar</button></div></div></div><div class="table-responsive"><table id="tabelaEstoque"><thead><tr><th>Foto</th><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín/Máx</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></div>
+                <div id="vendasPanel" class="panel"><div class="form-card"><h3><i class="fas fa-shopping-cart"></i> Registrar Venda</h3><div class="form-row"><div class="input-group"><label>Cliente</label><input type="text" id="clienteNome" placeholder="Nome do cliente"></div><div class="input-group"><label>Produto</label><select id="vendaProdutoId"></select></div><div class="input-group"><label>Quantidade</label><input type="number" id="vendaQtd" value="1" min="1"></div><div class="input-group"><label>Tipo</label><select id="vendaTipo"><option value="entrega">🚚 Entrega</option><option value="retirada">🏠 Retirada</option></select></div></div><button id="btnRegistrarVenda"><i class="fas fa-check-circle"></i> Finalizar Venda</button></div></div>
+                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3><i class="fas fa-file-alt"></i> Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
                 <div id="relatoriosPanel" class="panel"><div class="form-card"><div class="relatorio-filtro"><input type="month" id="mesSelecionado"><button id="btnCarregarRelatorio">Analisar</button></div><div id="relatorioMensal"><h3 id="mesTitulo"></h3><div class="stats-grid"><div class="stat-card"><div class="stat-title">Faturamento Bruto</div><div class="stat-value" id="relBruto">R$ 0</div></div><div class="stat-card"><div class="stat-title">Custo Total</div><div class="stat-value" id="relCusto">R$ 0</div></div><div class="stat-card"><div class="stat-title">Lucro Líquido</div><div class="stat-value" id="relLucro">R$ 0</div></div><div class="stat-card"><div class="stat-title">Produtos Vendidos</div><div class="stat-value" id="relQtdProdutos">0</div></div></div><h4>Top 5 Produtos</h4><div class="table-responsive"><table id="tabelaTopProdutos"><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody></tbody></table></div></div></div></div>
-                <div id="alertasPanel" class="panel"><div class="form-card"><h3>Alertas de Estoque</h3><div id="alertasList" class="alert-list"></div></div></div>
-                <div id="historicoPanel" class="panel"><div class="form-card"><h3>Histórico de Vendas</h3><button id="btnExportarCSV" class="btn-secondary">Exportar CSV</button><div class="table-responsive"><table id="tabelaHistorico"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
+                <div id="alertasPanel" class="panel"><div class="form-card"><h3><i class="fas fa-bell"></i> Alertas de Estoque</h3><div id="alertasList" class="alert-list"></div></div></div>
+                <div id="historicoPanel" class="panel"><div class="form-card"><h3><i class="fas fa-history"></i> Histórico de Vendas</h3><button id="btnExportarCSV" class="btn-secondary"><i class="fas fa-download"></i> Exportar CSV</button><div class="table-responsive"><table id="tabelaHistorico"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
                 <footer>🔔 Produtos em vermelho = abaixo do mínimo | Verde = acima do máximo</footer>
             </div>
         </div>
     </div>
 
     <script>
-        // SISTEMA DE AUTENTICAÇÃO POR USUÁRIO (Múltiplas contas)
+        // SISTEMA DE AUTENTICAÇÃO SIMPLES E FUNCIONAL (sem Google OAuth)
         let currentUser = null;
         let produtos = [], vendas = [], nextProdId = 1, nextVendaId = 1;
         let tipoChart, topChart, filtroMesAtual = null;
+
+        // Gerencia usuários no localStorage
+        function getUsers() {
+            const users = localStorage.getItem("loja_users_v2");
+            return users ? JSON.parse(users) : {};
+        }
+        function saveUsers(users) { localStorage.setItem("loja_users_v2", JSON.stringify(users)); }
+
+        function registerUser(nome, email, senha) {
+            const users = getUsers();
+            if(users[email]) return { success: false, error: "E-mail já cadastrado!" };
+            if(senha.length < 4) return { success: false, error: "Senha deve ter no mínimo 4 caracteres!" };
+            const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            users[email] = { id: userId, nome, email, senha: btoa(senha) };
+            saveUsers(users);
+            return { success: true, user: { id: userId, nome, email } };
+        }
+
+        function loginUser(email, senha) {
+            const users = getUsers();
+            const user = users[email];
+            if(user && atob(user.senha) === senha) {
+                return { success: true, user: { id: user.id, nome: user.nome, email } };
+            }
+            return { success: false, error: "E-mail ou senha inválidos!" };
+        }
 
         // Carregar dados do usuário logado
         function loadUserData() {
@@ -438,7 +495,6 @@
                 nextProdId = data.nextProdId || 1;
                 nextVendaId = data.nextVendaId || 1;
             } else {
-                // Dados iniciais
                 produtos = [
                     { id: 1, nome: "Camiseta Polo", precoCusto: 35, precoVenda: 79.9, quantidade: 8, estoqueMin: 5, estoqueMax: 50, foto: "" },
                     { id: 2, nome: "Caneca", precoCusto: 12, precoVenda: 29.9, quantidade: 3, estoqueMin: 5, estoqueMax: 40, foto: "" },
@@ -449,53 +505,20 @@
                 saveUserData();
             }
         }
+
         function saveUserData() {
             if(!currentUser) return;
             const key = `loja_data_${currentUser.id}`;
             localStorage.setItem(key, JSON.stringify({ produtos, vendas, nextProdId, nextVendaId }));
         }
 
-        // Gerenciamento de usuários (registro)
-        function getUsers() {
-            const users = localStorage.getItem("loja_users");
-            return users ? JSON.parse(users) : {};
-        }
-        function saveUsers(users) { localStorage.setItem("loja_users", JSON.stringify(users)); }
-
-        function registerUser(nome, email, senha) {
-            const users = getUsers();
-            if(users[email]) return false;
-            const userId = Date.now().toString();
-            users[email] = { id: userId, nome, email, senha: btoa(senha) };
-            saveUsers(users);
-            return { id: userId, nome, email };
-        }
-        function loginUser(email, senha) {
-            const users = getUsers();
-            const user = users[email];
-            if(user && atob(user.senha) === senha) return { id: user.id, nome: user.nome, email };
-            return null;
-        }
-        function loginWithGoogle(googleUser) {
-            const email = googleUser.email;
-            const nome = googleUser.name;
-            const users = getUsers();
-            if(users[email]) {
-                return { id: users[email].id, nome: users[email].nome, email };
-            } else {
-                const userId = Date.now().toString();
-                users[email] = { id: userId, nome, email, senha: btoa("google_oauth"), google: true };
-                saveUsers(users);
-                return { id: userId, nome, email };
-            }
-        }
-
         function updateUserUI() {
             if(currentUser && document.getElementById('userInfoDisplay')) {
+                const initial = currentUser.nome.charAt(0).toUpperCase();
                 document.getElementById('userInfoDisplay').innerHTML = `
-                    <img class="user-avatar" src="https://ui-avatars.com/api/?background=3b82f6&color=fff&name=${encodeURIComponent(currentUser.nome)}">
+                    <div class="user-avatar">${initial}</div>
                     <span class="user-name">${currentUser.nome}</span>
-                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
                 `;
                 document.getElementById('logoutBtn')?.addEventListener('click', logout);
             }
@@ -508,6 +531,7 @@
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('registerForm').style.display = 'none';
             document.getElementById('loginError').innerText = '';
+            document.getElementById('registerError').innerText = '';
         }
 
         function afterLogin(user) {
@@ -519,9 +543,10 @@
             updateUserUI();
         }
 
-        // Funções do App (originais adaptadas)
+        // Funções do App (originais)
         function formatMoney(v) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v); }
         function getVendasMes() { const hoje = new Date(); return vendas.filter(v => { const d = new Date(v.data); return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear(); }); }
+        
         function atualizarResumo() {
             document.getElementById('totalProdutos').innerText = produtos.reduce((a,p)=>a+p.quantidade,0);
             document.getElementById('valorEstoqueCusto').innerHTML = formatMoney(produtos.reduce((a,p)=>a+(p.precoCusto*p.quantidade),0));
@@ -531,8 +556,10 @@
             document.getElementById('lucroMes').innerHTML = formatMoney(vm.reduce((a,v)=>a+v.lucro,0));
             document.getElementById('prodCriticos').innerText = produtos.filter(p=>p.quantidade<p.estoqueMin).length;
         }
+        
         function renderEstoque() {
             const tbody = document.querySelector('#tabelaEstoque tbody');
+            if(!tbody) return;
             tbody.innerHTML = '';
             produtos.forEach(p => {
                 const row = tbody.insertRow();
@@ -546,31 +573,174 @@
                 row.insertCell(6).innerHTML = p.quantidade<p.estoqueMin ? '<span class="badge badge-danger">CRÍTICO</span>' : (p.quantidade>p.estoqueMax?'<span class="badge badge-success">EXCEDENTE</span>':'<span class="badge badge-warning">NORMAL</span>');
                 row.insertCell(7).innerHTML = `<i class="fas fa-edit" onclick="editarProduto(${p.id})" style="cursor:pointer"></i> <i class="fas fa-trash-alt" onclick="excluirProduto(${p.id})" style="cursor:pointer;color:var(--danger);margin-left:8px"></i>`;
             });
-            document.getElementById('alertasList').innerHTML = produtos.filter(p=>p.quantidade<p.estoqueMin).map(p=>`<div class="alert-item"><div><strong>⚠️ ${p.nome}</strong><br><small>Estoque: ${p.quantidade} | Mín: ${p.estoqueMin}</small></div><span class="badge badge-danger">REPOR</span></div>`).join('') || '<div style="text-align:center;padding:20px">✅ Nenhum produto crítico</div>';
+            const alertDiv = document.getElementById('alertasList');
+            if(alertDiv) {
+                const criticos = produtos.filter(p=>p.quantidade<p.estoqueMin);
+                alertDiv.innerHTML = criticos.length ? criticos.map(p=>`<div class="alert-item"><div><strong>⚠️ ${p.nome}</strong><br><small>Estoque: ${p.quantidade} | Mín: ${p.estoqueMin}</small></div><span class="badge badge-danger">REPOR</span></div>`).join('') : '<div style="text-align:center;padding:20px">✅ Nenhum produto crítico</div>';
+            }
         }
-        window.editarProduto = (id) => { const p = produtos.find(p=>p.id===id); if(p){ p.nome=prompt("Nome:",p.nome)||p.nome; p.precoCusto=parseFloat(prompt("Custo:",p.precoCusto))||p.precoCusto; p.precoVenda=parseFloat(prompt("Venda:",p.precoVenda))||p.precoVenda; p.quantidade=parseInt(prompt("Qtd:",p.quantidade))||p.quantidade; p.estoqueMin=parseInt(prompt("Mín:",p.estoqueMin))||p.estoqueMin; p.estoqueMax=parseInt(prompt("Máx:",p.estoqueMax))||p.estoqueMax; saveUserData(); renderAllApp(); } };
-        window.excluirProduto = (id) => { if(confirm("Excluir?")) { produtos=produtos.filter(p=>p.id!==id); saveUserData(); renderAllApp(); } };
-        function atualizarSelect() { const sel = document.getElementById('vendaProdutoId'); sel.innerHTML = ''; produtos.forEach(p=>{ if(p.quantidade>0) sel.appendChild(new Option(`${p.nome} - R$ ${p.precoVenda} (${p.quantidade})`, p.id)); }); }
-        function adicionarProduto() { const nome=document.getElementById('prodNome').value; const custo=parseFloat(document.getElementById('prodCusto').value); const venda=parseFloat(document.getElementById('prodVenda').value); const qtd=parseInt(document.getElementById('prodQtd').value); const min=parseInt(document.getElementById('prodMin').value); const max=parseInt(document.getElementById('prodMax').value); if(!nome||venda<=custo) return alert("Preço venda > custo"); produtos.push({id:nextProdId++,nome,precoCusto:custo,precoVenda:venda,quantidade:qtd,estoqueMin:min,estoqueMax:max,foto:""}); saveUserData(); renderAllApp(); limparForm(); }
-        function limparForm() { document.getElementById('prodNome').value=''; document.getElementById('prodCusto').value=''; document.getElementById('prodVenda').value=''; document.getElementById('prodQtd').value='1'; document.getElementById('prodMin').value='5'; document.getElementById('prodMax').value='50'; }
-        function registrarVenda() { const cliente=document.getElementById('clienteNome').value.trim(); const prodId=parseInt(document.getElementById('vendaProdutoId').value); const qtd=parseInt(document.getElementById('vendaQtd').value); const tipo=document.getElementById('vendaTipo').value; const prod=produtos.find(p=>p.id===prodId); if(!cliente||!prod||qtd>prod.quantidade) return alert("Dados inválidos ou estoque insuficiente"); prod.quantidade-=qtd; const total=prod.precoVenda*qtd; const lucro=total-(prod.precoCusto*qtd); vendas.push({id:nextVendaId++,cliente,produtoId:prodId,quantidade:qtd,precoVendaUnit:prod.precoVenda,precoCustoUnit:prod.precoCusto,total,lucro,tipo,data:new Date().toISOString().slice(0,10)}); saveUserData(); renderAllApp(); alert(`Venda finalizada! Total: ${formatMoney(total)}`); document.getElementById('clienteNome').value=''; document.getElementById('vendaQtd').value='1'; }
-        function renderHistorico() { const tbody = document.querySelector('#tabelaHistorico tbody'); tbody.innerHTML = ''; [...vendas].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada'; }); }
-        function renderRelatorioVendas() { let f=vendas; if(filtroMesAtual){ const [ano,mes]=filtroMesAtual.split('-'); f=vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mes)-1 && d.getFullYear()===parseInt(ano);});} const tbody=document.querySelector('#tabelaRelatorioVendas tbody'); tbody.innerHTML=''; [...f].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada';});}
-        function atualizarGraficos() { const entrega=vendas.filter(v=>v.tipo==='entrega').reduce((a,v)=>a+v.total,0); const retirada=vendas.filter(v=>v.tipo==='retirada').reduce((a,v)=>a+v.total,0); if(tipoChart) tipoChart.destroy(); tipoChart=new Chart(document.getElementById('tipoVendasChart'),{type:'doughnut',data:{labels:['🚚 Entrega','🏠 Retirada'],datasets:[{data:[entrega,retirada],backgroundColor:['#3b82f6','#10b981']}]}}); const prodQty={}; vendas.forEach(v=>prodQty[v.produtoId]=(prodQty[v.produtoId]||0)+v.quantidade); const top=Object.entries(prodQty).sort((a,b)=>b[1]-a[1]).slice(0,5); if(topChart) topChart.destroy(); topChart=new Chart(document.getElementById('topProdutosChart'),{type:'bar',data:{labels:top.map(([id])=>produtos.find(p=>p.id==id)?.nome||"?"),datasets:[{label:'Qtd Vendida',data:top.map(([,q])=>q),backgroundColor:'#f59e0b'}]}});}
-        function carregarRelatorioMensal(){ const mes=document.getElementById('mesSelecionado').value; if(!mes)return; const [ano,mesN]=mes.split('-'); const f=vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mesN)-1 && d.getFullYear()===parseInt(ano);}); const fat=f.reduce((a,v)=>a+v.total,0); const custo=f.reduce((a,v)=>a+(v.precoCustoUnit*v.quantidade),0); document.getElementById('relBruto').innerHTML=formatMoney(fat); document.getElementById('relCusto').innerHTML=formatMoney(custo); document.getElementById('relLucro').innerHTML=formatMoney(fat-custo); document.getElementById('relQtdProdutos').innerText=f.reduce((a,v)=>a+v.quantidade,0); const mapa={}; f.forEach(v=>mapa[v.produtoId]=(mapa[v.produtoId]||0)+v.quantidade); const top=Object.entries(mapa).sort((a,b)=>b[1]-a[1]).slice(0,5); const tb=document.querySelector('#tabelaTopProdutos tbody'); tb.innerHTML=''; top.forEach(([id,q])=>{const p=produtos.find(p=>p.id==id); if(p){const r=tb.insertRow(); r.insertCell(0).innerText=p.nome; r.insertCell(1).innerText=q; r.insertCell(2).innerHTML=formatMoney(p.precoVenda*q);}}); document.getElementById('mesTitulo').innerHTML=`📅 ${mes}`;}
-        function exportarCSV(){let csv="Data,Cliente,Produto,Qtd,Unitário,Total,Lucro,Tipo\n"; vendas.forEach(v=>{const p=produtos.find(p=>p.id===v.produtoId); csv+=`"${v.data}","${v.cliente}","${p?.nome||'?'}",${v.quantidade},${v.precoVendaUnit},${v.total},${v.lucro},"${v.tipo}"\n`;}); const blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="vendas.csv"; a.click();}
-        function renderAllApp(){ atualizarResumo(); renderEstoque(); atualizarSelect(); renderHistorico(); renderRelatorioVendas(); atualizarGraficos(); carregarRelatorioMensal(); }
-        function initAppEvents(){ document.getElementById('btnAddProduto').addEventListener('click', adicionarProduto); document.getElementById('btnRegistrarVenda').addEventListener('click', registrarVenda); document.getElementById('btnExportarCSV').addEventListener('click', exportarCSV); document.getElementById('btnCarregarRelatorio').addEventListener('click', carregarRelatorioMensal); document.getElementById('btnFiltrarVendas').addEventListener('click',()=>{filtroMesAtual=document.getElementById('filtroMesVendas').value||null; renderRelatorioVendas();}); document.getElementById('btnLimparFiltro').addEventListener('click',()=>{document.getElementById('filtroMesVendas').value=''; filtroMesAtual=null; renderRelatorioVendas();}); document.getElementById('mesSelecionado').valueAsDate=new Date(); document.getElementById('filtroMesVendas').valueAsDate=new Date(); const items=document.querySelectorAll('.menu-item'); const panels=document.querySelectorAll('.panel'); items.forEach(i=>{i.addEventListener('click',()=>{const pid=i.getAttribute('data-panel'); items.forEach(x=>x.classList.remove('active')); i.classList.add('active'); panels.forEach(p=>p.classList.remove('active-panel')); document.getElementById(`${pid}Panel`).classList.add('active-panel'); if(pid==='alertas')renderEstoque(); if(pid==='relatorioVendas')renderRelatorioVendas(); if(pid==='historico')renderHistorico(); if(window.innerWidth<=768)closeMenu();});}); const toggle=document.getElementById('menuToggle'),sidebar=document.getElementById('sidebar'),overlay=document.getElementById('sidebarOverlay'); const closeMenu=()=>{sidebar.classList.remove('open'); overlay.style.display='none'; toggle.innerHTML='<i class="fas fa-bars"></i>';}; toggle.addEventListener('click',()=>{if(sidebar.classList.contains('open'))closeMenu(); else{sidebar.classList.add('open'); overlay.style.display='block'; toggle.innerHTML='<i class="fas fa-times"></i>';}}); overlay.addEventListener('click',closeMenu); const themeToggle=document.getElementById('themeToggle'); if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark'); themeToggle.addEventListener('click',()=>{document.body.classList.toggle('dark'); localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');});}
         
-        // Login UI
-        document.getElementById('showRegister')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; });
-        document.getElementById('showLogin')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; });
-        document.getElementById('btnEmailLogin')?.addEventListener('click',()=>{ const email=document.getElementById('loginEmail').value; const senha=document.getElementById('loginSenha').value; const user=loginUser(email,senha); if(user){ afterLogin(user); }else{ document.getElementById('loginError').innerText='E-mail ou senha inválidos'; } });
-        document.getElementById('btnRegister')?.addEventListener('click',()=>{ const nome=document.getElementById('regNome').value; const email=document.getElementById('regEmail').value; const senha=document.getElementById('regSenha').value; if(!nome||!email||senha.length<4){ document.getElementById('registerError').innerText='Preencha todos os campos (senha min 4)'; return; } const user=registerUser(nome,email,senha); if(user){ afterLogin(user); }else{ document.getElementById('registerError').innerText='E-mail já existe'; } });
-        function initGoogle() { window.onGoogleLibraryLoad = () => { google.accounts.id.initialize({ client_id: "1080621199013-ufkr95544d23gidf4o82ifdp86fdn87t.apps.googleusercontent.com", callback: (response) => { const payload = decodeJwtResponse(response.credential); const user = loginWithGoogle({ email: payload.email, name: payload.name }); afterLogin(user); } }); google.accounts.id.renderButton(document.getElementById("googleBtnWrapper"), { theme: "outline", size: "large", width: "100%" }); }; }
-        function decodeJwtResponse(token) { const base64Url = token.split('.')[1]; const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/'); const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')); return JSON.parse(jsonPayload); }
-        initGoogle();
-        document.getElementById('loginScreen').style.display = 'flex';
+        window.editarProduto = (id) => { const p = produtos.find(p=>p.id===id); if(p){ p.nome=prompt("Nome:",p.nome)||p.nome; p.precoCusto=parseFloat(prompt("Custo:",p.precoCusto))||p.precoCusto; p.precoVenda=parseFloat(prompt("Venda:",p.precoVenda))||p.precoVenda; p.quantidade=parseInt(prompt("Qtd:",p.quantidade))||p.quantidade; p.estoqueMin=parseInt(prompt("Mín:",p.estoqueMin))||p.estoqueMin; p.estoqueMax=parseInt(prompt("Máx:",p.estoqueMax))||p.estoqueMax; saveUserData(); renderAllApp(); } };
+        window.excluirProduto = (id) => { if(confirm("Excluir produto?")) { produtos=produtos.filter(p=>p.id!==id); saveUserData(); renderAllApp(); } };
+        
+        function atualizarSelect() { const sel = document.getElementById('vendaProdutoId'); if(sel){ sel.innerHTML = ''; produtos.forEach(p=>{ if(p.quantidade>0) sel.appendChild(new Option(`${p.nome} - R$ ${p.precoVenda.toFixed(2)} (${p.quantidade})`, p.id)); }); } }
+        
+        function adicionarProduto() { 
+            const nome=document.getElementById('prodNome')?.value; 
+            const custo=parseFloat(document.getElementById('prodCusto')?.value); 
+            const venda=parseFloat(document.getElementById('prodVenda')?.value); 
+            const qtd=parseInt(document.getElementById('prodQtd')?.value); 
+            const min=parseInt(document.getElementById('prodMin')?.value); 
+            const max=parseInt(document.getElementById('prodMax')?.value); 
+            if(!nome||isNaN(custo)||isNaN(venda)||venda<=custo) return alert("Preço venda deve ser maior que o custo!"); 
+            if(min>=max) return alert("Mínimo deve ser menor que o máximo!");
+            produtos.push({id:nextProdId++,nome,precoCusto:custo,precoVenda:venda,quantidade:qtd,estoqueMin:min,estoqueMax:max,foto:""}); 
+            saveUserData(); renderAllApp(); 
+            document.getElementById('prodNome').value=''; document.getElementById('prodCusto').value=''; document.getElementById('prodVenda').value='';
+        }
+        
+        function registrarVenda() { 
+            const cliente=document.getElementById('clienteNome')?.value.trim(); 
+            const prodId=parseInt(document.getElementById('vendaProdutoId')?.value); 
+            const qtd=parseInt(document.getElementById('vendaQtd')?.value); 
+            const tipo=document.getElementById('vendaTipo')?.value; 
+            const prod=produtos.find(p=>p.id===prodId); 
+            if(!cliente) return alert("Digite o nome do cliente"); 
+            if(!prod) return alert("Selecione um produto"); 
+            if(isNaN(qtd)||qtd<=0||qtd>prod.quantidade) return alert(`Estoque insuficiente! Disponível: ${prod.quantidade}`); 
+            prod.quantidade-=qtd; 
+            const total=prod.precoVenda*qtd; 
+            const lucro=total-(prod.precoCusto*qtd); 
+            vendas.push({id:nextVendaId++,cliente,produtoId:prodId,quantidade:qtd,precoVendaUnit:prod.precoVenda,precoCustoUnit:prod.precoCusto,total,lucro,tipo,data:new Date().toISOString().slice(0,10)}); 
+            saveUserData(); renderAllApp(); 
+            alert(`✅ Venda finalizada! Total: ${formatMoney(total)}`); 
+            if(document.getElementById('clienteNome')) document.getElementById('clienteNome').value=''; 
+            if(document.getElementById('vendaQtd')) document.getElementById('vendaQtd').value='1';
+        }
+        
+        function renderHistorico() { 
+            const tbody = document.querySelector('#tabelaHistorico tbody'); 
+            if(!tbody) return;
+            tbody.innerHTML = ''; 
+            [...vendas].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada'; }); 
+        }
+        
+        function renderRelatorioVendas() { 
+            let f=vendas; 
+            if(filtroMesAtual){ const [ano,mes]=filtroMesAtual.split('-'); f=vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mes)-1 && d.getFullYear()===parseInt(ano);});} 
+            const tbody=document.querySelector('#tabelaRelatorioVendas tbody'); 
+            if(!tbody) return;
+            tbody.innerHTML=''; 
+            [...f].reverse().forEach(v=>{ const p=produtos.find(p=>p.id===v.produtoId); const r=tbody.insertRow(); r.insertCell(0).innerText=v.data; r.insertCell(1).innerText=v.cliente; r.insertCell(2).innerText=p?p.nome:"?"; r.insertCell(3).innerText=v.quantidade; r.insertCell(4).innerHTML=formatMoney(v.precoVendaUnit); r.insertCell(5).innerHTML=formatMoney(v.total); r.insertCell(6).innerHTML=formatMoney(v.lucro); r.insertCell(7).innerHTML=v.tipo==='entrega'?'🚚 Entrega':'🏠 Retirada';});
+        }
+        
+        function atualizarGraficos() { 
+            const entrega=vendas.filter(v=>v.tipo==='entrega').reduce((a,v)=>a+v.total,0); 
+            const retirada=vendas.filter(v=>v.tipo==='retirada').reduce((a,v)=>a+v.total,0); 
+            const ctx1 = document.getElementById('tipoVendasChart');
+            if(ctx1 && typeof Chart !== 'undefined') {
+                if(tipoChart) tipoChart.destroy(); 
+                tipoChart=new Chart(ctx1,{type:'doughnut',data:{labels:['🚚 Entrega','🏠 Retirada'],datasets:[{data:[entrega,retirada],backgroundColor:['#3b82f6','#10b981']}]}});
+            }
+            const prodQty={}; vendas.forEach(v=>prodQty[v.produtoId]=(prodQty[v.produtoId]||0)+v.quantidade); 
+            const top=Object.entries(prodQty).sort((a,b)=>b[1]-a[1]).slice(0,5); 
+            const ctx2 = document.getElementById('topProdutosChart');
+            if(ctx2 && typeof Chart !== 'undefined') {
+                if(topChart) topChart.destroy(); 
+                topChart=new Chart(ctx2,{type:'bar',data:{labels:top.map(([id])=>produtos.find(p=>p.id==id)?.nome||"?"),datasets:[{label:'Qtd Vendida',data:top.map(([,q])=>q),backgroundColor:'#f59e0b'}]}});
+            }
+        }
+        
+        function carregarRelatorioMensal(){ 
+            const mes=document.getElementById('mesSelecionado')?.value; 
+            if(!mes) return; 
+            const [ano,mesN]=mes.split('-'); 
+            const f=vendas.filter(v=>{const d=new Date(v.data); return d.getMonth()===parseInt(mesN)-1 && d.getFullYear()===parseInt(ano);}); 
+            const fat=f.reduce((a,v)=>a+v.total,0); 
+            const custo=f.reduce((a,v)=>a+(v.precoCustoUnit*v.quantidade),0); 
+            if(document.getElementById('relBruto')) document.getElementById('relBruto').innerHTML=formatMoney(fat); 
+            if(document.getElementById('relCusto')) document.getElementById('relCusto').innerHTML=formatMoney(custo); 
+            if(document.getElementById('relLucro')) document.getElementById('relLucro').innerHTML=formatMoney(fat-custo); 
+            if(document.getElementById('relQtdProdutos')) document.getElementById('relQtdProdutos').innerText=f.reduce((a,v)=>a+v.quantidade,0); 
+            const mapa={}; f.forEach(v=>mapa[v.produtoId]=(mapa[v.produtoId]||0)+v.quantidade); 
+            const top=Object.entries(mapa).sort((a,b)=>b[1]-a[1]).slice(0,5); 
+            const tb=document.querySelector('#tabelaTopProdutos tbody'); 
+            if(tb){ tb.innerHTML=''; top.forEach(([id,q])=>{const p=produtos.find(p=>p.id==id); if(p){const r=tb.insertRow(); r.insertCell(0).innerText=p.nome; r.insertCell(1).innerText=q; r.insertCell(2).innerHTML=formatMoney(p.precoVenda*q);}}); }
+            if(document.getElementById('mesTitulo')) document.getElementById('mesTitulo').innerHTML=`📅 ${mes}`;
+        }
+        
+        function exportarCSV(){let csv="Data,Cliente,Produto,Qtd,Unitário,Total,Lucro,Tipo\n"; vendas.forEach(v=>{const p=produtos.find(p=>p.id===v.produtoId); csv+=`"${v.data}","${v.cliente}","${p?.nome||'?'}",${v.quantidade},${v.precoVendaUnit},${v.total},${v.lucro},"${v.tipo}"\n`;}); const blob=new Blob(["\uFEFF"+csv],{type:"text/csv"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download="vendas.csv"; a.click();}
+        
+        function renderAllApp(){ atualizarResumo(); renderEstoque(); atualizarSelect(); renderHistorico(); renderRelatorioVendas(); atualizarGraficos(); carregarRelatorioMensal(); }
+        
+        // Inicialização dos eventos do app
+        function initAppEvents(){
+            const btnAdd = document.getElementById('btnAddProduto');
+            if(btnAdd) btnAdd.addEventListener('click', adicionarProduto);
+            const btnVenda = document.getElementById('btnRegistrarVenda');
+            if(btnVenda) btnVenda.addEventListener('click', registrarVenda);
+            const btnExport = document.getElementById('btnExportarCSV');
+            if(btnExport) btnExport.addEventListener('click', exportarCSV);
+            const btnRel = document.getElementById('btnCarregarRelatorio');
+            if(btnRel) btnRel.addEventListener('click', carregarRelatorioMensal);
+            const btnFiltrar = document.getElementById('btnFiltrarVendas');
+            if(btnFiltrar) btnFiltrar.addEventListener('click',()=>{filtroMesAtual=document.getElementById('filtroMesVendas')?.value||null; renderRelatorioVendas();});
+            const btnLimpar = document.getElementById('btnLimparFiltro');
+            if(btnLimpar) btnLimpar.addEventListener('click',()=>{if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value=''; filtroMesAtual=null; renderRelatorioVendas();});
+            const hoje = new Date();
+            const anoMes = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+            if(document.getElementById('mesSelecionado')) document.getElementById('mesSelecionado').value = anoMes;
+            if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value = anoMes;
+            
+            // Menu
+            const items = document.querySelectorAll('.menu-item');
+            const panels = document.querySelectorAll('.panel');
+            items.forEach(i=>{i.addEventListener('click',()=>{const pid=i.getAttribute('data-panel'); items.forEach(x=>x.classList.remove('active')); i.classList.add('active'); panels.forEach(p=>p.classList.remove('active-panel')); document.getElementById(`${pid}Panel`).classList.add('active-panel'); if(pid==='alertas')renderEstoque(); if(pid==='relatorioVendas')renderRelatorioVendas(); if(pid==='historico')renderHistorico(); if(window.innerWidth<=768)closeMenu();});});
+            
+            // Mobile menu
+            const toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
+            const closeMenu = () => { sidebar?.classList.remove('open'); if(overlay) overlay.style.display='none'; if(toggle) toggle.innerHTML='<i class="fas fa-bars"></i>'; };
+            if(toggle) toggle.addEventListener('click',()=>{if(sidebar?.classList.contains('open'))closeMenu(); else{sidebar?.classList.add('open'); if(overlay) overlay.style.display='block'; toggle.innerHTML='<i class="fas fa-times"></i>';}});
+            if(overlay) overlay.addEventListener('click',closeMenu);
+            
+            // Theme
+            const themeToggle = document.getElementById('themeToggle');
+            if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
+            if(themeToggle) themeToggle.addEventListener('click',()=>{document.body.classList.toggle('dark'); localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');});
+        }
+        
+        // EVENTOS DE LOGIN
+        document.getElementById('showRegister')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('loginError').innerText=''; document.getElementById('registerError').innerText=''; });
+        document.getElementById('showLogin')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; document.getElementById('registerError').innerText=''; document.getElementById('loginError').innerText=''; });
+        
+        document.getElementById('btnEmailLogin')?.addEventListener('click',()=>{ 
+            const email=document.getElementById('loginEmail')?.value; 
+            const senha=document.getElementById('loginSenha')?.value; 
+            const result = loginUser(email, senha); 
+            if(result.success){ afterLogin(result.user); } 
+            else{ if(document.getElementById('loginError')) document.getElementById('loginError').innerText = result.error; } 
+        });
+        
+        document.getElementById('btnRegister')?.addEventListener('click',()=>{ 
+            const nome=document.getElementById('regNome')?.value; 
+            const email=document.getElementById('regEmail')?.value; 
+            const senha=document.getElementById('regSenha')?.value; 
+            const confirm=document.getElementById('regConfirmSenha')?.value; 
+            if(!nome||!email){ if(document.getElementById('registerError')) document.getElementById('registerError').innerText='Preencha todos os campos'; return; }
+            if(senha !== confirm){ if(document.getElementById('registerError')) document.getElementById('registerError').innerText='As senhas não coincidem'; return; }
+            const result = registerUser(nome, email, senha); 
+            if(result.success){ 
+                if(document.getElementById('registerSuccess')) document.getElementById('registerSuccess').innerText='Conta criada! Faça login.';
+                setTimeout(()=>{ document.getElementById('showLogin')?.click(); }, 1500);
+            } else { 
+                if(document.getElementById('registerError')) document.getElementById('registerError').innerText = result.error; 
+            }
+        });
+        
+        // Enter key support
+        document.getElementById('loginSenha')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('btnEmailLogin')?.click(); });
+        document.getElementById('regConfirmSenha')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('btnRegister')?.click(); });
+        
         initAppEvents();
     </script>
 </body>
