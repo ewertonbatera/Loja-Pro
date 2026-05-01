@@ -152,7 +152,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--menu-icon-color);  /* usa a variável que muda com o tema */
+            color: var(--menu-icon-color);
         }
         .page-title {
             font-size: 1.4rem;
@@ -331,12 +331,6 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        .cliente-info {
-            background: var(--button-bg);
-            padding: 12px;
-            border-radius: 20px;
-            margin-top: 12px;
-        }
         @media (max-width: 700px) {
             body { padding: 16px; }
             .main-header { flex-direction: column; align-items: stretch; }
@@ -499,25 +493,40 @@
         appContainer.classList.remove('visible');
     });
 
-    // Menu sanduíche com ícone que alterna e cores dinâmicas
+    // ========== MENU SANDUÍCHE CORRIGIDO ==========
     const menuToggle = document.getElementById('menuToggle');
     const sidebarEl = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
+    
     function openSidebar() {
         sidebarEl.classList.add('open');
         backdrop.classList.add('active');
+        // Troca o ícone de barras para X
         menuToggle.innerHTML = '<i class="fas fa-times"></i>';
     }
+    
     function closeSidebar() {
         sidebarEl.classList.remove('open');
         backdrop.classList.remove('active');
+        // Troca o ícone de X para barras
         menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
     }
-    menuToggle.addEventListener('click', () => {
-        if (sidebarEl.classList.contains('open')) closeSidebar();
-        else openSidebar();
-    });
+    
+    function toggleSidebar() {
+        if (sidebarEl.classList.contains('open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+    
+    // Evento de clique no botão do menu
+    menuToggle.addEventListener('click', toggleSidebar);
+    
+    // Fechar ao clicar no backdrop
     backdrop.addEventListener('click', closeSidebar);
+    
+    // Fechar ao clicar em um item do menu
     document.querySelectorAll('.sidebar li').forEach(li => {
         li.addEventListener('click', (e) => {
             const view = li.getAttribute('data-view');
@@ -525,17 +534,18 @@
             closeSidebar();
         });
     });
+    // ===========================================
 
-    // Tema escuro/claro (já ajusta a cor do ícone via CSS)
-    const themeToggle = document.getElementById('themeToggle');
+    // Tema escuro/claro
+    const themeToggleBtn = document.getElementById('themeToggle');
     const body = document.body;
     function applyTheme() {
         const dark = localStorage.getItem('theme') === 'dark';
         if(dark) body.classList.add('dark');
         else body.classList.remove('dark');
-        themeToggle.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        themeToggleBtn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
-    themeToggle.addEventListener('click', () => {
+    themeToggleBtn.addEventListener('click', () => {
         body.classList.toggle('dark');
         const isDark = body.classList.contains('dark');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -543,7 +553,7 @@
     });
     applyTheme();
 
-    // ---------- RENDERIZAÇÃO DAS TELAS (mantendo tudo + clientes) ----------
+    // ---------- RENDERIZAÇÃO DAS TELAS ----------
     let salesChart = null, topProductsChart = null;
     function renderCurrentView(view) {
         if(view === 'dashboard') renderDashboard();
@@ -564,7 +574,6 @@
             return acc + (p ? v.quantidade * (p.venda - p.custo) : 0);
         }, 0);
         const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
-        // Dados para gráficos
         const vendasPorMes = {};
         vendas.forEach(v => {
             const mes = new Date(v.data).toLocaleString('default', { month: 'short', year:'numeric' });
@@ -583,18 +592,18 @@
                 <div class="stat-card"><i class="fas fa-chart-line"></i><h3>Faturamento</h3><p>R$ ${totalFaturamento.toFixed(2)}</p></div>
                 <div class="stat-card"><i class="fas fa-coins"></i><h3>Lucro Líquido</h3><p>R$ ${lucroTotal.toFixed(2)}</p></div>
                 <div class="stat-card"><i class="fas fa-boxes"></i><h3>Produtos em Estoque</h3><p>${produtos.reduce((s,p)=>s+p.estoque,0)}</p></div>
-                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p class="${baixoEstoque>0?'text-warning':''}">${baixoEstoque}</p></div>
+                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p>${baixoEstoque}</p></div>
             </div>
             <div class="charts-row">
                 <div class="chart-box"><canvas id="monthlySalesChart" width="400" height="250"></canvas></div>
                 <div class="chart-box"><canvas id="topProductsChart" width="400" height="250"></canvas></div>
             </div>
             <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
-             table<thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
+            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
             ${[...vendas].reverse().slice(0,5).map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Cliente não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
+                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
             }).join('')}
             </tbody></table></div>
         `;
@@ -650,10 +659,8 @@
         renderEstoque();
     }
 
-    // Tela de Nova Venda com data, pagamento e cliente
     function renderVenda() {
         const main = document.getElementById('mainContent');
-        // Opções de clientes
         const clientesOptions = clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
         main.innerHTML = `
             <div class="card-premium">
@@ -661,14 +668,18 @@
                 <div class="form-group">
                     <label>Cliente</label>
                     <div class="flex-row">
-                        <select id="clienteVenda" style="flex:1">${clientesOptions}<option value="novo">+ Novo Cliente</option></select>
+                        <select id="clienteVenda" style="flex:1">
+                            <option value="">-- Selecione um cliente --</option>
+                            ${clientesOptions}
+                            <option value="novo">+ Novo Cliente</option>
+                        </select>
                         <button id="btnNovoClienteRapido" class="btn-primary">Cadastrar</button>
                     </div>
                     <div id="novoClienteFields" style="display:none; margin-top:12px;">
-                        <input type="text" id="novoClienteNome" placeholder="Nome do cliente">
-                        <input type="email" id="novoClienteEmail" placeholder="E-mail">
-                        <input type="tel" id="novoClienteTelefone" placeholder="Telefone">
-                        <button id="salvarNovoCliente" class="btn-primary" style="margin-top:8px">Salvar Cliente</button>
+                        <input type="text" id="novoClienteNome" placeholder="Nome do cliente" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
+                        <input type="email" id="novoClienteEmail" placeholder="E-mail" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
+                        <input type="tel" id="novoClienteTelefone" placeholder="Telefone" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
+                        <button id="salvarNovoCliente" class="btn-primary">Salvar Cliente</button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -697,7 +708,6 @@
                 <div id="vendaMsg" style="margin-top:20px;"></div>
             </div>
         `;
-        // Lógica para cliente novo
         const clienteSelect = document.getElementById('clienteVenda');
         const novoClienteDiv = document.getElementById('novoClienteFields');
         const btnNovo = document.getElementById('btnNovoClienteRapido');
@@ -712,7 +722,6 @@
             const novoId = Date.now();
             clientes.push({ id: novoId, nome, email, telefone });
             saveAll();
-            // Atualiza select
             const option = new Option(nome, novoId);
             clienteSelect.add(option, 'novo');
             clienteSelect.value = novoId;
@@ -738,7 +747,7 @@
             vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date(dataVenda).toISOString(), clienteId, formaPagamento });
             saveAll();
             document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px; border-radius:60px;">✅ Venda realizada! Total R$ ${total.toFixed(2)}</div>`;
-            renderVenda(); // recarrega a tela
+            renderVenda();
         });
     }
 
@@ -788,7 +797,7 @@
         main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div>
             <button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button>
             <table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>
-            ${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email || '-'}</td><td>${c.telefone || '-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}
+            ${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email || '-'}<tr><td>${c.telefone || '-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}
             </tbody></table></div>`;
         document.getElementById('novoClienteBtn')?.addEventListener('click', () => {
             const nome = prompt('Nome do cliente:');
@@ -801,7 +810,7 @@
             }
         });
         document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => {
-            if(confirm('Remover cliente? Todas as vendas associadas permanecerão sem cliente.')) {
+            if(confirm('Remover cliente?')) {
                 clientes = clientes.filter(c => c.id != e.target.closest('button').dataset.id);
                 saveAll();
                 renderClientes();
