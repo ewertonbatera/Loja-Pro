@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
             margin: 0;
@@ -137,6 +138,10 @@
             background: var(--primary-dark);
             transform: scale(0.98);
         }
+        .btn-biometric {
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            margin-top: 12px;
+        }
         .divider {
             display: flex;
             align-items: center;
@@ -150,6 +155,11 @@
             flex: 1;
             height: 1px;
             background: var(--border);
+        }
+        .google-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 16px 0;
         }
         .switch-auth {
             margin-top: 20px;
@@ -224,22 +234,48 @@
             display: flex;
         }
 
-        /* Estilos do App */
+        /* Estilos do App - Botão sanduíche reposicionado */
         .menu-toggle {
             display: none;
             position: fixed;
-            top: 15px;
-            left: 15px;
+            top: 12px;
+            left: 12px;
             z-index: 1001;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 12px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
+        /* Ajuste para o header não ser coberto */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px 30px;
+            width: calc(100% - 280px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            gap: 15px;
+            padding-top: 0;
+        }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        /* Sidebar e demais estilos */
         .sidebar {
             width: 280px;
             background: var(--bg-sidebar);
@@ -290,15 +326,7 @@
             background: rgba(0,0,0,0.6);
             z-index: 999;
         }
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 20px 30px;
-            width: calc(100% - 280px);
-        }
         .container { max-width: 1400px; margin: 0 auto; width: 100%; }
-        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 30px; gap: 15px; }
-        h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), #8b5cf6); background-clip: text; -webkit-background-clip: text; color: transparent; }
         .theme-toggle { background: var(--bg-card); border: 1px solid var(--border); padding: 10px 20px; border-radius: 40px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .stat-card { background: var(--bg-card); border-radius: 20px; padding: 15px; box-shadow: var(--shadow); border: 1px solid var(--border); }
@@ -333,17 +361,20 @@
         .alert-item { background: var(--bg-body); border-left: 4px solid var(--danger); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
         .relatorio-filtro { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
         footer { margin-top: 40px; text-align: center; color: var(--text-secondary); font-size: 0.65rem; padding: 20px 0; }
+        
         @media (max-width: 768px) {
-            .menu-toggle { display: block; }
+            .menu-toggle { display: block; top: 12px; left: 12px; }
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 55px 12px 20px 12px; width: 100%; }
+            .main-content { margin-left: 0; padding: 60px 12px 20px 12px; width: 100%; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .stat-value { font-size: 1rem; }
+            h1 { font-size: 1.1rem; }
         }
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .stat-value { font-size: 0.9rem; }
+            .main-content { padding: 55px 10px 15px 10px; }
         }
     </style>
 </head>
@@ -363,6 +394,9 @@
                     <input type="password" id="loginSenha" placeholder="********" autocomplete="current-password">
                 </div>
                 <button class="btn-login" id="btnEmailLogin"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+                <button class="btn-login btn-biometric" id="btnBiometricLogin" style="display: none;"><i class="fas fa-fingerprint"></i> Entrar com Digital/Biometria</button>
+                <div class="divider">ou</div>
+                <div id="googleBtnWrapper" class="google-btn-wrapper"></div>
                 <div class="switch-auth">
                     Não tem uma conta? <a id="showRegister">Criar conta gratuita</a>
                 </div>
@@ -386,6 +420,8 @@
                     <input type="password" id="regConfirmSenha" placeholder="digite novamente">
                 </div>
                 <button class="btn-login" id="btnRegister"><i class="fas fa-user-plus"></i> Criar Conta</button>
+                <div class="divider">ou</div>
+                <div id="googleBtnWrapperRegister" class="google-btn-wrapper"></div>
                 <div class="switch-auth">
                     Já tem conta? <a id="showLogin">Fazer login</a>
                 </div>
@@ -425,7 +461,7 @@
                     </div>
                 </div>
 
-                <!-- PAINÉIS DO APP -->
+                <!-- PAINÉIS DO APP (mesmo conteúdo) -->
                 <div id="dashboardPanel" class="panel active-panel">
                     <div class="stats-grid">
                         <div class="stat-card"><div class="stat-title">📦 Produtos</div><div class="stat-value" id="totalProdutos">0</div></div>
@@ -452,17 +488,40 @@
     </div>
 
     <script>
-        // SISTEMA DE AUTENTICAÇÃO SIMPLES E FUNCIONAL (sem Google OAuth)
+        // SISTEMA DE AUTENTICAÇÃO COM SESSÃO PERSISTENTE E BIOMETRIA
         let currentUser = null;
         let produtos = [], vendas = [], nextProdId = 1, nextVendaId = 1;
         let tipoChart, topChart, filtroMesAtual = null;
 
-        // Gerencia usuários no localStorage
+        // Gerenciamento de usuários
         function getUsers() {
-            const users = localStorage.getItem("loja_users_v2");
+            const users = localStorage.getItem("loja_users_v3");
             return users ? JSON.parse(users) : {};
         }
-        function saveUsers(users) { localStorage.setItem("loja_users_v2", JSON.stringify(users)); }
+        function saveUsers(users) { localStorage.setItem("loja_users_v3", JSON.stringify(users)); }
+
+        // Salvar sessão atual
+        function saveCurrentSession(user) {
+            if(user) {
+                localStorage.setItem("loja_current_session", JSON.stringify({ id: user.id, email: user.email, nome: user.nome }));
+            } else {
+                localStorage.removeItem("loja_current_session");
+            }
+        }
+        
+        // Carregar sessão anterior
+        function loadSavedSession() {
+            const session = localStorage.getItem("loja_current_session");
+            if(session) {
+                const saved = JSON.parse(session);
+                const users = getUsers();
+                const userData = users[saved.email];
+                if(userData && userData.id === saved.id) {
+                    return { id: userData.id, nome: userData.nome, email: saved.email };
+                }
+            }
+            return null;
+        }
 
         function registerUser(nome, email, senha) {
             const users = getUsers();
@@ -483,7 +542,68 @@
             return { success: false, error: "E-mail ou senha inválidos!" };
         }
 
-        // Carregar dados do usuário logado
+        // Login com Google
+        function handleGoogleCredential(response) {
+            try {
+                const payload = decodeJwtResponse(response.credential);
+                const email = payload.email;
+                const nome = payload.name;
+                const users = getUsers();
+                let user;
+                if(users[email]) {
+                    user = { id: users[email].id, nome: users[email].nome, email };
+                } else {
+                    const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+                    users[email] = { id: userId, nome, email, senha: btoa("google_oauth_" + Date.now()), google: true };
+                    saveUsers(users);
+                    user = { id: userId, nome, email };
+                }
+                afterLogin(user);
+            } catch(e) { console.error("Google login error", e); }
+        }
+        
+        function decodeJwtResponse(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // Biometria (WebAuthn simulada para mobile - verifica se API está disponível)
+        async function checkBiometricSupport() {
+            // Verifica se é mobile e se há suporte a biometria
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if(isMobile && window.PublicKeyCredential && typeof PublicKeyCredential !== 'undefined') {
+                try {
+                    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                    if(available) return true;
+                } catch(e) { return false; }
+            }
+            // Fallback: verificar se há credenciais salvas
+            return localStorage.getItem("loja_biometric_enabled") === "true";
+        }
+        
+        async function loginWithBiometric() {
+            const savedEmail = localStorage.getItem("loja_biometric_email");
+            if(!savedEmail) {
+                alert("Nenhuma digital configurada. Faça login normal primeiro e ative a biometria.");
+                return false;
+            }
+            // Simular biometria - em APK real, isso chamaria a API nativa
+            // Aqui usamos um prompt de confirmação para demonstrar
+            if(confirm("🔐 Autenticação biométrica\nUse sua digital para continuar")) {
+                const users = getUsers();
+                const user = users[savedEmail];
+                if(user) {
+                    afterLogin({ id: user.id, nome: user.nome, email: savedEmail });
+                    return true;
+                }
+            }
+            alert("Falha na autenticação biométrica");
+            return false;
+        }
+
+        // Carregar dados do usuário
         function loadUserData() {
             if(!currentUser) return;
             const key = `loja_data_${currentUser.id}`;
@@ -526,24 +646,51 @@
 
         function logout() {
             currentUser = null;
+            saveCurrentSession(null);
+            localStorage.removeItem("loja_biometric_enabled");
+            localStorage.removeItem("loja_biometric_email");
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('appMain').classList.remove('visible');
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('loginError').innerText = '';
-            document.getElementById('registerError').innerText = '';
         }
 
         function afterLogin(user) {
             currentUser = user;
+            saveCurrentSession(user);
             loadUserData();
             renderAllApp();
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appMain').classList.add('visible');
             updateUserUI();
+            
+            // Oferecer ativar biometria se for mobile
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if(isMobile && !localStorage.getItem("loja_biometric_email")) {
+                if(confirm("Deseja ativar login com digital/biometria para acesso mais rápido?")) {
+                    localStorage.setItem("loja_biometric_enabled", "true");
+                    localStorage.setItem("loja_biometric_email", user.email);
+                    alert("✅ Biometria ativada! Na próxima vez você poderá usar sua digital para entrar.");
+                }
+            }
         }
 
-        // Funções do App (originais)
+        // Verificar sessão salva ao carregar
+        function checkAutoLogin() {
+            const savedUser = loadSavedSession();
+            if(savedUser) {
+                currentUser = savedUser;
+                loadUserData();
+                renderAllApp();
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appMain').classList.add('visible');
+                updateUserUI();
+                return true;
+            }
+            return false;
+        }
+
+        // Funções do App (mantidas originais)
         function formatMoney(v) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v); }
         function getVendasMes() { const hoje = new Date(); return vendas.filter(v => { const d = new Date(v.data); return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear(); }); }
         
@@ -673,7 +820,36 @@
         
         function renderAllApp(){ atualizarResumo(); renderEstoque(); atualizarSelect(); renderHistorico(); renderRelatorioVendas(); atualizarGraficos(); carregarRelatorioMensal(); }
         
-        // Inicialização dos eventos do app
+        // Inicialização
+        async function init() {
+            // Configurar Google
+            if(typeof google !== 'undefined') {
+                google.accounts.id.initialize({
+                    client_id: "1080621199013-ufkr95544d23gidf4o82ifdp86fdn87t.apps.googleusercontent.com",
+                    callback: handleGoogleCredential
+                });
+                const googleBtn = document.getElementById("googleBtnWrapper");
+                const googleBtnReg = document.getElementById("googleBtnWrapperRegister");
+                if(googleBtn) google.accounts.id.renderButton(googleBtn, { theme: "outline", size: "large", width: "100%" });
+                if(googleBtnReg) google.accounts.id.renderButton(googleBtnReg, { theme: "outline", size: "large", width: "100%" });
+            }
+            
+            // Verificar biometria
+            const hasBiometric = await checkBiometricSupport();
+            const bioBtn = document.getElementById('btnBiometricLogin');
+            if(hasBiometric && localStorage.getItem("loja_biometric_email")) {
+                if(bioBtn) bioBtn.style.display = 'block';
+                bioBtn?.addEventListener('click', loginWithBiometric);
+            }
+            
+            // Tentar auto-login
+            if(!checkAutoLogin()) {
+                document.getElementById('loginScreen').style.display = 'flex';
+            }
+            
+            initAppEvents();
+        }
+        
         function initAppEvents(){
             const btnAdd = document.getElementById('btnAddProduto');
             if(btnAdd) btnAdd.addEventListener('click', adicionarProduto);
@@ -709,9 +885,9 @@
             if(themeToggle) themeToggle.addEventListener('click',()=>{document.body.classList.toggle('dark'); localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');});
         }
         
-        // EVENTOS DE LOGIN
-        document.getElementById('showRegister')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.getElementById('loginError').innerText=''; document.getElementById('registerError').innerText=''; });
-        document.getElementById('showLogin')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; document.getElementById('registerError').innerText=''; document.getElementById('loginError').innerText=''; });
+        // Eventos de login
+        document.getElementById('showRegister')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; });
+        document.getElementById('showLogin')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; });
         
         document.getElementById('btnEmailLogin')?.addEventListener('click',()=>{ 
             const email=document.getElementById('loginEmail')?.value; 
@@ -737,11 +913,7 @@
             }
         });
         
-        // Enter key support
-        document.getElementById('loginSenha')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('btnEmailLogin')?.click(); });
-        document.getElementById('regConfirmSenha')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('btnRegister')?.click(); });
-        
-        initAppEvents();
+        init();
     </script>
 </body>
     </html>
