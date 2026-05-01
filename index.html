@@ -45,34 +45,65 @@
             --backdrop-bg: rgba(0,0,0,0.6);
             --menu-icon-color: #ffffff;
         }
+        
+        /* TELA DE LOGIN REDESIGNADA */
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-gradient); display: flex; align-items: center;
-            justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
+            justify-content: center; z-index: 1000;
         }
         .login-card {
-            background: var(--card-bg); border-radius: 40px; padding: 40px;
-            width: 90%; max-width: 460px; box-shadow: var(--shadow-md);
+            background: var(--card-bg); border-radius: 48px; padding: 48px 40px;
+            width: 90%; max-width: 440px; box-shadow: var(--shadow-md);
             border: 1px solid var(--border-color);
+            text-align: center;
         }
         .login-card h2 {
             font-size: 2rem; font-weight: 700;
             background: linear-gradient(135deg, var(--primary), var(--info));
             -webkit-background-clip: text; background-clip: text; color: transparent;
-            text-align: center; margin-bottom: 24px;
+            margin-bottom: 32px;
         }
-        .login-card input {
-            width: 100%; padding: 14px 18px; margin: 12px 0;
+        .login-card h2 i { margin-right: 12px; }
+        .login-card .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .login-card .input-group label {
+            display: block; margin-bottom: 8px; font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .login-card .input-group input {
+            width: 100%; padding: 14px 18px;
             border-radius: 60px; border: 1px solid var(--border-color);
             background: var(--card-bg); color: var(--text-color);
+            font-size: 1rem; transition: 0.2s;
+        }
+        .login-card .input-group input:focus {
+            outline: none; border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
         }
         .login-card button {
             width: 100%; padding: 14px; background: var(--primary);
             color: white; font-weight: 600; border: none;
             border-radius: 60px; cursor: pointer; font-size: 1rem;
+            margin-top: 12px; transition: 0.2s;
         }
-        .code-field { display: none; margin-top: 12px; }
-        .code-field.visible { display: block; }
+        .login-card button:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .login-card .register-link {
+            margin-top: 24px; padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .login-card .register-link span {
+            color: var(--primary); cursor: pointer; font-weight: 600;
+            transition: 0.2s;
+        }
+        .login-card .register-link span:hover { text-decoration: underline; }
+        .login-card .login-message {
+            margin-top: 16px; font-size: 0.85rem;
+            color: var(--danger);
+        }
+        
         .app-container { display: none; }
         .app-container.visible { display: block; }
         .main-header {
@@ -193,24 +224,57 @@
             body { padding: 16px; }
             .main-header { flex-direction: column; }
             .right-area { justify-content: flex-end; }
+            .login-card { padding: 32px 24px; }
         }
     </style>
 </head>
 <body>
 
-<!-- Login -->
+<!-- TELA DE LOGIN REDESIGNADA -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
         <h2><i class="fas fa-store"></i> Loja Pro</h2>
-        <input type="text" id="loginName" placeholder="Nome completo">
-        <input type="email" id="loginEmail" placeholder="E-mail">
-        <input type="password" id="loginPassword" placeholder="Senha">
-        <div id="codeField" class="code-field">
-            <input type="text" id="verificationCode" placeholder="Código de 6 dígitos">
+        <div class="input-group">
+            <label><i class="fas fa-envelope"></i> E-mail</label>
+            <input type="email" id="loginEmail" placeholder="seu@email.com">
         </div>
-        <button id="doLoginBtn">Enviar código</button>
-        <div id="loginMessage" style="margin-top:16px;"></div>
-        <div style="text-align:center; margin-top:20px;"><i class="fas fa-envelope"></i> Simulação: código via alerta</div>
+        <div class="input-group">
+            <label><i class="fas fa-lock"></i> Senha</label>
+            <input type="password" id="loginPassword" placeholder="••••••">
+        </div>
+        <button id="doLoginBtn">Entrar</button>
+        <div class="register-link">
+            Não tem uma conta? <span id="showRegisterBtn">Cadastre-se</span>
+        </div>
+        <div id="loginMessage" class="login-message"></div>
+    </div>
+</div>
+
+<!-- TELA DE CADASTRO (inicialmente oculta) -->
+<div id="registerOverlay" class="login-overlay" style="display: none;">
+    <div class="login-card">
+        <h2><i class="fas fa-user-plus"></i> Criar Conta</h2>
+        <div class="input-group">
+            <label><i class="fas fa-user"></i> Nome</label>
+            <input type="text" id="regName" placeholder="Seu nome completo">
+        </div>
+        <div class="input-group">
+            <label><i class="fas fa-envelope"></i> E-mail</label>
+            <input type="email" id="regEmail" placeholder="seu@email.com">
+        </div>
+        <div class="input-group">
+            <label><i class="fas fa-lock"></i> Senha</label>
+            <input type="password" id="regPassword" placeholder="Mínimo 3 caracteres">
+        </div>
+        <div class="input-group">
+            <label><i class="fas fa-check-circle"></i> Confirmar Senha</label>
+            <input type="password" id="regConfirmPassword" placeholder="Digite a senha novamente">
+        </div>
+        <button id="doRegisterBtn">Cadastrar</button>
+        <div class="register-link">
+            Já tem uma conta? <span id="showLoginBtn">Faça login</span>
+        </div>
+        <div id="registerMessage" class="login-message"></div>
     </div>
 </div>
 
@@ -272,8 +336,7 @@
         saveAll();
     }
     
-    // Vendas iniciais com cálculo correto do total
-    if (vendas.length === 0) {
+    if (vendas.length === 0 && produtos.length > 0) {
         const prod1 = produtos.find(p => p.id === 1);
         const prod2 = produtos.find(p => p.id === 2);
         vendas = [
@@ -291,55 +354,129 @@
         saveAll();
     }
 
-    // Login
-    let loginStep = 1, pendingCode = null, pendingUserData = null;
+    // Elementos de tela
     const loginOverlay = document.getElementById('loginOverlay');
+    const registerOverlay = document.getElementById('registerOverlay');
     const appContainer = document.getElementById('appContainer');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
     const doLoginBtn = document.getElementById('doLoginBtn');
-    const loginMsg = document.getElementById('loginMessage');
-    const codeField = document.getElementById('codeField');
+    const loginMessage = document.getElementById('loginMessage');
+    const showRegisterBtn = document.getElementById('showRegisterBtn');
+    const showLoginBtn = document.getElementById('showLoginBtn');
+    const doRegisterBtn = document.getElementById('doRegisterBtn');
+    const regName = document.getElementById('regName');
+    const regEmail = document.getElementById('regEmail');
+    const regPassword = document.getElementById('regPassword');
+    const regConfirmPassword = document.getElementById('regConfirmPassword');
+    const registerMessage = document.getElementById('registerMessage');
 
+    // Mostrar tela de cadastro
+    showRegisterBtn.addEventListener('click', () => {
+        loginOverlay.style.display = 'none';
+        registerOverlay.style.display = 'flex';
+        loginMessage.innerText = '';
+        registerMessage.innerText = '';
+    });
+
+    // Mostrar tela de login
+    showLoginBtn.addEventListener('click', () => {
+        registerOverlay.style.display = 'none';
+        loginOverlay.style.display = 'flex';
+        loginMessage.innerText = '';
+        registerMessage.innerText = '';
+    });
+
+    // Função de login
+    function doLogin(email, password) {
+        if (!email || !password) {
+            loginMessage.innerText = "Preencha todos os campos";
+            return false;
+        }
+        const user = users.find(u => u.email === email);
+        if (!user) {
+            loginMessage.innerText = "E-mail não cadastrado";
+            return false;
+        }
+        if (user.password !== password) {
+            loginMessage.innerText = "Senha incorreta";
+            return false;
+        }
+        return user;
+    }
+
+    // Função de registro
+    function doRegister(name, email, password, confirmPassword) {
+        if (!name || !email || !password || !confirmPassword) {
+            registerMessage.innerText = "Preencha todos os campos";
+            return false;
+        }
+        if (password.length < 3) {
+            registerMessage.innerText = "A senha deve ter pelo menos 3 caracteres";
+            return false;
+        }
+        if (password !== confirmPassword) {
+            registerMessage.innerText = "As senhas não coincidem";
+            return false;
+        }
+        if (users.find(u => u.email === email)) {
+            registerMessage.innerText = "Este e-mail já está cadastrado";
+            return false;
+        }
+        const newUser = { name, email, password };
+        users.push(newUser);
+        saveAll();
+        return newUser;
+    }
+
+    // Evento de login
     doLoginBtn.addEventListener('click', () => {
-        if (loginStep === 1) {
-            const name = document.getElementById('loginName').value.trim();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            if (!name || !email || !password) { loginMsg.innerText = "Preencha todos os campos"; return; }
-            let user = users.find(u => u.email === email);
-            if (user && user.password !== password) { loginMsg.innerText = "Senha incorreta"; return; }
-            if (!user) {
-                user = { name, email, password };
-                users.push(user);
-                saveAll();
-            }
-            pendingCode = Math.floor(100000 + Math.random() * 900000).toString();
-            pendingUserData = user;
-            alert(`📧 Código: ${pendingCode}`);
-            loginMsg.innerText = `Código enviado para ${email}`;
-            codeField.classList.add('visible');
-            doLoginBtn.innerText = "Verificar código";
-            loginStep = 2;
-        } else {
-            const code = document.getElementById('verificationCode').value.trim();
-            if (code === pendingCode) {
-                currentSession = { name: pendingUserData.name, email: pendingUserData.email, avatar: pendingUserData.name.charAt(0).toUpperCase() };
-                saveAll();
-                document.getElementById('userAvatar').innerText = currentSession.avatar;
-                document.getElementById('userNameDisplay').innerText = currentSession.name;
-                loginOverlay.style.display = 'none';
-                appContainer.classList.add('visible');
-                applyTheme();
-                // Força a abertura do dashboard
-                setTimeout(() => {
-                    renderDashboard();
-                }, 100);
-                closeSidebar();
-            } else {
-                loginMsg.innerText = "Código inválido";
-            }
+        const email = loginEmail.value.trim();
+        const password = loginPassword.value.trim();
+        const user = doLogin(email, password);
+        if (user) {
+            currentSession = { name: user.name, email: user.email, avatar: user.name.charAt(0).toUpperCase() };
+            saveAll();
+            document.getElementById('userAvatar').innerText = currentSession.avatar;
+            document.getElementById('userNameDisplay').innerText = currentSession.name;
+            loginOverlay.style.display = 'none';
+            appContainer.classList.add('visible');
+            applyTheme();
+            renderDashboard();
+            closeSidebar();
         }
     });
 
+    // Evento de registro
+    doRegisterBtn.addEventListener('click', () => {
+        const name = regName.value.trim();
+        const email = regEmail.value.trim();
+        const password = regPassword.value.trim();
+        const confirmPassword = regConfirmPassword.value.trim();
+        const newUser = doRegister(name, email, password, confirmPassword);
+        if (newUser) {
+            registerMessage.innerText = "Cadastro realizado com sucesso! Faça login.";
+            registerMessage.style.color = "var(--success)";
+            setTimeout(() => {
+                registerOverlay.style.display = 'none';
+                loginOverlay.style.display = 'flex';
+                loginEmail.value = email;
+                loginPassword.value = '';
+                registerMessage.innerText = '';
+                registerMessage.style.color = "";
+            }, 1500);
+        }
+    });
+
+    // Permitir Enter nos campos de login
+    loginEmail.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
+    loginPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
+    regName.addEventListener('keypress', (e) => { if (e.key === 'Enter') doRegisterBtn.click(); });
+    regEmail.addEventListener('keypress', (e) => { if (e.key === 'Enter') doRegisterBtn.click(); });
+    regPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') doRegisterBtn.click(); });
+    regConfirmPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') doRegisterBtn.click(); });
+
+    // Verificar sessão existente
     if (currentSession) {
         loginOverlay.style.display = 'none';
         appContainer.classList.add('visible');
@@ -349,18 +486,16 @@
         renderDashboard();
     }
 
+    // Logout
     document.getElementById('logoutBtn').addEventListener('click', () => {
         currentSession = null;
         saveAll();
-        loginStep = 1;
-        document.getElementById('loginName').value = '';
-        document.getElementById('loginEmail').value = '';
-        document.getElementById('loginPassword').value = '';
-        document.getElementById('verificationCode').value = '';
-        codeField.classList.remove('visible');
-        doLoginBtn.innerText = "Enviar código";
-        loginMsg.innerText = '';
+        loginEmail.value = '';
+        loginPassword.value = '';
+        loginMessage.innerText = '';
+        registerMessage.innerText = '';
         loginOverlay.style.display = 'flex';
+        registerOverlay.style.display = 'none';
         appContainer.classList.remove('visible');
     });
 
@@ -387,7 +522,7 @@
     });
     if(backdrop) backdrop.addEventListener('click', closeSidebar);
     
-    // Função global para navegação - CORRIGIDA
+    // Navegação
     window.navigateTo = function(view) {
         closeSidebar();
         if(view === 'dashboard') renderDashboard();
@@ -400,7 +535,6 @@
         else if(view === 'clientes') renderClientes();
     };
     
-    // Adiciona eventos aos itens do menu
     document.querySelectorAll('.sidebar li').forEach(li => {
         const view = li.getAttribute('data-view');
         if(view) {
@@ -542,11 +676,7 @@
     
     function renderDashboard() {
         const main = document.getElementById('mainContent');
-        
-        // Cálculo do faturamento total
         const totalFaturamento = vendas.reduce((s,v) => s + v.total, 0);
-        
-        // CÁLCULO CORRETO DO LUCRO LÍQUIDO
         let lucroTotal = 0;
         for (const venda of vendas) {
             const produto = produtos.find(p => p.id === venda.produtoId);
@@ -555,10 +685,8 @@
                 lucroTotal += (venda.total - custoTotal);
             }
         }
-        
         const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
         
-        // Dados para gráficos
         const vendasPorMes = {};
         vendas.forEach(v => {
             const mes = new Date(v.data).toLocaleString('default', { month: 'short', year:'numeric' });
@@ -585,11 +713,11 @@
                 <div class="chart-box"><canvas id="topProductsChart"></canvas></div>
             </div>
             <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
-             table<thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
+            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
             ${[...vendas].reverse().slice(0,5).map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>${formatarMoeda(v.total)}</td></tr>`;
+                return `<tr><tr>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>${formatarMoeda(v.total)}</td></tr>`;
             }).join('')}
             </tbody></table></div>
         `;
@@ -615,22 +743,21 @@
                 <div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
                 <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
                 <div style="overflow-x:auto">
-                    <table>
-                        <thead><tr><th>Produto</th><th>Código Barras</th><th>Compra</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Entrada</th><th>Ações</th></tr></thead>
-                        <tbody>${produtos.map(p => `
-                            <tr>
-                                <td><strong>${p.nome}</strong><br><small style="opacity:0.7;">${(p.descricao || '').substring(0,30)}${(p.descricao || '').length>30 ? '...' : ''}</small></td>
-                                <td>${p.codigoBarras || '-'}</td>
-                                <td>${formatarMoeda(p.precoCompra)}</td>
-                                <td>${formatarMoeda(p.precoVenda)}</td>
-                                <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
-                                <td>${p.estoqueMin}</td>
-                                <td>${p.estoqueMax}</td>
-                                <td>${p.dataEntrada ? new Date(p.dataEntrada).toLocaleDateString() : '-'}</td>
-                                <td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td>
-                            </tr>`).join('')}
-                        </tbody>
-                    </table>
+                    85 <thead> <tr> <th>Produto</th><th>Código Barras</th><th>Compra</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Entrada</th><th>Ações</th> </tr> </thead>
+                    <tbody>${produtos.map(p => `
+                        <tr>
+                            <td><strong>${p.nome}</strong><br><small style="opacity:0.7;">${(p.descricao || '').substring(0,30)}${(p.descricao || '').length>30 ? '...' : ''}</small></td>
+                            <td>${p.codigoBarras || '-'}</td>
+                            <td>${formatarMoeda(p.precoCompra)}</td>
+                            <td>${formatarMoeda(p.precoVenda)}</td>
+                            <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
+                            <td>${p.estoqueMin}</td>
+                            <td>${p.estoqueMax}</td>
+                            <td>${p.dataEntrada ? new Date(p.dataEntrada).toLocaleDateString() : '-'}</td>
+                            <td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>
                 </div>
             </div>
         `;
@@ -729,19 +856,19 @@
         const main = document.getElementById('mainContent');
         const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
         main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-chart-simple"></i> Relatório de Vendas</div>
-             table<thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
-            ${vendas.map(v => {
+             table<thead> <tr> <th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th> </tr> </thead>
+            <tbody>${vendas.map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
                 return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente?cliente.nome:'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento}</td><td>${formatarMoeda(v.total)}</td></tr>`;
             }).join('')}
-            </tbody></table><div style="margin-top:20px;"><strong>Total Geral: ${formatarMoeda(totalGeral)}</strong></div></div>`;
+            </tbody> </table> <div style="margin-top:20px;"><strong>Total Geral: ${formatarMoeda(totalGeral)}</strong></div></div>`;
     }
 
     function renderRelatorioMensal() {
         const porMes = {};
         vendas.forEach(v => { const d = new Date(v.data); const chave = `${d.getMonth()+1}/${d.getFullYear()}`; porMes[chave] = (porMes[chave]||0)+v.total; });
-        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div> table<thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
+        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div> <table><thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
         for(let [mes, total] of Object.entries(porMes)) html += `<tr><td>${mes}</td><td>${formatarMoeda(total)}</td></tr>`;
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
@@ -763,7 +890,7 @@
 
     function renderClientes() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button> table<thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button> <table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
         document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome do cliente:'); if(nome){ const email = prompt('E-mail (opcional):'); const telefone = prompt('Telefone (opcional):'); clientes.push({ id:Date.now(), nome, email:email||'', telefone:telefone||'' }); saveAll(); renderClientes(); } });
         document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover cliente?')){ const id = parseInt(e.target.closest('button').dataset.id); clientes = clientes.filter(c => c.id !== id); saveAll(); renderClientes(); } }));
     }
