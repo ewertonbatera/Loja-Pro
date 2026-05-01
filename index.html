@@ -4,17 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Loja Pro - Gestão Inteligente Premium</title>
-    <!-- Google Fonts + Font Awesome + Chart.js -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-gradient);
@@ -22,8 +16,6 @@
             padding: 24px;
             transition: background 0.3s, color 0.2s;
         }
-
-        /* Temas premium */
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%);
             --card-bg: rgba(255,255,255,0.96);
@@ -37,12 +29,11 @@
             --danger: #ef4444;
             --warning: #f59e0b;
             --info: #8b5cf6;
-            --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
-            --shadow-md: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02);
+            --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.05);
+            --shadow-md: 0 20px 25px -5px rgba(0,0,0,0.05);
             --backdrop-bg: rgba(0,0,0,0.3);
             --menu-icon-color: #1e293b;
         }
-
         body.dark {
             --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             --card-bg: #1e293b;
@@ -54,148 +45,72 @@
             --backdrop-bg: rgba(0,0,0,0.6);
             --menu-icon-color: #ffffff;
         }
-
-        /* Login premium */
         .login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-gradient); display: flex; align-items: center;
+            justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
         }
         .login-card {
-            background: var(--card-bg);
-            border-radius: 40px;
-            padding: 40px;
-            width: 90%;
-            max-width: 460px;
-            box-shadow: var(--shadow-md);
+            background: var(--card-bg); border-radius: 40px; padding: 40px;
+            width: 90%; max-width: 460px; box-shadow: var(--shadow-md);
             border: 1px solid var(--border-color);
         }
         .login-card h2 {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 2rem; font-weight: 700;
             background: linear-gradient(135deg, var(--primary), var(--info));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-align: center;
-            margin-bottom: 24px;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            text-align: center; margin-bottom: 24px;
         }
         .login-card input {
-            width: 100%;
-            padding: 14px 18px;
-            margin: 12px 0;
-            border-radius: 60px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-color);
-            font-family: 'Inter', sans-serif;
-        }
-        .login-card input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+            width: 100%; padding: 14px 18px; margin: 12px 0;
+            border-radius: 60px; border: 1px solid var(--border-color);
+            background: var(--card-bg); color: var(--text-color);
         }
         .login-card button {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-            border: none;
-            border-radius: 60px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
+            width: 100%; padding: 14px; background: var(--primary);
+            color: white; font-weight: 600; border: none;
+            border-radius: 60px; cursor: pointer; font-size: 1rem;
         }
-        .login-card button:hover { background: var(--primary-dark); transform: translateY(-2px); }
         .code-field { display: none; margin-top: 12px; }
         .code-field.visible { display: block; }
-
-        /* App principal */
         .app-container { display: none; }
         .app-container.visible { display: block; }
-
-        /* Header */
         .main-header {
-            background: var(--header-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 12px 28px;
-            margin-bottom: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            box-shadow: var(--shadow-sm);
+            background: var(--header-bg); backdrop-filter: blur(12px);
+            border-radius: 60px; padding: 12px 28px; margin-bottom: 32px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px; box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-color);
         }
         .menu-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            font-size: 24px;
-            cursor: pointer;
-            width: 48px;
-            height: 48px;
-            border-radius: 40px;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--menu-icon-color);
-        }
-        .menu-btn i {
-            pointer-events: none; /* Garante que o clique seja no botão, não no ícone */
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            font-size: 24px; cursor: pointer; width: 48px; height: 48px;
+            border-radius: 40px; display: flex; align-items: center;
+            justify-content: center; color: var(--menu-icon-color);
         }
         .page-title {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.4rem; font-weight: 700;
             background: linear-gradient(135deg, var(--primary), var(--info));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            flex-grow: 1;
-            text-align: center;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            flex-grow: 1; text-align: center;
         }
         .right-area { display: flex; gap: 16px; align-items: center; }
         .user-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--card-bg);
-            padding: 6px 20px 6px 12px;
-            border-radius: 60px;
-            border: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 12px;
+            background: var(--card-bg); padding: 6px 20px 6px 12px;
+            border-radius: 60px; border: 1px solid var(--border-color);
         }
         .avatar {
             width: 42px; height: 42px;
             background: linear-gradient(135deg, var(--primary), var(--info));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; color: white; font-weight: bold;
         }
         .theme-toggle, .logout-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 10px 18px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 500;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 10px 18px; border-radius: 40px; cursor: pointer;
         }
         .logout-btn { background: var(--danger); color: white; border: none; }
-
-        /* Sidebar off-canvas */
         .sidebar-backdrop {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--backdrop-bg); z-index: 98; display: none;
@@ -211,128 +126,63 @@
         .sidebar.open { transform: translateX(0); }
         .sidebar ul { list-style: none; padding: 0 20px; }
         .sidebar li {
-            margin: 12px 0;
-            padding: 14px 20px;
-            border-radius: 60px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-size: 1rem;
+            margin: 12px 0; padding: 14px 20px; border-radius: 60px;
+            cursor: pointer; display: flex; align-items: center; gap: 14px;
         }
-        .sidebar li:hover { background: var(--primary); color: white; transform: translateX(8px); }
-        .sidebar li i { width: 24px; }
-
-        /* Conteúdo principal */
+        .sidebar li:hover { background: var(--primary); color: white; }
         .main-content { min-height: 600px; }
         .card-premium {
-            background: var(--card-bg);
-            border-radius: 32px;
-            padding: 28px;
-            margin-bottom: 28px;
-            box-shadow: var(--shadow-sm);
+            background: var(--card-bg); border-radius: 32px; padding: 28px;
+            margin-bottom: 28px; box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-color);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .card-premium:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
         .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            font-size: 1.5rem; font-weight: 600; margin-bottom: 20px;
+            display: flex; align-items: center; gap: 12px;
         }
         .grid-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px; margin-bottom: 32px;
         }
         .stat-card {
-            background: var(--card-bg);
-            border-radius: 28px;
-            padding: 24px;
-            text-align: center;
-            border: 1px solid var(--border-color);
+            background: var(--card-bg); border-radius: 28px; padding: 24px;
+            text-align: center; border: 1px solid var(--border-color);
         }
-        .stat-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 12px; }
-        .stat-card h3 { font-size: 1rem; font-weight: 500; opacity: 0.8; }
         .stat-card p { font-size: 2rem; font-weight: 700; margin-top: 8px; }
-        .charts-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-        .chart-box {
-            flex: 1;
-            min-width: 280px;
-            background: var(--card-bg);
-            border-radius: 28px;
-            padding: 20px;
-            border: 1px solid var(--border-color);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        th { font-weight: 600; color: var(--primary); }
-        button, input, select {
-            font-family: 'Inter', sans-serif;
-        }
+        .charts-row { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; }
+        .chart-box { flex: 1; background: var(--card-bg); border-radius: 28px; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--primary); }
         .btn-primary {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
+            background: var(--primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 40px; cursor: pointer;
         }
-        .btn-primary:hover { background: var(--primary-dark); transform: scale(1.02); }
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 60px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 60px; font-size: 0.75rem; }
         .badge-success { background: var(--success); color: white; }
         .badge-warning { background: var(--warning); color: #1e293b; }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 60px;
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px; border-radius: 16px;
             border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-color);
+            background: var(--card-bg); color: var(--text-color);
         }
-        .flex-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
+        .modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: var(--backdrop-bg);
+            align-items: center; justify-content: center; z-index: 200;
         }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--card-bg); border-radius: 32px; padding: 32px;
+            width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+        }
+        .flex-row { display: flex; gap: 16px; flex-wrap: wrap; }
+        .flex-row .form-group { flex: 1; }
         @media (max-width: 700px) {
             body { padding: 16px; }
-            .main-header { flex-direction: column; align-items: stretch; }
+            .main-header { flex-direction: column; }
             .right-area { justify-content: flex-end; }
         }
     </style>
@@ -350,8 +200,8 @@
             <input type="text" id="verificationCode" placeholder="Código de 6 dígitos">
         </div>
         <button id="doLoginBtn">Enviar código</button>
-        <div id="loginMessage" class="login-message" style="margin-top:16px; font-size:0.8rem;"></div>
-        <div style="text-align:center; margin-top:20px; opacity:0.7;"><i class="fas fa-envelope"></i> Simulação: código via alerta</div>
+        <div id="loginMessage" style="margin-top:16px;"></div>
+        <div style="text-align:center; margin-top:20px;"><i class="fas fa-envelope"></i> Simulação: código via alerta</div>
     </div>
 </div>
 
@@ -382,12 +232,11 @@
 </div>
 
 <script>
-    // Função para formatar moeda no padrão brasileiro
     function formatarMoeda(valor) {
         return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // ---------- DADOS PERSISTENTES ----------
+    // Dados
     let users = JSON.parse(localStorage.getItem('lojapro_users')) || [];
     let produtos = JSON.parse(localStorage.getItem('lojapro_produtos')) || [];
     let vendas = JSON.parse(localStorage.getItem('lojapro_vendas')) || [];
@@ -403,13 +252,13 @@
         else localStorage.removeItem('lojapro_session');
     }
 
-    // Dados iniciais
+    // Produtos iniciais com novos campos
     if (produtos.length === 0) {
         produtos = [
-            { id: 1, nome: "Smartphone X", custo: 800, venda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40 },
-            { id: 2, nome: "Fone Bluetooth Pro", custo: 45, venda: 149, estoque: 15, estoqueMin: 5, estoqueMax: 60 },
-            { id: 3, nome: "Carregador Turbo", custo: 28, venda: 79, estoque: 3, estoqueMin: 4, estoqueMax: 30 },
-            { id: 4, nome: "Smartwatch", custo: 150, venda: 299, estoque: 6, estoqueMin: 2, estoqueMax: 25 }
+            { id: 1, nome: "Smartphone X", descricao: "Smartphone de última geração com 128GB", codigoBarras: "7891234567890", precoCompra: 800, precoVenda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40, dataEntrada: "2025-01-15" },
+            { id: 2, nome: "Fone Bluetooth Pro", descricao: "Fone com cancelamento de ruído", codigoBarras: "7891234567891", precoCompra: 45, precoVenda: 149, estoque: 15, estoqueMin: 5, estoqueMax: 60, dataEntrada: "2025-02-10" },
+            { id: 3, nome: "Carregador Turbo", descricao: "Carregador rápido 65W", codigoBarras: "7891234567892", precoCompra: 28, precoVenda: 79, estoque: 3, estoqueMin: 4, estoqueMax: 30, dataEntrada: "2025-01-20" },
+            { id: 4, nome: "Smartwatch", descricao: "Relógio inteligente com GPS", codigoBarras: "7891234567893", precoCompra: 150, precoVenda: 299, estoque: 6, estoqueMin: 2, estoqueMax: 25, dataEntrada: "2025-03-01" }
         ];
         saveAll();
     }
@@ -428,7 +277,7 @@
         saveAll();
     }
 
-    // ---------- LOGIN COM CÓDIGO ----------
+    // Login
     let loginStep = 1, pendingCode = null, pendingUserData = null;
     const loginOverlay = document.getElementById('loginOverlay');
     const appContainer = document.getElementById('appContainer');
@@ -451,7 +300,7 @@
             }
             pendingCode = Math.floor(100000 + Math.random() * 900000).toString();
             pendingUserData = user;
-            alert(`📧 Simulação: Seu código é ${pendingCode}`);
+            alert(`📧 Código: ${pendingCode}`);
             loginMsg.innerText = `Código enviado para ${email}`;
             codeField.classList.add('visible');
             doLoginBtn.innerText = "Verificar código";
@@ -497,67 +346,20 @@
         appContainer.classList.remove('visible');
     });
 
-    // ========== MENU SANDUÍCHE CORRIGIDO (COM X FUNCIONANDO 100%) ==========
+    // Menu sanduíche
     const menuToggle = document.getElementById('menuToggle');
     const sidebarEl = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
-    
-    function openSidebar() {
-        sidebarEl.classList.add('open');
-        backdrop.classList.add('active');
-        // Troca o ícone para X (fa-times)
-        if (menuToggle) {
-            menuToggle.innerHTML = '<i class="fas fa-times"></i>';
-        }
-    }
-    
-    function closeSidebar() {
-        sidebarEl.classList.remove('open');
-        backdrop.classList.remove('active');
-        // Troca o ícone para sanduíche (fa-bars)
-        if (menuToggle) {
-            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        }
-    }
-    
-    function toggleSidebar() {
-        if (sidebarEl.classList.contains('open')) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    }
-    
-    // Evento principal do botão do menu
-    if (menuToggle) {
-        // Remove qualquer listener anterior para evitar duplicação
-        const newMenuToggle = menuToggle.cloneNode(true);
-        menuToggle.parentNode.replaceChild(newMenuToggle, menuToggle);
-        const finalMenuToggle = document.getElementById('menuToggle');
-        
-        finalMenuToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleSidebar();
-        });
-    }
-    
-    // Fechar ao clicar no backdrop
-    if (backdrop) {
-        backdrop.addEventListener('click', closeSidebar);
-    }
-    
-    // Fechar ao clicar em um item do menu
+    function openSidebar() { sidebarEl.classList.add('open'); backdrop.classList.add('active'); if(menuToggle) menuToggle.innerHTML = '<i class="fas fa-times"></i>'; }
+    function closeSidebar() { sidebarEl.classList.remove('open'); backdrop.classList.remove('active'); if(menuToggle) menuToggle.innerHTML = '<i class="fas fa-bars"></i>'; }
+    function toggleSidebar() { if(sidebarEl.classList.contains('open')) closeSidebar(); else openSidebar(); }
+    if(menuToggle) menuToggle.addEventListener('click', toggleSidebar);
+    if(backdrop) backdrop.addEventListener('click', closeSidebar);
     document.querySelectorAll('.sidebar li').forEach(li => {
-        li.addEventListener('click', (e) => {
-            const view = li.getAttribute('data-view');
-            if(view) renderCurrentView(view);
-            closeSidebar();
-        });
+        li.addEventListener('click', () => { const view = li.getAttribute('data-view'); if(view) renderCurrentView(view); closeSidebar(); });
     });
-    // ===========================================
 
-    // Tema escuro/claro
+    // Tema
     const themeToggleBtn = document.getElementById('themeToggle');
     const body = document.body;
     function applyTheme() {
@@ -566,15 +368,122 @@
         else body.classList.remove('dark');
         themeToggleBtn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
-    themeToggleBtn.addEventListener('click', () => {
-        body.classList.toggle('dark');
-        const isDark = body.classList.contains('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        applyTheme();
-    });
+    themeToggleBtn.addEventListener('click', () => { body.classList.toggle('dark'); localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light'); applyTheme(); });
     applyTheme();
 
-    // ---------- RENDERIZAÇÃO DAS TELAS ----------
+    // Modal para cadastro/edição de produto (profissional)
+    let produtoModal = null;
+
+    function abrirModalProduto(produto = null) {
+        // Remove modal existente
+        if(produtoModal) produtoModal.remove();
+        
+        const isEditing = produto !== null;
+        const modalDiv = document.createElement('div');
+        modalDiv.className = 'modal active';
+        modalDiv.innerHTML = `
+            <div class="modal-content">
+                <h3 style="margin-bottom:24px;">${isEditing ? '✏️ Editar Produto' : '➕ Novo Produto'}</h3>
+                <div class="form-group">
+                    <label>Nome do Produto *</label>
+                    <input type="text" id="prodNome" value="${produto ? produto.nome : ''}" placeholder="Ex: Smartphone X">
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="prodDescricao" rows="3" placeholder="Descrição detalhada do produto...">${produto ? (produto.descricao || '') : ''}</textarea>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group">
+                        <label>Código de Barras</label>
+                        <input type="text" id="prodCodigoBarras" value="${produto ? (produto.codigoBarras || '') : ''}" placeholder="7891234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Entrada</label>
+                        <input type="date" id="prodDataEntrada" value="${produto ? (produto.dataEntrada || new Date().toISOString().slice(0,10)) : new Date().toISOString().slice(0,10)}">
+                    </div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group">
+                        <label>Preço de Compra (R$)</label>
+                        <input type="number" id="prodPrecoCompra" step="0.01" value="${produto ? produto.precoCompra : ''}" placeholder="0,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Preço de Venda (R$) *</label>
+                        <input type="number" id="prodPrecoVenda" step="0.01" value="${produto ? produto.precoVenda : ''}" placeholder="0,00">
+                    </div>
+                </div>
+                <div class="flex-row">
+                    <div class="form-group">
+                        <label>Estoque Atual</label>
+                        <input type="number" id="prodEstoque" value="${produto ? produto.estoque : '0'}" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque Mínimo</label>
+                        <input type="number" id="prodEstoqueMin" value="${produto ? produto.estoqueMin : '0'}" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque Máximo</label>
+                        <input type="number" id="prodEstoqueMax" value="${produto ? produto.estoqueMax : '0'}" placeholder="0">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button id="salvarProdutoBtn" class="btn-primary">💾 Salvar Produto</button>
+                    <button id="cancelarModalBtn" style="background: var(--danger); color: white; border: none; padding: 12px 24px; border-radius: 40px; cursor: pointer;">Cancelar</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalDiv);
+        produtoModal = modalDiv;
+        
+        // Eventos do modal
+        document.getElementById('salvarProdutoBtn').addEventListener('click', () => {
+            const nome = document.getElementById('prodNome').value.trim();
+            const descricao = document.getElementById('prodDescricao').value.trim();
+            const codigoBarras = document.getElementById('prodCodigoBarras').value.trim();
+            const dataEntrada = document.getElementById('prodDataEntrada').value;
+            const precoCompra = parseFloat(document.getElementById('prodPrecoCompra').value);
+            const precoVenda = parseFloat(document.getElementById('prodPrecoVenda').value);
+            const estoque = parseInt(document.getElementById('prodEstoque').value);
+            const estoqueMin = parseInt(document.getElementById('prodEstoqueMin').value);
+            const estoqueMax = parseInt(document.getElementById('prodEstoqueMax').value);
+            
+            if(!nome) { alert('Nome do produto é obrigatório!'); return; }
+            if(isNaN(precoVenda) || precoVenda <= 0) { alert('Preço de venda deve ser maior que zero!'); return; }
+            if(isNaN(estoque)) { alert('Estoque inválido!'); return; }
+            
+            if(isEditing) {
+                produto.nome = nome;
+                produto.descricao = descricao;
+                produto.codigoBarras = codigoBarras;
+                produto.dataEntrada = dataEntrada;
+                produto.precoCompra = precoCompra;
+                produto.precoVenda = precoVenda;
+                produto.estoque = estoque;
+                produto.estoqueMin = estoqueMin;
+                produto.estoqueMax = estoqueMax;
+            } else {
+                produtos.push({
+                    id: Date.now(),
+                    nome: nome,
+                    descricao: descricao,
+                    codigoBarras: codigoBarras,
+                    dataEntrada: dataEntrada,
+                    precoCompra: precoCompra,
+                    precoVenda: precoVenda,
+                    estoque: estoque,
+                    estoqueMin: estoqueMin,
+                    estoqueMax: estoqueMax
+                });
+            }
+            saveAll();
+            modalDiv.remove();
+            renderEstoque();
+        });
+        
+        document.getElementById('cancelarModalBtn').addEventListener('click', () => modalDiv.remove());
+    }
+
+    // Renderização das telas
     let salesChart = null, topProductsChart = null;
     function renderCurrentView(view) {
         if(view === 'dashboard') renderDashboard();
@@ -592,7 +501,7 @@
         const totalFaturamento = vendas.reduce((s,v)=>s+v.total,0);
         const lucroTotal = vendas.reduce((acc, v) => {
             const p = produtos.find(prod => prod.id === v.produtoId);
-            return acc + (p ? v.quantidade * (p.venda - p.custo) : 0);
+            return acc + (p ? v.quantidade * (p.precoVenda - p.precoCompra) : 0);
         }, 0);
         const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
         const vendasPorMes = {};
@@ -615,10 +524,7 @@
                 <div class="stat-card"><i class="fas fa-boxes"></i><h3>Produtos em Estoque</h3><p>${produtos.reduce((s,p)=>s+p.estoque,0)}</p></div>
                 <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p>${baixoEstoque}</p></div>
             </div>
-            <div class="charts-row">
-                <div class="chart-box"><canvas id="monthlySalesChart" width="400" height="250"></canvas></div>
-                <div class="chart-box"><canvas id="topProductsChart" width="400" height="250"></canvas></div>
-            </div>
+            <div class="charts-row"><div class="chart-box"><canvas id="monthlySalesChart"></canvas></div><div class="chart-box"><canvas id="topProductsChart"></canvas></div></div>
             <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
             <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
             ${[...vendas].reverse().slice(0,5).map(v => {
@@ -626,14 +532,14 @@
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
                 return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>${formatarMoeda(v.total)}</td></tr>`;
             }).join('')}
-            </tbody><table></div>
+            </tbody></table></div>
         `;
         setTimeout(() => {
             const ctx1 = document.getElementById('monthlySalesChart')?.getContext('2d');
             const ctx2 = document.getElementById('topProductsChart')?.getContext('2d');
             if(ctx1) {
                 if(salesChart) salesChart.destroy();
-                salesChart = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Faturamento (R$)', data: valores, backgroundColor: '#3b82f6', borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: true } });
+                salesChart = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Faturamento (R$)', data: valores, backgroundColor: '#3b82f6', borderRadius: 12 }] }, options: { responsive: true } });
             }
             if(ctx2) {
                 if(topProductsChart) topProductsChart.destroy();
@@ -644,40 +550,44 @@
 
     function renderEstoque() {
         const main = document.getElementById('mainContent');
-        const html = `
-            <div class="card-premium"><div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
-            <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
-            <div style="overflow-x:auto">${'</td><thead><tr><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody>' + produtos.map(p => `<tr><td>${p.nome}</td><td>${formatarMoeda(p.custo)}</td><td>${formatarMoeda(p.venda)}</td><td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td><td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>'}
-            </div></div>
+        main.innerHTML = `
+            <div class="card-premium">
+                <div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
+                <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
+                <div style="overflow-x:auto">
+                    <table>
+                        <thead><tr><th>Produto</th><th>Código Barras</th><th>Compra</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Entrada</th><th>Ações</th></tr></thead>
+                        <tbody>${produtos.map(p => `
+                            <tr>
+                                <td><strong>${p.nome}</strong><br><small style="opacity:0.7;">${(p.descricao || '').substring(0,30)}${(p.descricao || '').length>30 ? '...' : ''}</small></td>
+                                <td>${p.codigoBarras || '-'}</td>
+                                <td>${formatarMoeda(p.precoCompra)}</td>
+                                <td>${formatarMoeda(p.precoVenda)}</td>
+                                <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
+                                <td>${p.estoqueMin}</td>
+                                <td>${p.estoqueMax}</td>
+                                <td>${p.dataEntrada ? new Date(p.dataEntrada).toLocaleDateString() : '-'}</td>
+                                <td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td>
+                            </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         `;
-        main.innerHTML = html;
-        document.getElementById('novoProdutoBtn')?.addEventListener('click', () => openProdutoModal());
-        document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', (e) => openProdutoModal(parseInt(e.target.closest('button').dataset.id))));
+        document.getElementById('novoProdutoBtn')?.addEventListener('click', () => abrirModalProduto());
+        document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', (e) => {
+            const id = parseInt(e.target.closest('button').dataset.id);
+            const produto = produtos.find(p => p.id === id);
+            if(produto) abrirModalProduto(produto);
+        }));
         document.querySelectorAll('.delProd').forEach(btn => btn.addEventListener('click', (e) => {
             if(confirm('Excluir produto?')) {
-                produtos = produtos.filter(p => p.id != e.target.closest('button').dataset.id);
+                const id = parseInt(e.target.closest('button').dataset.id);
+                produtos = produtos.filter(p => p.id !== id);
                 saveAll();
                 renderEstoque();
             }
         }));
-    }
-    function openProdutoModal(id = null) {
-        const prod = id ? produtos.find(p => p.id===id) : { nome:'', custo:0, venda:0, estoque:0, estoqueMin:0, estoqueMax:0 };
-        const nome = prompt('Nome:', prod.nome);
-        if(!nome) return;
-        const custo = parseFloat(prompt('Custo (R$):', prod.custo));
-        const venda = parseFloat(prompt('Venda (R$):', prod.venda));
-        const estoque = parseInt(prompt('Estoque:', prod.estoque));
-        const min = parseInt(prompt('Estoque mínimo:', prod.estoqueMin));
-        const max = parseInt(prompt('Estoque máximo:', prod.estoqueMax));
-        if(isNaN(custo)||isNaN(venda)||isNaN(estoque)||isNaN(min)||isNaN(max)) return;
-        if(id) {
-            prod.nome=nome; prod.custo=custo; prod.venda=venda; prod.estoque=estoque; prod.estoqueMin=min; prod.estoqueMax=max;
-        } else {
-            produtos.push({ id: Date.now(), nome, custo, venda, estoque, estoqueMin: min, estoqueMax: max });
-        }
-        saveAll();
-        renderEstoque();
     }
 
     function renderVenda() {
@@ -688,86 +598,31 @@
                 <div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
                 <div class="form-group">
                     <label>Cliente</label>
-                    <div class="flex-row">
-                        <select id="clienteVenda" style="flex:1">
-                            <option value="">-- Selecione um cliente --</option>
-                            ${clientesOptions}
-                            <option value="novo">+ Novo Cliente</option>
-                        </select>
-                        <button id="btnNovoClienteRapido" class="btn-primary">Cadastrar</button>
-                    </div>
-                    <div id="novoClienteFields" style="display:none; margin-top:12px;">
-                        <input type="text" id="novoClienteNome" placeholder="Nome do cliente" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
-                        <input type="email" id="novoClienteEmail" placeholder="E-mail" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
-                        <input type="tel" id="novoClienteTelefone" placeholder="Telefone" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
-                        <button id="salvarNovoCliente" class="btn-primary">Salvar Cliente</button>
-                    </div>
+                    <select id="clienteVenda">${clientesOptions}<option value="novo">+ Novo Cliente</option></select>
+                    <button id="btnNovoClienteRapido" class="btn-primary" style="margin-top:8px">Cadastrar Cliente</button>
+                    <div id="novoClienteFields" style="display:none; margin-top:12px;"></div>
                 </div>
-                <div class="form-group">
-                    <label>Produto</label>
-                    <select id="produtoVenda">${produtos.map(p => `<option value="${p.id}" data-venda="${p.venda}" data-estoque="${p.estoque}">${p.nome} - ${formatarMoeda(p.venda)} (estoque: ${p.estoque})</option>`).join('')}</select>
-                </div>
-                <div class="form-group">
-                    <label>Quantidade</label>
-                    <input type="number" id="qtdVenda" min="1" value="1">
-                </div>
-                <div class="form-group">
-                    <label>Data da Venda</label>
-                    <input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}">
-                </div>
-                <div class="form-group">
-                    <label>Forma de Pagamento</label>
-                    <select id="formaPagamento">
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão Crédito">Cartão Crédito</option>
-                        <option value="Cartão Débito">Cartão Débito</option>
-                        <option value="Pix">Pix</option>
-                        <option value="Boleto">Boleto</option>
-                    </select>
-                </div>
-                <button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button>
-                <div id="vendaMsg" style="margin-top:20px;"></div>
+                <div class="form-group"><label>Produto</label><select id="produtoVenda">${produtos.map(p => `<option value="${p.id}">${p.nome} - ${formatarMoeda(p.precoVenda)} (${p.estoque} un)</option>`).join('')}</select></div>
+                <div class="form-group"><label>Quantidade</label><input type="number" id="qtdVenda" min="1" value="1"></div>
+                <div class="form-group"><label>Data da Venda</label><input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}"></div>
+                <div class="form-group"><label>Forma de Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option><option>Pix</option></select></div>
+                <button id="venderBtn" class="btn-primary">Registrar Venda</button>
+                <div id="vendaMsg"></div>
             </div>
         `;
-        const clienteSelect = document.getElementById('clienteVenda');
-        const novoClienteDiv = document.getElementById('novoClienteFields');
-        const btnNovo = document.getElementById('btnNovoClienteRapido');
-        btnNovo.addEventListener('click', () => {
-            novoClienteDiv.style.display = 'block';
-        });
-        document.getElementById('salvarNovoCliente').addEventListener('click', () => {
-            const nome = document.getElementById('novoClienteNome').value.trim();
-            const email = document.getElementById('novoClienteEmail').value.trim();
-            const telefone = document.getElementById('novoClienteTelefone').value.trim();
-            if(!nome) return alert('Nome é obrigatório');
-            const novoId = Date.now();
-            clientes.push({ id: novoId, nome, email, telefone });
-            saveAll();
-            const option = new Option(nome, novoId);
-            clienteSelect.add(option, 'novo');
-            clienteSelect.value = novoId;
-            novoClienteDiv.style.display = 'none';
-            document.getElementById('novoClienteNome').value = '';
-            document.getElementById('novoClienteEmail').value = '';
-            document.getElementById('novoClienteTelefone').value = '';
-            alert('Cliente cadastrado com sucesso!');
-        });
-
         document.getElementById('venderBtn').addEventListener('click', () => {
             let clienteId = parseInt(document.getElementById('clienteVenda').value);
             if(isNaN(clienteId)) clienteId = null;
             const prodId = parseInt(document.getElementById('produtoVenda').value);
             const qtd = parseInt(document.getElementById('qtdVenda').value);
-            const dataVenda = document.getElementById('dataVenda').value;
-            const formaPagamento = document.getElementById('formaPagamento').value;
             const prod = produtos.find(p=>p.id===prodId);
-            if(!prod || qtd<=0) return alert('Selecione produto e quantidade válida');
+            if(!prod || qtd<=0) return alert('Selecione produto válido');
             if(qtd > prod.estoque) return alert('Estoque insuficiente');
             prod.estoque -= qtd;
-            const total = qtd * prod.venda;
-            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date(dataVenda).toISOString(), clienteId, formaPagamento });
+            const total = qtd * prod.precoVenda;
+            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date(document.getElementById('dataVenda').value).toISOString(), clienteId, formaPagamento: document.getElementById('formaPagamento').value });
             saveAll();
-            document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px; border-radius:60px;">✅ Venda realizada! Total ${formatarMoeda(total)}</div>`;
+            document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px;">✅ Venda realizada! Total ${formatarMoeda(total)}</div>`;
             renderVenda();
         });
     }
@@ -780,19 +635,15 @@
             ${vendas.map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento || '-'}</td><td>${formatarMoeda(v.total)}</td></tr>`;
+                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente?cliente.nome:'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento}</td><td>${formatarMoeda(v.total)}</td></tr>`;
             }).join('')}
             </tbody></table><div style="margin-top:20px;"><strong>Total Geral: ${formatarMoeda(totalGeral)}</strong></div></div>`;
     }
 
     function renderRelatorioMensal() {
         const porMes = {};
-        vendas.forEach(v => {
-            const d = new Date(v.data);
-            const chave = `${d.getMonth()+1}/${d.getFullYear()}`;
-            porMes[chave] = (porMes[chave] || 0) + v.total;
-        });
-        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div> table<thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
+        vendas.forEach(v => { const d = new Date(v.data); const chave = `${d.getMonth()+1}/${d.getFullYear()}`; porMes[chave] = (porMes[chave]||0)+v.total; });
+        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div><table><thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
         for(let [mes, total] of Object.entries(porMes)) html += `<tr><td>${mes}</td><td>${formatarMoeda(total)}</td></tr>`;
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
@@ -800,43 +651,23 @@
 
     function renderAlertas() {
         const alertas = produtos.filter(p => p.estoque <= p.estoqueMin);
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-bell"></i> Alertas de Estoque</div>
-            ${alertas.length ? alertas.map(p => `<div class="badge-warning" style="margin:8px 0; padding:12px; border-radius:60px;">⚠️ ${p.nome} está com ${p.estoque} unid. (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta ativo</p>'}</div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-bell"></i> Alertas de Estoque</div>${alertas.length ? alertas.map(p => `<div class="badge-warning" style="margin:8px 0; padding:12px;">⚠️ ${p.nome}: ${p.estoque} un (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta ativo</p>'}</div>`;
     }
 
     function renderHistorico() {
         const items = [...vendas].reverse().map(v => {
             const p = produtos.find(prod=>prod.id===v.produtoId);
             const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-            return `<li style="margin-bottom:12px;"><i class="fas fa-receipt"></i> Venda: ${p?.nome} - ${v.quantidade} un - ${formatarMoeda(v.total)} - ${new Date(v.data).toLocaleString()} - Cliente: ${cliente?cliente.nome:'Não cadastrado'} - Pagamento: ${v.formaPagamento}</li>`;
+            return `<li> Venda: ${p?.nome} - ${v.quantidade} un - ${formatarMoeda(v.total)} - ${new Date(v.data).toLocaleString()} - Cliente: ${cliente?cliente.nome:'N/C'} - Pagamento: ${v.formaPagamento}</li>`;
         });
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-history"></i> Histórico de Movimentações</div><ul>${items.length?items.join(''):'<li>Nenhuma venda registrada</li>'}</ul></div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-history"></i> Histórico</div><ul>${items.length?items.join(''):'<li>Nenhuma venda</li>'}</ul></div>`;
     }
 
     function renderClientes() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div>
-            <button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button>
-            <table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>
-            ${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email || '-'}</td><td>${c.telefone || '-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}
-            </tbody></table></div>`;
-        document.getElementById('novoClienteBtn')?.addEventListener('click', () => {
-            const nome = prompt('Nome do cliente:');
-            if(nome) {
-                const email = prompt('E-mail (opcional):');
-                const telefone = prompt('Telefone (opcional):');
-                clientes.push({ id: Date.now(), nome, email: email||'', telefone: telefone||'' });
-                saveAll();
-                renderClientes();
-            }
-        });
-        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => {
-            if(confirm('Remover cliente?')) {
-                clientes = clientes.filter(c => c.id != e.target.closest('button').dataset.id);
-                saveAll();
-                renderClientes();
-            }
-        }));
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px">Novo Cliente</button><table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
+        document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome:'); if(nome){ clientes.push({ id:Date.now(), nome, email:prompt('Email:')||'', telefone:prompt('Telefone:')||'' }); saveAll(); renderClientes(); } });
+        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover?')){ clientes = clientes.filter(c => c.id != e.target.closest('button').dataset.id); saveAll(); renderClientes(); } }));
     }
 </script>
 </body>
