@@ -19,7 +19,6 @@
             padding: 20px;
         }
 
-        /* Variáveis de tema */
         :root {
             --bg-color: #f9fafb;
             --card-bg: #ffffff;
@@ -33,6 +32,9 @@
             --login-card-bg: #ffffff;
             --input-border: #d1d5db;
             --backdrop-bg: rgba(0,0,0,0.4);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
         }
 
         body.dark {
@@ -49,7 +51,7 @@
             --backdrop-bg: rgba(0,0,0,0.6);
         }
 
-        /* ---- TELA DE LOGIN (overlay) ---- */
+        /* Login */
         .login-overlay {
             position: fixed;
             top: 0;
@@ -70,13 +72,8 @@
             width: 90%;
             max-width: 420px;
             box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color);
         }
-        .login-card h2 {
-            text-align: center;
-            margin-bottom: 24px;
-            font-size: 1.8rem;
-        }
+        .login-card h2 { text-align: center; margin-bottom: 24px; }
         .login-card input {
             width: 100%;
             padding: 14px 16px;
@@ -85,8 +82,6 @@
             border: 1px solid var(--input-border);
             background: var(--card-bg);
             color: var(--text-color);
-            font-size: 1rem;
-            outline: none;
         }
         .login-card button {
             width: 100%;
@@ -98,47 +93,26 @@
             border-radius: 40px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 1rem;
         }
-        .login-card button:hover {
-            background: #2563eb;
-        }
-        .login-message {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 0.85rem;
-            color: #ef4444;
-        }
-        .switch-mode {
-            text-align: center;
-            margin-top: 20px;
-            cursor: pointer;
-            color: #3b82f6;
-            font-weight: 500;
-        }
+        .login-message { text-align: center; margin-top: 12px; font-size: 0.85rem; color: var(--danger); }
+        .code-field { display: none; }
+        .code-field.visible { display: block; }
 
-        /* ---- APLICATIVO PRINCIPAL (oculto até login) ---- */
-        .app-container {
-            display: none;
-        }
-        .app-container.visible {
-            display: block;
-        }
+        /* App principal */
+        .app-container { display: none; }
+        .app-container.visible { display: block; }
 
-        /* ---- CABEÇALHO ---- */
+        /* Cabeçalho */
         .main-header {
             background: var(--header-bg);
             border-radius: 20px;
             padding: 12px 24px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 15px;
-            position: relative;
-            z-index: 10;
         }
         .menu-btn {
             background: var(--button-bg);
@@ -148,14 +122,6 @@
             width: 48px;
             height: 48px;
             border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-color);
-            flex-shrink: 0;
-        }
-        .menu-btn:hover {
-            background: var(--button-hover);
         }
         .page-title {
             font-size: 1.5rem;
@@ -166,452 +132,403 @@
             border-radius: 60px;
             flex-grow: 1;
             margin: 0 16px;
-            white-space: nowrap;
-            overflow-x: auto;
         }
-        .right-area {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-shrink: 0;
-        }
-        .user-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--button-bg);
-            padding: 6px 16px;
-            border-radius: 40px;
-        }
-        .avatar {
-            width: 38px;
-            height: 38px;
-            background: #3b82f6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-        }
-        .user-name {
-            font-weight: 500;
-        }
-        .theme-toggle, .logout-btn {
-            background: var(--button-bg);
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 500;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-        .logout-btn {
-            background: #ef4444;
-            color: white;
-        }
-        .logout-btn:hover {
-            background: #dc2626;
-        }
-        .theme-toggle:hover {
-            background: var(--button-hover);
-        }
+        .right-area { display: flex; gap: 20px; align-items: center; }
+        .user-area { display: flex; align-items: center; gap: 12px; background: var(--button-bg); padding: 6px 16px; border-radius: 40px; }
+        .avatar { width: 38px; height: 38px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+        .theme-toggle, .logout-btn { background: var(--button-bg); border: none; padding: 8px 18px; border-radius: 40px; cursor: pointer; }
+        .logout-btn { background: var(--danger); color: white; }
 
-        /* ---- LAYOUT PRINCIPAL (sidebar off-canvas) ---- */
-        .dashboard-wrapper {
-            position: relative;
-            min-height: 500px;
-        }
-        /* Backdrop (fundo escuro) quando o menu está aberto */
-        .sidebar-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--backdrop-bg);
-            z-index: 98;
-            display: none;
-            cursor: pointer;
-        }
-        .sidebar-backdrop.active {
-            display: block;
-        }
-        /* Sidebar que desliza da esquerda (off-canvas) */
+        /* Sidebar off-canvas */
+        .sidebar-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--backdrop-bg); z-index: 98; display: none; }
+        .sidebar-backdrop.active { display: block; }
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 280px;
-            height: 100%;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-            z-index: 99;
-            padding: 80px 0 20px 0;
-            overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed; top: 0; left: 0; width: 280px; height: 100%;
+            background: var(--sidebar-bg); transform: translateX(-100%);
+            transition: transform 0.3s; z-index: 99; padding: 80px 0 20px;
+            overflow-y: auto; border-right: 1px solid var(--border-color);
         }
-        .sidebar.open {
-            transform: translateX(0);
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0 16px;
-        }
-        .sidebar li {
-            margin: 8px 0;
-            padding: 12px 16px;
-            border-radius: 16px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: 0.2s;
-        }
-        .sidebar li:hover {
-            background: var(--button-bg);
-        }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar ul { list-style: none; padding: 0 16px; }
+        .sidebar li { margin: 8px 0; padding: 12px 16px; border-radius: 16px; cursor: pointer; }
+        .sidebar li:hover { background: var(--button-bg); }
 
-        /* Conteúdo principal (sem ser empurrado) */
-        .main-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        /* Cards de exemplo */
-        .demo-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 24px;
-            position: relative;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .close-card-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-color);
-            opacity: 0.6;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        .close-card-btn:hover {
-            background: var(--button-bg);
-            opacity: 1;
-        }
-        .card-title {
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 16px;
-            padding-right: 32px;
-        }
-
-        @media (max-width: 640px) {
-            .main-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .page-title {
-                margin: 0;
-                white-space: normal;
-            }
-            .right-area {
-                justify-content: flex-end;
-                flex-wrap: wrap;
-            }
-            .sidebar {
-                width: 85%;
-                max-width: 280px;
-            }
-        }
+        /* Conteúdo principal */
+        .main-content { min-height: 500px; }
+        .card { background: var(--card-bg); border-radius: 20px; padding: 24px; margin-bottom: 24px; border: 1px solid var(--border-color); }
+        .card-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 16px; }
+        .grid { display: flex; gap: 20px; flex-wrap: wrap; }
+        .stat-card { flex: 1; background: var(--card-bg); padding: 20px; border-radius: 20px; text-align: center; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        input, select, button { background: var(--button-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px; color: var(--text-color); }
+        button { cursor: pointer; }
+        .btn-primary { background: #3b82f6; color: white; border: none; }
+        .btn-danger { background: var(--danger); color: white; }
+        .alert { background: var(--warning); color: #1f2937; padding: 10px; border-radius: 12px; margin-bottom: 16px; }
+        @media (max-width: 640px) { .main-header { flex-direction: column; } .right-area { justify-content: flex-end; } }
     </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
+<!-- Login -->
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
         <h2>🔐 Loja Pro</h2>
-        <input type="text" id="loginName" placeholder="Seu nome" autocomplete="off">
-        <input type="email" id="loginEmail" placeholder="E-mail" autocomplete="off">
+        <input type="text" id="loginName" placeholder="Nome completo">
+        <input type="email" id="loginEmail" placeholder="E-mail">
         <input type="password" id="loginPassword" placeholder="Senha">
-        <button id="doLoginBtn">Entrar / Cadastrar</button>
+        <div id="codeField" class="code-field">
+            <input type="text" id="verificationCode" placeholder="Código de verificação">
+        </div>
+        <button id="doLoginBtn">Enviar código / Verificar</button>
         <div id="loginMessage" class="login-message"></div>
-        <div class="switch-mode" id="demoHint">🔓 Demo: qualquer email/senha (mínimo 3 caracteres)</div>
+        <div class="switch-mode">🔓 Simulação: o código será exibido em um alerta</div>
     </div>
 </div>
 
-<!-- APLICATIVO PRINCIPAL -->
+<!-- App principal -->
 <div id="appContainer" class="app-container">
     <div class="main-header">
         <button class="menu-btn" id="menuToggle">☰</button>
         <div class="page-title">Loja Pro  Gestão Inteligente</div>
         <div class="right-area">
-            <div class="user-area" id="userInfo">
-                <div class="avatar" id="userAvatar">AD</div>
-                <span class="user-name" id="userNameDisplay">Usuário</span>
-            </div>
-            <button class="theme-toggle" id="themeToggle">🌙 Modo escuro</button>
-            <button class="logout-btn" id="logoutBtn">🚪 Sair</button>
+            <div class="user-area"><div class="avatar" id="userAvatar">U</div><span id="userNameDisplay"></span></div>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+            <button class="logout-btn" id="logoutBtn">Sair</button>
         </div>
     </div>
-
-    <div class="dashboard-wrapper">
-        <!-- Backdrop (fundo escuro) para fechar ao clicar fora -->
-        <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
-
-        <!-- Sidebar (menu lateral off-canvas) -->
-        <div id="sidebar" class="sidebar">
-            <ul>
-                <li>📊 Dashboard</li>
-                <li>📦 Estoque</li>
-                <li>💰 Nova Venda</li>
-                <li>📈 Relatório de Vendas</li>
-                <li>📅 Relatório Mensal</li>
-                <li>⚠️ Alertas</li>
-                <li>📜 Histórico</li>
-            </ul>
-        </div>
-
-        <div class="main-content">
-            <div class="demo-card" id="demoCard1">
-                <button class="close-card-btn" id="closeCard1">✕</button>
-                <div class="card-title">📌 Alerta de estoque baixo</div>
-                <div class="card-content">
-                    <p>Produto "Smartphone Ultra" com apenas 2 unidades.</p>
-                    <p>👉 O botão <strong>X</strong> deste card não interfere no título principal.<br>
-                    O menu sanduíche agora abre uma <strong>aba lateral</strong> (off-canvas) sobre o conteúdo.<br>
-                    Usuário logado: <span id="loggedUserNameRef"></span>.</p>
-                </div>
-            </div>
-            <div class="demo-card">
-                <div class="card-title">✅ Menu sanduíche em aba lateral</div>
-                <div class="card-content">
-                    • A sidebar desliza da esquerda, sem empurrar o conteúdo.<br>
-                    • Um backdrop escuro aparece atrás; clique nele para fechar.<br>
-                    • O ícone do sanduíche vira X enquanto o menu está aberto.<br>
-                    • Login persistente, tema escuro/claro e tudo mais preservado.
-                </div>
-            </div>
-        </div>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li data-view="dashboard">📊 Dashboard</li>
+            <li data-view="estoque">📦 Estoque</li>
+            <li data-view="venda">💰 Nova Venda</li>
+            <li data-view="relatorioVendas">📈 Relatório de Vendas</li>
+            <li data-view="relatorioMensal">📅 Relatório Mensal</li>
+            <li data-view="alertas">⚠️ Alertas</li>
+            <li data-view="historico">📜 Histórico</li>
+        </ul>
+    </div>
+    <div class="main-content" id="mainContent">
+        <!-- Conteúdo dinâmico -->
     </div>
 </div>
 
 <script>
-    // ---------- GERENCIAMENTO DE USUÁRIOS (localStorage) ----------
-    const USERS_KEY = 'lojapro_users';
-    const SESSION_KEY = 'lojapro_session';
+    // ---------- SIMULAÇÃO DE ENVIO DE CÓDIGO ----------
+    let pendingCode = null;
+    let pendingUserData = null;
 
-    let users = [];
-    const storedUsers = localStorage.getItem(USERS_KEY);
-    if (storedUsers) {
-        users = JSON.parse(storedUsers);
-    } else {
-        users = [
-            { name: "Ana Oliveira", email: "ana@loja.com", password: "123456" }
+    // Dados persistentes
+    let users = JSON.parse(localStorage.getItem('lojapro_users')) || [];
+    let produtos = JSON.parse(localStorage.getItem('lojapro_produtos')) || [];
+    let vendas = JSON.parse(localStorage.getItem('lojapro_vendas')) || [];
+    let currentSession = JSON.parse(localStorage.getItem('lojapro_session')) || null;
+
+    // Helper para salvar
+    function saveAll() {
+        localStorage.setItem('lojapro_users', JSON.stringify(users));
+        localStorage.setItem('lojapro_produtos', JSON.stringify(produtos));
+        localStorage.setItem('lojapro_vendas', JSON.stringify(vendas));
+        if (currentSession) localStorage.setItem('lojapro_session', JSON.stringify(currentSession));
+        else localStorage.removeItem('lojapro_session');
+    }
+
+    // Se não houver produtos iniciais, criar alguns
+    if (produtos.length === 0) {
+        produtos = [
+            { id: 1, nome: "Smartphone X", custo: 800, venda: 1200, estoque: 5, estoqueMin: 3, estoqueMax: 30 },
+            { id: 2, nome: "Fone Bluetooth", custo: 50, venda: 120, estoque: 12, estoqueMin: 5, estoqueMax: 50 },
+            { id: 3, nome: "Carregador Rápido", custo: 30, venda: 70, estoque: 2, estoqueMin: 4, estoqueMax: 40 }
         ];
-        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        saveAll();
     }
 
-    function saveUsers() {
-        localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-
-    function loginOrRegister(name, email, password) {
-        if (!name.trim() || !email.trim() || !password.trim()) {
-            return { success: false, message: "Preencha todos os campos." };
-        }
-        if (password.length < 3) {
-            return { success: false, message: "A senha deve ter pelo menos 3 caracteres." };
-        }
-        const existingUser = users.find(u => u.email === email);
-        if (existingUser) {
-            if (existingUser.password === password) {
-                return { success: true, user: existingUser };
-            } else {
-                return { success: false, message: "Senha incorreta para este e-mail." };
-            }
-        } else {
-            const newUser = { name: name.trim(), email: email, password: password };
-            users.push(newUser);
-            saveUsers();
-            return { success: true, user: newUser };
-        }
-    }
-
-    function setSession(user) {
-        const session = {
-            name: user.name,
-            email: user.email,
-            avatar: user.name.charAt(0).toUpperCase()
-        };
-        localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-    }
-
-    function getSession() {
-        const sess = localStorage.getItem(SESSION_KEY);
-        return sess ? JSON.parse(sess) : null;
-    }
-
-    function clearSession() {
-        localStorage.removeItem(SESSION_KEY);
-    }
-
+    // ----- LOGIN COM CÓDIGO -----
     const loginOverlay = document.getElementById('loginOverlay');
     const appContainer = document.getElementById('appContainer');
     const loginName = document.getElementById('loginName');
     const loginEmail = document.getElementById('loginEmail');
     const loginPassword = document.getElementById('loginPassword');
+    const codeField = document.getElementById('codeField');
+    const verificationCodeInput = document.getElementById('verificationCode');
     const doLoginBtn = document.getElementById('doLoginBtn');
-    const loginMessage = document.getElementById('loginMessage');
-
-    const userAvatar = document.getElementById('userAvatar');
-    const userNameDisplay = document.getElementById('userNameDisplay');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const loggedUserNameRef = document.getElementById('loggedUserNameRef');
-
-    function updateAppUI(session) {
-        if (session) {
-            userAvatar.textContent = session.avatar;
-            userNameDisplay.textContent = session.name;
-            if (loggedUserNameRef) loggedUserNameRef.textContent = session.name;
-        }
-    }
-
-    function showApp() {
-        loginOverlay.style.display = 'none';
-        appContainer.classList.add('visible');
-        applyThemeFromStorage();
-        // Garantir que o menu lateral comece fechado
-        closeSidebar();
-    }
-
-    function showLogin() {
-        loginOverlay.style.display = 'flex';
-        appContainer.classList.remove('visible');
-    }
+    const loginMsg = document.getElementById('loginMessage');
+    let loginStep = 1; // 1: enviar credenciais, 2: verificar código
 
     doLoginBtn.addEventListener('click', () => {
-        const name = loginName.value;
-        const email = loginEmail.value;
-        const password = loginPassword.value;
-        const result = loginOrRegister(name, email, password);
-        if (result.success) {
-            setSession(result.user);
-            updateAppUI(getSession());
-            showApp();
+        if (loginStep === 1) {
+            const name = loginName.value.trim();
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value.trim();
+            if (!name || !email || !password) {
+                loginMsg.textContent = "Preencha todos os campos.";
+                return;
+            }
+            // Verifica se usuário existe ou cria
+            let user = users.find(u => u.email === email);
+            if (user) {
+                if (user.password !== password) {
+                    loginMsg.textContent = "Senha incorreta.";
+                    return;
+                }
+            } else {
+                user = { name, email, password };
+                users.push(user);
+                saveAll();
+            }
+            // Gerar código simulado (6 dígitos)
+            pendingCode = Math.floor(100000 + Math.random() * 900000).toString();
+            pendingUserData = user;
+            alert(`🔐 Código de verificação: ${pendingCode}\n(Simulação de e-mail)`);
+            loginMsg.textContent = `Código enviado para ${email}. Digite-o abaixo.`;
+            codeField.classList.add('visible');
+            doLoginBtn.textContent = "Verificar código";
+            loginStep = 2;
         } else {
-            loginMessage.textContent = result.message;
+            const code = verificationCodeInput.value.trim();
+            if (code === pendingCode) {
+                // Login bem-sucedido
+                currentSession = { name: pendingUserData.name, email: pendingUserData.email, avatar: pendingUserData.name.charAt(0).toUpperCase() };
+                saveAll();
+                updateAppUI();
+                loginOverlay.style.display = 'none';
+                appContainer.classList.add('visible');
+                applyTheme();
+                renderCurrentView('dashboard');
+                closeSidebar();
+            } else {
+                loginMsg.textContent = "Código inválido. Tente novamente.";
+            }
         }
     });
 
-    loginName.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
-    loginEmail.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
-    loginPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
-
-    logoutBtn.addEventListener('click', () => {
-        clearSession();
-        loginName.value = '';
-        loginEmail.value = '';
-        loginPassword.value = '';
-        loginMessage.textContent = '';
-        showLogin();
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const session = getSession();
-        if (session) {
-            updateAppUI(session);
-            showApp();
-        } else {
-            showLogin();
+    function updateAppUI() {
+        if (currentSession) {
+            document.getElementById('userAvatar').textContent = currentSession.avatar;
+            document.getElementById('userNameDisplay').textContent = currentSession.name;
         }
+    }
+
+    // Verificar sessão ao carregar
+    if (currentSession) {
+        loginOverlay.style.display = 'none';
+        appContainer.classList.add('visible');
+        updateAppUI();
+        renderCurrentView('dashboard');
+    } else {
+        loginOverlay.style.display = 'flex';
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        currentSession = null;
+        saveAll();
+        loginStep = 1;
+        loginName.value = loginEmail.value = loginPassword.value = verificationCodeInput.value = '';
+        codeField.classList.remove('visible');
+        doLoginBtn.textContent = "Enviar código / Verificar";
+        loginMsg.textContent = "";
+        loginOverlay.style.display = 'flex';
+        appContainer.classList.remove('visible');
     });
 
-    // ---------- MENU SANDUÍCHE (off-canvas) ----------
+    // ----- MENU SANDUÍCHE (off-canvas) -----
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+    function openSidebar() { sidebar.classList.add('open'); sidebarBackdrop.classList.add('active'); menuToggle.innerHTML = '✕'; }
+    function closeSidebar() { sidebar.classList.remove('open'); sidebarBackdrop.classList.remove('active'); menuToggle.innerHTML = '☰'; }
+    function toggleSidebar() { if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); }
+    menuToggle.addEventListener('click', toggleSidebar);
+    sidebarBackdrop.addEventListener('click', closeSidebar);
 
-    function openSidebar() {
-        sidebar.classList.add('open');
-        sidebarBackdrop.classList.add('active');
-        menuToggle.innerHTML = '✕';  // vira X
-    }
-    function closeSidebar() {
-        sidebar.classList.remove('open');
-        sidebarBackdrop.classList.remove('active');
-        menuToggle.innerHTML = '☰';  // volta sanduíche
-    }
-    function toggleSidebar() {
-        if (sidebar.classList.contains('open')) {
+    // Navegação pelos itens do menu
+    document.querySelectorAll('.sidebar li').forEach(item => {
+        item.addEventListener('click', () => {
+            const view = item.getAttribute('data-view');
+            if (view) renderCurrentView(view);
             closeSidebar();
-        } else {
-            openSidebar();
-        }
-    }
-
-    if (menuToggle) {
-        menuToggle.addEventListener('click', toggleSidebar);
-    }
-    if (sidebarBackdrop) {
-        sidebarBackdrop.addEventListener('click', closeSidebar);
-    }
-
-    // Fechar menu ao redimensionar para mobile? não necessário, mas mantém.
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 640 && sidebar.classList.contains('open')) {
-            closeSidebar();
-        }
+        });
     });
 
-    // ---------- TEMA ESCURO/CLARO (persistente) ----------
+    // ----- RENDERIZAÇÃO DAS TELAS -----
+    function renderCurrentView(view) {
+        const main = document.getElementById('mainContent');
+        if (view === 'dashboard') renderDashboard(main);
+        else if (view === 'estoque') renderEstoque(main);
+        else if (view === 'venda') renderVenda(main);
+        else if (view === 'relatorioVendas') renderRelatorioVendas(main);
+        else if (view === 'relatorioMensal') renderRelatorioMensal(main);
+        else if (view === 'alertas') renderAlertas(main);
+        else if (view === 'historico') renderHistorico(main);
+    }
+
+    // DASHBOARD
+    function renderDashboard(container) {
+        const totalVendas = vendas.reduce((acc, v) => acc + v.total, 0);
+        const totalProdutos = produtos.length;
+        const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
+        const lucroTotal = vendas.reduce((acc, venda) => {
+            const prod = produtos.find(p => p.id === venda.produtoId);
+            if (prod) return acc + (venda.quantidade * (prod.venda - prod.custo));
+            return acc;
+        }, 0);
+        const ultimasVendas = [...vendas].reverse().slice(0, 5);
+        container.innerHTML = `
+            <div class="grid">
+                <div class="stat-card"><h3>💰 Faturamento</h3><p style="font-size:2rem">R$ ${totalVendas.toFixed(2)}</p></div>
+                <div class="stat-card"><h3>📦 Produtos</h3><p style="font-size:2rem">${totalProdutos}</p></div>
+                <div class="stat-card"><h3>⚠️ Estoque baixo</h3><p style="font-size:2rem">${baixoEstoque}</p></div>
+                <div class="stat-card"><h3>📈 Lucro Líquido</h3><p style="font-size:2rem">R$ ${lucroTotal.toFixed(2)}</p></div>
+            </div>
+            <div class="card"><div class="card-title">Últimas vendas</div>
+            <table><tr><th>Produto</th><th>Qtd</th><th>Data</th><th>Total</th></tr>
+            ${ultimasVendas.map(v => {
+                const prod = produtos.find(p => p.id === v.produtoId);
+                return `<tr><td>${prod ? prod.nome : '-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
+            }).join('')}
+            </table></div>
+        `;
+    }
+
+    // ESTOQUE (CRUD com custo, venda, min, max)
+    function renderEstoque(container) {
+        function renderTable() {
+            container.innerHTML = `
+                <div class="card"><div class="card-title">📦 Gerenciar Produtos</div>
+                <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:16px">+ Novo Produto</button>
+                <table id="tabelaEstoque"><tr><th>Nome</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr>
+                ${produtos.map(p => `
+                    <tr>
+                        <td>${p.nome}</td><td>R$ ${p.custo}</td><td>R$ ${p.venda}</td>
+                        <td>${p.estoque}</td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td>
+                        <td><button class="editarProduto" data-id="${p.id}">✏️</button> <button class="deletarProduto" data-id="${p.id}">🗑️</button></td>
+                    </tr>
+                `).join('')}</table></div>
+            `;
+            document.getElementById('novoProdutoBtn')?.addEventListener('click', () => openProdutoModal());
+            document.querySelectorAll('.editarProduto').forEach(btn => btn.addEventListener('click', (e) => openProdutoModal(parseInt(e.target.dataset.id))));
+            document.querySelectorAll('.deletarProduto').forEach(btn => btn.addEventListener('click', (e) => {
+                if(confirm('Remover produto?')) {
+                    produtos = produtos.filter(p => p.id != e.target.dataset.id);
+                    saveAll();
+                    renderEstoque(container);
+                }
+            }));
+        }
+        function openProdutoModal(id = null) {
+            const prod = id ? produtos.find(p => p.id === id) : { nome: '', custo: 0, venda: 0, estoque: 0, estoqueMin: 0, estoqueMax: 0 };
+            const nomeForm = prompt('Nome:', prod.nome);
+            if (!nomeForm) return;
+            const custo = parseFloat(prompt('Custo (R$):', prod.custo));
+            const venda = parseFloat(prompt('Venda (R$):', prod.venda));
+            const estoque = parseInt(prompt('Estoque atual:', prod.estoque));
+            const min = parseInt(prompt('Estoque mínimo:', prod.estoqueMin));
+            const max = parseInt(prompt('Estoque máximo:', prod.estoqueMax));
+            if (isNaN(custo) || isNaN(venda) || isNaN(estoque) || isNaN(min) || isNaN(max)) return;
+            if (id) {
+                prod.nome = nomeForm; prod.custo = custo; prod.venda = venda; prod.estoque = estoque; prod.estoqueMin = min; prod.estoqueMax = max;
+            } else {
+                const newId = Date.now();
+                produtos.push({ id: newId, nome: nomeForm, custo, venda, estoque, estoqueMin: min, estoqueMax: max });
+            }
+            saveAll();
+            renderTable();
+        }
+        renderTable();
+    }
+
+    // NOVA VENDA
+    function renderVenda(container) {
+        container.innerHTML = `<div class="card"><div class="card-title">💰 Registrar Venda</div>
+            <select id="produtoVenda"><option value="">Selecione</option>${produtos.map(p => `<option value="${p.id}" data-preco="${p.venda}" data-estoque="${p.estoque}">${p.nome} - R$ ${p.venda} (Estoque: ${p.estoque})</option>`).join('')}</select>
+            <input type="number" id="qtdVenda" placeholder="Quantidade" min="1" step="1">
+            <button id="realizarVendaBtn" class="btn-primary">Vender</button>
+            <div id="vendaMsg"></div></div>`;
+        document.getElementById('realizarVendaBtn').addEventListener('click', () => {
+            const prodId = parseInt(document.getElementById('produtoVenda').value);
+            const qtd = parseInt(document.getElementById('qtdVenda').value);
+            const prod = produtos.find(p => p.id === prodId);
+            if (!prodId || !qtd) return alert('Selecione produto e quantidade');
+            if (qtd > prod.estoque) return alert('Estoque insuficiente');
+            prod.estoque -= qtd;
+            const total = qtd * prod.venda;
+            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date().toISOString() });
+            saveAll();
+            document.getElementById('vendaMsg').innerHTML = `<div class="alert">Venda realizada! Total: R$ ${total.toFixed(2)}</div>`;
+            renderVenda(container);
+        });
+    }
+
+    // RELATÓRIO DE VENDAS (geral)
+    function renderRelatorioVendas(container) {
+        container.innerHTML = `<div class="card"><div class="card-title">📈 Relatório de Vendas</div>
+            <table><tr><th>Produto</th><th>Qtd</th><th>Data</th><th>Total</th></tr>
+            ${vendas.map(v => {
+                const prod = produtos.find(p => p.id === v.produtoId);
+                return `<tr><td>${prod ? prod.nome : '-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
+            }).join('')}
+            </table><p><strong>Total Geral: R$ ${vendas.reduce((s,v)=>s+v.total,0).toFixed(2)}</strong></p></div>`;
+    }
+
+    // RELATÓRIO MENSAL (agrupado por mês/ano)
+    function renderRelatorioMensal(container) {
+        const porMes = {};
+        vendas.forEach(v => {
+            const data = new Date(v.data);
+            const chave = `${data.getMonth()+1}/${data.getFullYear()}`;
+            if (!porMes[chave]) porMes[chave] = 0;
+            porMes[chave] += v.total;
+        });
+        let html = `<div class="card"><div class="card-title">📅 Relatório Mensal</div><table><tr><th>Mês/Ano</th><th>Faturamento</th></tr>`;
+        for (let [mes, total] of Object.entries(porMes)) {
+            html += `<tr><td>${mes}</td><td>R$ ${total.toFixed(2)}</td></tr>`;
+        }
+        html += `</table></div>`;
+        container.innerHTML = html;
+    }
+
+    // ALERTAS: estoque abaixo do mínimo
+    function renderAlertas(container) {
+        const alertas = produtos.filter(p => p.estoque <= p.estoqueMin);
+        container.innerHTML = `<div class="card"><div class="card-title">⚠️ Alertas de Estoque</div>
+            ${alertas.length ? alertas.map(p => `<div class="alert">Produto "${p.nome}" está com ${p.estoque} unidades (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta no momento.</p>'}
+            </div>`;
+    }
+
+    // HISTÓRICO (todas as ações: vendas + alterações de estoque? Vamos mostrar vendas + edições de produto)
+    function renderHistorico(container) {
+        const historicoItens = [...vendas].reverse().map(v => {
+            const prod = produtos.find(p => p.id === v.produtoId);
+            return `Venda: ${prod?.nome} - ${v.quantidade} un. - R$ ${v.total} - ${new Date(v.data).toLocaleString()}`;
+        });
+        container.innerHTML = `<div class="card"><div class="card-title">📜 Histórico de Movimentações</div>
+            <ul>${historicoItens.map(h => `<li>📌 ${h}</li>`).join('')}</ul>
+            ${historicoItens.length === 0 ? '<p>Nenhuma movimentação registrada.</p>' : ''}
+            </div>`;
+    }
+
+    // Tema escuro/claro
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
-    function applyThemeFromStorage() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            body.classList.add('dark');
-            if (themeToggle) themeToggle.innerHTML = '☀️ Modo claro';
-        } else {
-            body.classList.remove('dark');
-            if (themeToggle) themeToggle.innerHTML = '🌙 Modo escuro';
-        }
+    function applyTheme() {
+        const isDark = localStorage.getItem('theme') === 'dark';
+        if (isDark) body.classList.add('dark');
+        else body.classList.remove('dark');
+        themeToggle.innerHTML = isDark ? '☀️' : '🌙';
     }
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark');
-            const isDark = body.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            themeToggle.innerHTML = isDark ? '☀️ Modo claro' : '🌙 Modo escuro';
-        });
-    }
-    applyThemeFromStorage();
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        const isDark = body.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        themeToggle.innerHTML = isDark ? '☀️' : '🌙';
+    });
+    applyTheme();
 
-    // ---------- FECHAR CARD (X) ----------
-    const closeCard1 = document.getElementById('closeCard1');
-    if (closeCard1) {
-        closeCard1.addEventListener('click', () => {
-            const card = closeCard1.closest('.demo-card');
-            if (card) card.style.display = 'none';
-        });
-    }
+    // Inicializar
+    if (currentSession) renderCurrentView('dashboard');
 </script>
 </body>
 </html>
