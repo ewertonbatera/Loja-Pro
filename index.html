@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Loja Pro - Gestão Inteligente Premium</title>
     <!-- Google Fonts + Font Awesome + Chart.js -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -40,6 +40,7 @@
             --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
             --shadow-md: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02);
             --backdrop-bg: rgba(0,0,0,0.3);
+            --menu-icon-color: #1e293b;  /* cor padrão do ícone do menu (claro) */
         }
 
         body.dark {
@@ -51,6 +52,7 @@
             --sidebar-bg: #0f172a;
             --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.3);
             --backdrop-bg: rgba(0,0,0,0.6);
+            --menu-icon-color: #ffffff;  /* tracinhos brancos no escuro */
         }
 
         /* Login premium */
@@ -147,6 +149,10 @@
             height: 48px;
             border-radius: 40px;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--menu-icon-color);  /* usa a variável que muda com o tema */
         }
         .page-title {
             font-size: 1.4rem;
@@ -303,23 +309,33 @@
         }
         .badge-success { background: var(--success); color: white; }
         .badge-warning { background: var(--warning); color: #1e293b; }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--backdrop-bg);
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
+        .form-group {
+            margin-bottom: 20px;
         }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: 40px;
-            padding: 32px;
-            width: 90%;
-            max-width: 500px;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 60px;
             border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        .flex-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .cliente-info {
+            background: var(--button-bg);
+            padding: 12px;
+            border-radius: 20px;
+            margin-top: 12px;
         }
         @media (max-width: 700px) {
             body { padding: 16px; }
@@ -366,6 +382,7 @@
             <li data-view="relatorioMensal"><i class="fas fa-calendar-alt"></i> Relatório Mensal</li>
             <li data-view="alertas"><i class="fas fa-bell"></i> Alertas</li>
             <li data-view="historico"><i class="fas fa-history"></i> Histórico</li>
+            <li data-view="clientes"><i class="fas fa-users"></i> Clientes</li>
         </ul>
     </div>
     <div class="main-content" id="mainContent"></div>
@@ -376,17 +393,19 @@
     let users = JSON.parse(localStorage.getItem('lojapro_users')) || [];
     let produtos = JSON.parse(localStorage.getItem('lojapro_produtos')) || [];
     let vendas = JSON.parse(localStorage.getItem('lojapro_vendas')) || [];
+    let clientes = JSON.parse(localStorage.getItem('lojapro_clientes')) || [];
     let currentSession = JSON.parse(localStorage.getItem('lojapro_session')) || null;
 
     function saveAll() {
         localStorage.setItem('lojapro_users', JSON.stringify(users));
         localStorage.setItem('lojapro_produtos', JSON.stringify(produtos));
         localStorage.setItem('lojapro_vendas', JSON.stringify(vendas));
+        localStorage.setItem('lojapro_clientes', JSON.stringify(clientes));
         if (currentSession) localStorage.setItem('lojapro_session', JSON.stringify(currentSession));
         else localStorage.removeItem('lojapro_session');
     }
 
-    // Produtos iniciais
+    // Dados iniciais
     if (produtos.length === 0) {
         produtos = [
             { id: 1, nome: "Smartphone X", custo: 800, venda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40 },
@@ -397,12 +416,16 @@
         saveAll();
     }
     if (vendas.length === 0) {
-        // criar algumas vendas demo
         vendas = [
-            { id: Date.now(), produtoId: 1, quantidade: 2, total: 2598, data: new Date(2025,3,10).toISOString() },
-            { id: Date.now()+1, produtoId: 2, quantidade: 5, total: 745, data: new Date(2025,3,12).toISOString() },
-            { id: Date.now()+2, produtoId: 3, quantidade: 1, total: 79, data: new Date(2025,3,15).toISOString() },
-            { id: Date.now()+3, produtoId: 4, quantidade: 1, total: 299, data: new Date(2025,4,1).toISOString() }
+            { id: Date.now(), produtoId: 1, quantidade: 2, total: 2598, data: new Date(2025,3,10).toISOString(), clienteId: null, formaPagamento: "Dinheiro" },
+            { id: Date.now()+1, produtoId: 2, quantidade: 5, total: 745, data: new Date(2025,3,12).toISOString(), clienteId: null, formaPagamento: "Cartão" }
+        ];
+        saveAll();
+    }
+    if (clientes.length === 0) {
+        clientes = [
+            { id: 1, nome: "João Silva", email: "joao@email.com", telefone: "11999999999" },
+            { id: 2, nome: "Maria Oliveira", email: "maria@email.com", telefone: "11988888888" }
         ];
         saveAll();
     }
@@ -476,13 +499,24 @@
         appContainer.classList.remove('visible');
     });
 
-    // Menu sanduíche
+    // Menu sanduíche com ícone que alterna e cores dinâmicas
     const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
+    const sidebarEl = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
-    function openSidebar() { sidebar.classList.add('open'); backdrop.classList.add('active'); menuToggle.innerHTML = '<i class="fas fa-times"></i>'; }
-    function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('active'); menuToggle.innerHTML = '<i class="fas fa-bars"></i>'; }
-    menuToggle.addEventListener('click', () => { if(sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); });
+    function openSidebar() {
+        sidebarEl.classList.add('open');
+        backdrop.classList.add('active');
+        menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+    }
+    function closeSidebar() {
+        sidebarEl.classList.remove('open');
+        backdrop.classList.remove('active');
+        menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    }
+    menuToggle.addEventListener('click', () => {
+        if (sidebarEl.classList.contains('open')) closeSidebar();
+        else openSidebar();
+    });
     backdrop.addEventListener('click', closeSidebar);
     document.querySelectorAll('.sidebar li').forEach(li => {
         li.addEventListener('click', (e) => {
@@ -492,7 +526,7 @@
         });
     });
 
-    // Tema
+    // Tema escuro/claro (já ajusta a cor do ícone via CSS)
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     function applyTheme() {
@@ -509,7 +543,7 @@
     });
     applyTheme();
 
-    // Renderização dinâmica com gráficos
+    // ---------- RENDERIZAÇÃO DAS TELAS (mantendo tudo + clientes) ----------
     let salesChart = null, topProductsChart = null;
     function renderCurrentView(view) {
         if(view === 'dashboard') renderDashboard();
@@ -519,6 +553,7 @@
         else if(view === 'relatorioMensal') renderRelatorioMensal();
         else if(view === 'alertas') renderAlertas();
         else if(view === 'historico') renderHistorico();
+        else if(view === 'clientes') renderClientes();
     }
 
     function renderDashboard() {
@@ -537,7 +572,6 @@
         });
         const labels = Object.keys(vendasPorMes);
         const valores = Object.values(vendasPorMes);
-        // Produtos mais vendidos
         const qtdPorProduto = {};
         vendas.forEach(v => { qtdPorProduto[v.produtoId] = (qtdPorProduto[v.produtoId] || 0) + v.quantidade; });
         const topProdutos = Object.entries(qtdPorProduto).sort((a,b)=>b[1]-a[1]).slice(0,3);
@@ -556,14 +590,14 @@
                 <div class="chart-box"><canvas id="topProductsChart" width="400" height="250"></canvas></div>
             </div>
             <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
-            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Data</th><th>Total</th></tr></thead><tbody>
+             table<thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
             ${[...vendas].reverse().slice(0,5).map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
-                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
+                const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
+                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Cliente não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
             }).join('')}
             </tbody></table></div>
         `;
-        // gráficos após render
         setTimeout(() => {
             const ctx1 = document.getElementById('monthlySalesChart')?.getContext('2d');
             const ctx2 = document.getElementById('topProductsChart')?.getContext('2d');
@@ -616,25 +650,95 @@
         renderEstoque();
     }
 
+    // Tela de Nova Venda com data, pagamento e cliente
     function renderVenda() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
-            <select id="produtoVenda" class="form-control" style="padding:12px; width:100%; margin-bottom:16px;">${produtos.map(p => `<option value="${p.id}" data-venda="${p.venda}" data-estoque="${p.estoque}">${p.nome} - R$ ${p.venda} (estoque: ${p.estoque})</option>`).join('')}</select>
-            <input type="number" id="qtdVenda" placeholder="Quantidade" style="width:100%; margin-bottom:16px; padding:12px;">
-            <button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button>
-            <div id="vendaMsg" style="margin-top:20px;"></div></div>`;
+        // Opções de clientes
+        const clientesOptions = clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+        main.innerHTML = `
+            <div class="card-premium">
+                <div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <div class="flex-row">
+                        <select id="clienteVenda" style="flex:1">${clientesOptions}<option value="novo">+ Novo Cliente</option></select>
+                        <button id="btnNovoClienteRapido" class="btn-primary">Cadastrar</button>
+                    </div>
+                    <div id="novoClienteFields" style="display:none; margin-top:12px;">
+                        <input type="text" id="novoClienteNome" placeholder="Nome do cliente">
+                        <input type="email" id="novoClienteEmail" placeholder="E-mail">
+                        <input type="tel" id="novoClienteTelefone" placeholder="Telefone">
+                        <button id="salvarNovoCliente" class="btn-primary" style="margin-top:8px">Salvar Cliente</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Produto</label>
+                    <select id="produtoVenda">${produtos.map(p => `<option value="${p.id}" data-venda="${p.venda}" data-estoque="${p.estoque}">${p.nome} - R$ ${p.venda} (estoque: ${p.estoque})</option>`).join('')}</select>
+                </div>
+                <div class="form-group">
+                    <label>Quantidade</label>
+                    <input type="number" id="qtdVenda" min="1" value="1">
+                </div>
+                <div class="form-group">
+                    <label>Data da Venda</label>
+                    <input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}">
+                </div>
+                <div class="form-group">
+                    <label>Forma de Pagamento</label>
+                    <select id="formaPagamento">
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão Crédito">Cartão Crédito</option>
+                        <option value="Cartão Débito">Cartão Débito</option>
+                        <option value="Pix">Pix</option>
+                        <option value="Boleto">Boleto</option>
+                    </select>
+                </div>
+                <button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button>
+                <div id="vendaMsg" style="margin-top:20px;"></div>
+            </div>
+        `;
+        // Lógica para cliente novo
+        const clienteSelect = document.getElementById('clienteVenda');
+        const novoClienteDiv = document.getElementById('novoClienteFields');
+        const btnNovo = document.getElementById('btnNovoClienteRapido');
+        btnNovo.addEventListener('click', () => {
+            novoClienteDiv.style.display = 'block';
+        });
+        document.getElementById('salvarNovoCliente').addEventListener('click', () => {
+            const nome = document.getElementById('novoClienteNome').value.trim();
+            const email = document.getElementById('novoClienteEmail').value.trim();
+            const telefone = document.getElementById('novoClienteTelefone').value.trim();
+            if(!nome) return alert('Nome é obrigatório');
+            const novoId = Date.now();
+            clientes.push({ id: novoId, nome, email, telefone });
+            saveAll();
+            // Atualiza select
+            const option = new Option(nome, novoId);
+            clienteSelect.add(option, 'novo');
+            clienteSelect.value = novoId;
+            novoClienteDiv.style.display = 'none';
+            document.getElementById('novoClienteNome').value = '';
+            document.getElementById('novoClienteEmail').value = '';
+            document.getElementById('novoClienteTelefone').value = '';
+            alert('Cliente cadastrado com sucesso!');
+        });
+
         document.getElementById('venderBtn').addEventListener('click', () => {
+            let clienteId = parseInt(document.getElementById('clienteVenda').value);
+            if(isNaN(clienteId)) clienteId = null;
             const prodId = parseInt(document.getElementById('produtoVenda').value);
             const qtd = parseInt(document.getElementById('qtdVenda').value);
+            const dataVenda = document.getElementById('dataVenda').value;
+            const formaPagamento = document.getElementById('formaPagamento').value;
             const prod = produtos.find(p=>p.id===prodId);
             if(!prod || qtd<=0) return alert('Selecione produto e quantidade válida');
             if(qtd > prod.estoque) return alert('Estoque insuficiente');
             prod.estoque -= qtd;
             const total = qtd * prod.venda;
-            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date().toISOString() });
+            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date(dataVenda).toISOString(), clienteId, formaPagamento });
             saveAll();
             document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px; border-radius:60px;">✅ Venda realizada! Total R$ ${total.toFixed(2)}</div>`;
-            renderVenda();
+            renderVenda(); // recarrega a tela
         });
     }
 
@@ -642,8 +746,12 @@
         const main = document.getElementById('mainContent');
         const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
         main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-chart-simple"></i> Relatório de Vendas</div>
-            <table><thead><tr><th>Produto</th><th>Quantidade</th><th>Data</th><th>Total</th></tr></thead><tbody>
-            ${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${new Date(v.data).toLocaleString()}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`; }).join('')}
+            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
+            ${vendas.map(v => {
+                const p = produtos.find(prod=>prod.id===v.produtoId);
+                const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
+                return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cliente ? cliente.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento || '-'}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`;
+            }).join('')}
             </tbody></table><div style="margin-top:20px;"><strong>Total Geral: R$ ${totalGeral.toFixed(2)}</strong></div></div>`;
     }
 
@@ -669,9 +777,36 @@
     function renderHistorico() {
         const items = [...vendas].reverse().map(v => {
             const p = produtos.find(prod=>prod.id===v.produtoId);
-            return `<li style="margin-bottom:12px;"><i class="fas fa-receipt"></i> Venda: ${p?.nome} - ${v.quantidade} un - R$ ${v.total} - ${new Date(v.data).toLocaleString()}</li>`;
+            const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
+            return `<li style="margin-bottom:12px;"><i class="fas fa-receipt"></i> Venda: ${p?.nome} - ${v.quantidade} un - R$ ${v.total} - ${new Date(v.data).toLocaleString()} - Cliente: ${cliente?cliente.nome:'Não cadastrado'} - Pagamento: ${v.formaPagamento}</li>`;
         });
         document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-history"></i> Histórico de Movimentações</div><ul>${items.length?items.join(''):'<li>Nenhuma venda registrada</li>'}</ul></div>`;
+    }
+
+    function renderClientes() {
+        const main = document.getElementById('mainContent');
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div>
+            <button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button>
+            <table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>
+            ${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email || '-'}</td><td>${c.telefone || '-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}
+            </tbody></table></div>`;
+        document.getElementById('novoClienteBtn')?.addEventListener('click', () => {
+            const nome = prompt('Nome do cliente:');
+            if(nome) {
+                const email = prompt('E-mail (opcional):');
+                const telefone = prompt('Telefone (opcional):');
+                clientes.push({ id: Date.now(), nome, email: email||'', telefone: telefone||'' });
+                saveAll();
+                renderClientes();
+            }
+        });
+        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => {
+            if(confirm('Remover cliente? Todas as vendas associadas permanecerão sem cliente.')) {
+                clientes = clientes.filter(c => c.id != e.target.closest('button').dataset.id);
+                saveAll();
+                renderClientes();
+            }
+        }));
     }
 </script>
 </body>
