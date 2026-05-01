@@ -32,6 +32,7 @@
             --login-overlay-bg: rgba(0,0,0,0.7);
             --login-card-bg: #ffffff;
             --input-border: #d1d5db;
+            --backdrop-bg: rgba(0,0,0,0.4);
         }
 
         body.dark {
@@ -45,6 +46,7 @@
             --sidebar-bg: #1f2937;
             --login-card-bg: #374151;
             --input-border: #4b5563;
+            --backdrop-bg: rgba(0,0,0,0.6);
         }
 
         /* ---- TELA DE LOGIN (overlay) ---- */
@@ -115,7 +117,7 @@
             font-weight: 500;
         }
 
-        /* ---- APLICATIVO PRINCIPAL (inicialmente oculto) ---- */
+        /* ---- APLICATIVO PRINCIPAL (oculto até login) ---- */
         .app-container {
             display: none;
         }
@@ -123,7 +125,7 @@
             display: block;
         }
 
-        /* ---- CABEÇALHO PRINCIPAL ---- */
+        /* ---- CABEÇALHO ---- */
         .main-header {
             background: var(--header-bg);
             border-radius: 20px;
@@ -135,8 +137,9 @@
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 15px;
+            position: relative;
+            z-index: 10;
         }
-
         .menu-btn {
             background: var(--button-bg);
             border: none;
@@ -154,7 +157,6 @@
         .menu-btn:hover {
             background: var(--button-hover);
         }
-
         .page-title {
             font-size: 1.5rem;
             font-weight: bold;
@@ -167,14 +169,12 @@
             white-space: nowrap;
             overflow-x: auto;
         }
-
         .right-area {
             display: flex;
             align-items: center;
             gap: 20px;
             flex-shrink: 0;
         }
-
         .user-area {
             display: flex;
             align-items: center;
@@ -198,7 +198,6 @@
         .user-name {
             font-weight: 500;
         }
-
         .theme-toggle, .logout-btn {
             background: var(--button-bg);
             border: none;
@@ -223,31 +222,48 @@
             background: var(--button-hover);
         }
 
+        /* ---- LAYOUT PRINCIPAL (sidebar off-canvas) ---- */
         .dashboard-wrapper {
-            display: flex;
-            gap: 24px;
             position: relative;
+            min-height: 500px;
         }
-
+        /* Backdrop (fundo escuro) quando o menu está aberto */
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--backdrop-bg);
+            z-index: 98;
+            display: none;
+            cursor: pointer;
+        }
+        .sidebar-backdrop.active {
+            display: block;
+        }
+        /* Sidebar que desliza da esquerda (off-canvas) */
         .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
             background: var(--sidebar-bg);
-            border-radius: 24px;
-            width: 260px;
-            padding: 20px 0;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            flex-shrink: 0;
+            border-right: 1px solid var(--border-color);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 99;
+            padding: 80px 0 20px 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
-        .sidebar.closed {
-            width: 0;
-            padding: 0;
-            opacity: 0;
-            visibility: hidden;
+        .sidebar.open {
+            transform: translateX(0);
         }
         .sidebar ul {
             list-style: none;
-            padding: 0 12px;
+            padding: 0 16px;
         }
         .sidebar li {
             margin: 8px 0;
@@ -255,17 +271,19 @@
             border-radius: 16px;
             cursor: pointer;
             font-weight: 500;
-            white-space: nowrap;
+            transition: 0.2s;
         }
         .sidebar li:hover {
             background: var(--button-bg);
         }
 
+        /* Conteúdo principal (sem ser empurrado) */
         .main-content {
             flex: 1;
             min-width: 0;
         }
 
+        /* Cards de exemplo */
         .demo-card {
             background: var(--card-bg);
             border-radius: 20px;
@@ -304,7 +322,7 @@
             padding-right: 32px;
         }
 
-        @media (max-width: 780px) {
+        @media (max-width: 640px) {
             .main-header {
                 flex-direction: column;
                 align-items: stretch;
@@ -317,15 +335,9 @@
                 justify-content: flex-end;
                 flex-wrap: wrap;
             }
-            .dashboard-wrapper {
-                flex-direction: column;
-            }
             .sidebar {
-                width: 100%;
-            }
-            .sidebar.closed {
-                width: 100%;
-                display: none;
+                width: 85%;
+                max-width: 280px;
             }
         }
     </style>
@@ -341,7 +353,6 @@
         <input type="password" id="loginPassword" placeholder="Senha">
         <button id="doLoginBtn">Entrar / Cadastrar</button>
         <div id="loginMessage" class="login-message"></div>
-        <!-- Simulação: se não tiver conta, será criada automaticamente -->
         <div class="switch-mode" id="demoHint">🔓 Demo: qualquer email/senha (mínimo 3 caracteres)</div>
     </div>
 </div>
@@ -362,7 +373,11 @@
     </div>
 
     <div class="dashboard-wrapper">
-        <div class="sidebar" id="sidebar">
+        <!-- Backdrop (fundo escuro) para fechar ao clicar fora -->
+        <div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+
+        <!-- Sidebar (menu lateral off-canvas) -->
+        <div id="sidebar" class="sidebar">
             <ul>
                 <li>📊 Dashboard</li>
                 <li>📦 Estoque</li>
@@ -381,17 +396,17 @@
                 <div class="card-content">
                     <p>Produto "Smartphone Ultra" com apenas 2 unidades.</p>
                     <p>👉 O botão <strong>X</strong> deste card não interfere no título principal.<br>
-                    O menu sanduíche vira X e fica à esquerda, sem sobreposição.<br>
+                    O menu sanduíche agora abre uma <strong>aba lateral</strong> (off-canvas) sobre o conteúdo.<br>
                     Usuário logado: <span id="loggedUserNameRef"></span>.</p>
                 </div>
             </div>
             <div class="demo-card">
-                <div class="card-title">✅ Login funcional com persistência</div>
+                <div class="card-title">✅ Menu sanduíche em aba lateral</div>
                 <div class="card-content">
-                    • O sistema salva seus dados de acesso no navegador.<br>
-                    • Ao recarregar a página, você continua logado.<br>
-                    • Botão "Sair" limpa a sessão e volta à tela de login.<br>
-                    • Tema escuro/claro mantido separado do nome do usuário.
+                    • A sidebar desliza da esquerda, sem empurrar o conteúdo.<br>
+                    • Um backdrop escuro aparece atrás; clique nele para fechar.<br>
+                    • O ícone do sanduíche vira X enquanto o menu está aberto.<br>
+                    • Login persistente, tema escuro/claro e tudo mais preservado.
                 </div>
             </div>
         </div>
@@ -399,51 +414,40 @@
 </div>
 
 <script>
-    // ---------- GERENCIAMENTO DE USUÁRIOS (simulado com localStorage) ----------
-    // Chave para armazenar a lista de usuários cadastrados
+    // ---------- GERENCIAMENTO DE USUÁRIOS (localStorage) ----------
     const USERS_KEY = 'lojapro_users';
-    // Chave para armazenar a sessão atual
     const SESSION_KEY = 'lojapro_session';
 
-    // Carregar usuários existentes ou iniciar vazio
     let users = [];
     const storedUsers = localStorage.getItem(USERS_KEY);
     if (storedUsers) {
         users = JSON.parse(storedUsers);
     } else {
-        // Usuário demo opcional (para teste rápido)
         users = [
             { name: "Ana Oliveira", email: "ana@loja.com", password: "123456" }
         ];
         localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
 
-    // Função para salvar usuários
     function saveUsers() {
         localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
 
-    // Função de login/cadastro
     function loginOrRegister(name, email, password) {
-        // validação simples
         if (!name.trim() || !email.trim() || !password.trim()) {
             return { success: false, message: "Preencha todos os campos." };
         }
         if (password.length < 3) {
             return { success: false, message: "A senha deve ter pelo menos 3 caracteres." };
         }
-        // verificar se email já existe
         const existingUser = users.find(u => u.email === email);
         if (existingUser) {
-            // verificar senha
             if (existingUser.password === password) {
-                // login bem-sucedido
                 return { success: true, user: existingUser };
             } else {
                 return { success: false, message: "Senha incorreta para este e-mail." };
             }
         } else {
-            // criar novo usuário
             const newUser = { name: name.trim(), email: email, password: password };
             users.push(newUser);
             saveUsers();
@@ -451,7 +455,6 @@
         }
     }
 
-    // Criar sessão
     function setSession(user) {
         const session = {
             name: user.name,
@@ -461,19 +464,15 @@
         localStorage.setItem(SESSION_KEY, JSON.stringify(session));
     }
 
-    // Obter sessão atual
     function getSession() {
         const sess = localStorage.getItem(SESSION_KEY);
-        if (sess) return JSON.parse(sess);
-        return null;
+        return sess ? JSON.parse(sess) : null;
     }
 
-    // Encerrar sessão
     function clearSession() {
         localStorage.removeItem(SESSION_KEY);
     }
 
-    // Elementos da tela de login
     const loginOverlay = document.getElementById('loginOverlay');
     const appContainer = document.getElementById('appContainer');
     const loginName = document.getElementById('loginName');
@@ -482,13 +481,11 @@
     const doLoginBtn = document.getElementById('doLoginBtn');
     const loginMessage = document.getElementById('loginMessage');
 
-    // Elementos do app
     const userAvatar = document.getElementById('userAvatar');
     const userNameDisplay = document.getElementById('userNameDisplay');
     const logoutBtn = document.getElementById('logoutBtn');
     const loggedUserNameRef = document.getElementById('loggedUserNameRef');
 
-    // Atualizar interface do app com dados do usuário
     function updateAppUI(session) {
         if (session) {
             userAvatar.textContent = session.avatar;
@@ -497,22 +494,19 @@
         }
     }
 
-    // Mostrar app e esconder login
     function showApp() {
         loginOverlay.style.display = 'none';
         appContainer.classList.add('visible');
-        // Recarregar tema e sanduíche após login
         applyThemeFromStorage();
-        initSidebar();
+        // Garantir que o menu lateral comece fechado
+        closeSidebar();
     }
 
-    // mostrar tela de login
     function showLogin() {
         loginOverlay.style.display = 'flex';
         appContainer.classList.remove('visible');
     }
 
-    // Processar tentativa de login
     doLoginBtn.addEventListener('click', () => {
         const name = loginName.value;
         const email = loginEmail.value;
@@ -520,26 +514,19 @@
         const result = loginOrRegister(name, email, password);
         if (result.success) {
             setSession(result.user);
-            const session = getSession();
-            updateAppUI(session);
+            updateAppUI(getSession());
             showApp();
         } else {
             loginMessage.textContent = result.message;
         }
     });
 
-    // Permitir Enter nos campos
-    const loginInputs = [loginName, loginEmail, loginPassword];
-    loginInputs.forEach(input => {
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') doLoginBtn.click();
-        });
-    });
+    loginName.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
+    loginEmail.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
+    loginPassword.addEventListener('keypress', (e) => { if (e.key === 'Enter') doLoginBtn.click(); });
 
-    // Logout
     logoutBtn.addEventListener('click', () => {
         clearSession();
-        // Limpar campos de login
         loginName.value = '';
         loginEmail.value = '';
         loginPassword.value = '';
@@ -547,7 +534,6 @@
         showLogin();
     });
 
-    // Verificar sessão ao carregar a página
     window.addEventListener('DOMContentLoaded', () => {
         const session = getSession();
         if (session) {
@@ -558,10 +544,46 @@
         }
     });
 
+    // ---------- MENU SANDUÍCHE (off-canvas) ----------
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        sidebarBackdrop.classList.add('active');
+        menuToggle.innerHTML = '✕';  // vira X
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        sidebarBackdrop.classList.remove('active');
+        menuToggle.innerHTML = '☰';  // volta sanduíche
+    }
+    function toggleSidebar() {
+        if (sidebar.classList.contains('open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    }
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', toggleSidebar);
+    }
+    if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', closeSidebar);
+    }
+
+    // Fechar menu ao redimensionar para mobile? não necessário, mas mantém.
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 640 && sidebar.classList.contains('open')) {
+            closeSidebar();
+        }
+    });
+
     // ---------- TEMA ESCURO/CLARO (persistente) ----------
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
-
     function applyThemeFromStorage() {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
@@ -572,7 +594,6 @@
             if (themeToggle) themeToggle.innerHTML = '🌙 Modo escuro';
         }
     }
-
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark');
@@ -582,32 +603,6 @@
         });
     }
     applyThemeFromStorage();
-
-    // ---------- MENU SANDUÍCHE (abrir/fechar sidebar) ----------
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    let isMenuOpen = false;
-
-    function initSidebar() {
-        if (!sidebar) return;
-        // Sidebar começa fechada
-        sidebar.classList.add('closed');
-        isMenuOpen = false;
-        if (menuToggle) menuToggle.innerHTML = '☰';
-    }
-
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', () => {
-            isMenuOpen = !isMenuOpen;
-            if (isMenuOpen) {
-                sidebar.classList.remove('closed');
-                menuToggle.innerHTML = '✕';
-            } else {
-                sidebar.classList.add('closed');
-                menuToggle.innerHTML = '☰';
-            }
-        });
-    }
 
     // ---------- FECHAR CARD (X) ----------
     const closeCard1 = document.getElementById('closeCard1');
@@ -619,4 +614,4 @@
     }
 </script>
 </body>
-    </html>
+</html>
