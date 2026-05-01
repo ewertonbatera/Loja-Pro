@@ -11,23 +11,11 @@
             box-sizing: border-box;
         }
 
-        /* Ícones em SVG para não depender de Font Awesome */
-        .icon {
-            width: 20px;
-            height: 20px;
-            display: inline-block;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            vertical-align: middle;
-        }
-
         body {
-            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-body);
             color: var(--text-primary);
             transition: background 0.3s ease;
-            overflow-x: hidden;
         }
 
         :root {
@@ -118,9 +106,6 @@
             font-size: 0.9rem;
             outline: none;
         }
-        .input-group-login input:focus {
-            border-color: var(--primary);
-        }
         .btn-login {
             width: 100%;
             background: var(--primary);
@@ -132,9 +117,6 @@
             border: none;
             cursor: pointer;
             font-size: 1rem;
-        }
-        .btn-login:hover {
-            background: var(--primary-dark);
         }
         .divider {
             display: flex;
@@ -161,18 +143,13 @@
             text-decoration: none;
             font-weight: 600;
         }
-        .error-msg {
-            color: var(--danger);
+        .error-msg, .success-msg {
             font-size: 0.75rem;
             margin-top: 12px;
             text-align: center;
         }
-        .success-msg {
-            color: var(--success);
-            font-size: 0.75rem;
-            margin-top: 12px;
-            text-align: center;
-        }
+        .error-msg { color: var(--danger); }
+        .success-msg { color: var(--success); }
 
         /* User info */
         .user-info {
@@ -196,10 +173,6 @@
             font-weight: bold;
             font-size: 0.9rem;
         }
-        .user-name {
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
         .logout-btn {
             background: transparent;
             color: var(--danger);
@@ -216,9 +189,7 @@
             min-height: 100vh;
             width: 100%;
         }
-        .app-container.visible {
-            display: flex;
-        }
+        .app-container.visible { display: flex; }
 
         .menu-toggle {
             display: none;
@@ -272,7 +243,6 @@
             color: var(--text-secondary);
             font-weight: 500;
         }
-        .menu-item i { width: 24px; font-style: normal; }
         .menu-item:hover, .menu-item.active { background: var(--primary); color: white; }
         .sidebar-overlay {
             display: none;
@@ -299,7 +269,14 @@
             margin-bottom: 30px;
             gap: 15px;
         }
-        h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
         .theme-toggle {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -398,10 +375,13 @@
             border-radius: 20px;
             padding: 15px;
             border: 1px solid var(--border);
+            text-align: center;
         }
         .chart-box canvas {
-            max-height: 200px;
-            width: 100%;
+            max-width: 100%;
+            height: auto;
+            background: var(--bg-card);
+            border-radius: 12px;
         }
         .alert-list { display: flex; flex-direction: column; gap: 10px; }
         .alert-item {
@@ -423,7 +403,7 @@
             .main-content { margin-left: 0; padding: 60px 12px 20px 12px; width: 100%; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .stat-value { font-size: 1rem; }
-            h1 { font-size: 1.1rem; }
+            h1 { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -499,7 +479,7 @@
         <div class="main-content">
             <div class="container">
                 <div class="header">
-                    <h1>📈 Loja Pro</h1>
+                    <h1>📊 Loja Pro</h1>
                     <div style="display: flex; gap: 12px; align-items: center;">
                         <div id="userInfoDisplay" class="user-info"></div>
                         <button class="theme-toggle" id="themeToggle">🌙 Modo Escuro</button>
@@ -516,13 +496,13 @@
                         <div class="stat-card"><div class="stat-title">📊 Lucro Mês</div><div class="stat-value" id="lucroMes">R$ 0</div></div>
                     </div>
                     <div class="charts-grid">
-                        <div class="chart-box"><h4>📈 Vendas por Tipo</h4><canvas id="tipoVendasChart" width="300" height="200"></canvas></div>
-                        <div class="chart-box"><h4>💰 Produtos Mais Vendidos</h4><canvas id="topProdutosChart" width="300" height="200"></canvas></div>
+                        <div class="chart-box"><h4>📈 Vendas por Tipo</h4><canvas id="tipoVendasChart" width="400" height="250" style="width:100%; height:auto; max-width:400px; margin:0 auto;"></canvas></div>
+                        <div class="chart-box"><h4>💰 Produtos Mais Vendidos</h4><canvas id="topProdutosChart" width="400" height="250" style="width:100%; height:auto; max-width:400px; margin:0 auto;"></canvas></div>
                     </div>
                 </div>
-                <div id="estoquePanel" class="panel"><div class="form-card"><h3>➕ Novo Produto</h3><div class="form-row"><div class="input-group"><label>Nome</label><input type="text" id="prodNome" placeholder="Ex: Camiseta"></div><div class="input-group"><label>Preço Custo</label><input type="number" id="prodCusto" step="0.01"></div><div class="input-group"><label>Preço Venda</label><input type="number" id="prodVenda" step="0.01"></div></div><div class="form-row"><div class="input-group"><label>Quantidade</label><input type="number" id="prodQtd" value="1"></div><div class="input-group"><label>Estoque Mínimo</label><input type="number" id="prodMin" value="5"></div><div class="input-group"><label>Estoque Máximo</label><input type="number" id="prodMax" value="50"></div></div><button id="btnAddProduto">💾 Salvar Produto</button></div><div class="table-responsive"><table id="tabelaEstoque"><thead><tr><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín/Máx</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></div>
+                <div id="estoquePanel" class="panel"><div class="form-card"><h3>➕ Novo Produto</h3><div class="form-row"><div class="input-group"><label>Nome</label><input type="text" id="prodNome" placeholder="Ex: Camiseta"></div><div class="input-group"><label>Preço Custo (R$)</label><input type="number" id="prodCusto" step="0.01"></div><div class="input-group"><label>Preço Venda (R$)</label><input type="number" id="prodVenda" step="0.01"></div></div><div class="form-row"><div class="input-group"><label>Quantidade</label><input type="number" id="prodQtd" value="1"></div><div class="input-group"><label>Estoque Mínimo</label><input type="number" id="prodMin" value="5"></div><div class="input-group"><label>Estoque Máximo</label><input type="number" id="prodMax" value="50"></div></div><button id="btnAddProduto">💾 Salvar Produto</button></div><div class="table-responsive"><table id="tabelaEstoque"><thead><tr><th>Produto</th><th>Custo</th><th>Venda</th><th>Estoque</th><th>Mín/Máx</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></div>
                 <div id="vendasPanel" class="panel"><div class="form-card"><h3>🛒 Registrar Venda</h3><div class="form-row"><div class="input-group"><label>Cliente</label><input type="text" id="clienteNome" placeholder="Nome do cliente"></div><div class="input-group"><label>Produto</label><select id="vendaProdutoId"></select></div><div class="input-group"><label>Quantidade</label><input type="number" id="vendaQtd" value="1" min="1"></div><div class="input-group"><label>Tipo</label><select id="vendaTipo"><option value="entrega">🚚 Entrega</option><option value="retirada">🏠 Retirada</option></select></div></div><button id="btnRegistrarVenda">✅ Finalizar Venda</button></div></div>
-                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3>📄 Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">🔍 Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">🗑 Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
+                <div id="relatorioVendasPanel" class="panel"><div class="form-card"><h3>📄 Relatório de Vendas</h3><div class="relatorio-filtro"><input type="month" id="filtroMesVendas"><button id="btnFiltrarVendas">🔍 Filtrar</button><button id="btnLimparFiltro" class="btn-secondary">🗑 Limpar</button></div><div class="table-responsive"><table id="tabelaRelatorioVendas"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody><tr></div></div></div>
                 <div id="relatoriosPanel" class="panel"><div class="form-card"><div class="relatorio-filtro"><input type="month" id="mesSelecionado"><button id="btnCarregarRelatorio">📊 Analisar</button></div><div id="relatorioMensal"><h3 id="mesTitulo"></h3><div class="stats-grid"><div class="stat-card"><div class="stat-title">💰 Faturamento Bruto</div><div class="stat-value" id="relBruto">R$ 0</div></div><div class="stat-card"><div class="stat-title">📉 Custo Total</div><div class="stat-value" id="relCusto">R$ 0</div></div><div class="stat-card"><div class="stat-title">📊 Lucro Líquido</div><div class="stat-value" id="relLucro">R$ 0</div></div><div class="stat-card"><div class="stat-title">📦 Produtos Vendidos</div><div class="stat-value" id="relQtdProdutos">0</div></div></div><h4>🏆 Top 5 Produtos</h4><div class="table-responsive"><table id="tabelaTopProdutos"><thead><tr><th>Produto</th><th>Quantidade</th><th>Faturamento</th></tr></thead><tbody></tbody></table></div></div></div></div>
                 <div id="alertasPanel" class="panel"><div class="form-card"><h3>🔔 Alertas de Estoque</h3><div id="alertasList" class="alert-list"></div></div></div>
                 <div id="historicoPanel" class="panel"><div class="form-card"><h3>📋 Histórico de Vendas</h3><button id="btnExportarCSV" class="btn-secondary">📎 Exportar CSV</button><div class="table-responsive"><table id="tabelaHistorico"><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th><th>Valor Unit.</th><th>Total</th><th>Lucro</th><th>Tipo</th></tr></thead><tbody></tbody></table></div></div></div>
@@ -532,70 +512,107 @@
     </div>
 
     <script>
-        // Versão simplificada - APK compatível
+        // ===================== SISTEMA COMPLETO E CORRIGIDO =====================
         let currentUser = null;
         let produtos = [], vendas = [], nextProdId = 1, nextVendaId = 1;
         let filtroMesAtual = null;
-        let tipoChart = null, topChart = null;
 
-        // Chart.js simplificado (versão embutida básica)
+        // ---------- Gráficos robustos (sem dependências externas) ----------
         function drawDoughnut(canvasId, labels, data, colors) {
             const canvas = document.getElementById(canvasId);
-            if(!canvas) return;
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            const w = canvas.width, h = canvas.height;
+            const w = canvas.clientWidth, h = canvas.clientHeight;
+            canvas.width = w;
+            canvas.height = h;
+            
             ctx.clearRect(0, 0, w, h);
             const total = data.reduce((a,b)=>a+b,0);
-            if(total === 0) { ctx.fillStyle = '#ccc'; ctx.fillRect(0,0,w,h); return; }
+            if (total === 0) {
+                ctx.font = "14px sans-serif";
+                ctx.fillStyle = "#999";
+                ctx.textAlign = "center";
+                ctx.fillText("Sem vendas no período", w/2, h/2);
+                return;
+            }
             let start = -Math.PI/2;
-            const centerX = w/2, centerY = h/2, radius = Math.min(w,h)/2.5;
+            const centerX = w/2, centerY = h/2;
+            const radius = Math.min(w, h) / 2.5;
             data.forEach((val, i) => {
-                const angle = (val/total) * Math.PI * 2;
+                const angle = (val / total) * Math.PI * 2;
                 ctx.beginPath();
-                ctx.fillStyle = colors[i];
+                ctx.fillStyle = colors[i % colors.length];
                 ctx.moveTo(centerX, centerY);
                 ctx.arc(centerX, centerY, radius, start, start+angle);
                 ctx.fill();
                 start += angle;
             });
+            // legenda simples
+            ctx.font = "10px sans-serif";
+            ctx.fillStyle = "#333";
+            let y = h - 20;
+            for (let i=0; i<labels.length; i++) {
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(10, y, 12, 12);
+                ctx.fillStyle = "#555";
+                ctx.fillText(labels[i], 28, y+10);
+                y -= 18;
+            }
         }
-        
+
         function drawBar(canvasId, labels, data, color) {
             const canvas = document.getElementById(canvasId);
-            if(!canvas) return;
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            const w = canvas.width, h = canvas.height;
+            const w = canvas.clientWidth, h = canvas.clientHeight;
+            canvas.width = w;
+            canvas.height = h;
             ctx.clearRect(0, 0, w, h);
-            if(data.length === 0) return;
+            
+            if (!data.length || data.every(v=>v===0)) {
+                ctx.font = "14px sans-serif";
+                ctx.fillStyle = "#999";
+                ctx.textAlign = "center";
+                ctx.fillText("Nenhum produto vendido", w/2, h/2);
+                return;
+            }
             const maxVal = Math.max(...data, 1);
-            const barWidth = (w / data.length) * 0.7;
-            const startX = (w / data.length) * 0.15;
-            for(let i=0; i<data.length; i++) {
-                const barHeight = (data[i]/maxVal) * (h - 40);
+            const barWidth = (w / data.length) * 0.6;
+            const startX = (w / data.length) * 0.2;
+            for (let i = 0; i < data.length; i++) {
+                const barHeight = (data[i] / maxVal) * (h - 50);
                 ctx.fillStyle = color;
                 ctx.fillRect(startX + i*(w/data.length), h - barHeight - 20, barWidth, barHeight);
-                ctx.fillStyle = '#666';
-                ctx.font = '10px sans-serif';
-                ctx.fillText(labels[i]?.substring(0,8)||'', startX + i*(w/data.length), h - 5);
+                ctx.fillStyle = "#555";
+                ctx.font = "10px sans-serif";
+                ctx.textAlign = "center";
+                let label = labels[i] || "";
+                if (label.length > 10) label = label.substr(0,8)+"...";
+                ctx.fillText(label, startX + i*(w/data.length) + barWidth/2, h - 8);
             }
         }
 
         function atualizarGraficos() {
-            const entrega = vendas.filter(v=>v.tipo==='entrega').reduce((a,v)=>a+v.total,0);
-            const retirada = vendas.filter(v=>v.tipo==='retirada').reduce((a,v)=>a+v.total,0);
-            drawDoughnut('tipoVendasChart', ['Entrega','Retirada'], [entrega, retirada], ['#3b82f6', '#10b981']);
-            
-            const prodQtd = {};
-            vendas.forEach(v => prodQtd[v.produtoId] = (prodQtd[v.produtoId]||0) + v.quantidade);
-            const top = Object.entries(prodQtd).sort((a,b)=>b[1]-a[1]).slice(0,5);
-            drawBar('topProdutosChart', top.map(([id])=>produtos.find(p=>p.id==id)?.nome?.substring(0,10)||'?'), top.map(([,q])=>q), '#f59e0b');
+            setTimeout(() => {
+                const entrega = vendas.filter(v=>v.tipo==='entrega').reduce((a,v)=>a+v.total,0);
+                const retirada = vendas.filter(v=>v.tipo==='retirada').reduce((a,v)=>a+v.total,0);
+                drawDoughnut('tipoVendasChart', ['Entrega', 'Retirada'], [entrega, retirada], ['#3b82f6', '#10b981']);
+                
+                const prodQtd = {};
+                vendas.forEach(v => prodQtd[v.produtoId] = (prodQtd[v.produtoId]||0) + v.quantidade);
+                const top = Object.entries(prodQtd).sort((a,b)=>b[1]-a[1]).slice(0,5);
+                drawBar('topProdutosChart', 
+                    top.map(([id]) => produtos.find(p=>p.id==id)?.nome || '?'), 
+                    top.map(([,q]) => q), 
+                    '#f59e0b');
+            }, 50);
         }
 
-        // Usuários
-        function getUsers() { const u = localStorage.getItem("loja_users_apk"); return u ? JSON.parse(u) : {}; }
-        function saveUsers(users) { localStorage.setItem("loja_users_apk", JSON.stringify(users)); }
-        function saveCurrentSession(user) { if(user) localStorage.setItem("loja_current_session_apk", JSON.stringify({ id: user.id, email: user.email, nome: user.nome })); else localStorage.removeItem("loja_current_session_apk"); }
-        function loadSavedSession() { const s = localStorage.getItem("loja_current_session_apk"); if(s) { const u = JSON.parse(s); const users = getUsers(); if(users[u.email] && users[u.email].id === u.id) return u; } return null; }
+        // ---------- Gerenciamento de usuários e dados ----------
+        function getUsers() { const u = localStorage.getItem("loja_users_apk2"); return u ? JSON.parse(u) : {}; }
+        function saveUsers(users) { localStorage.setItem("loja_users_apk2", JSON.stringify(users)); }
+        function saveCurrentSession(user) { if(user) localStorage.setItem("loja_session_apk2", JSON.stringify({ id: user.id, email: user.email, nome: user.nome })); else localStorage.removeItem("loja_session_apk2"); }
+        function loadSavedSession() { const s = localStorage.getItem("loja_session_apk2"); if(s) { const u = JSON.parse(s); const users = getUsers(); if(users[u.email] && users[u.email].id === u.id) return u; } return null; }
         
         function registerUser(nome, email, senha) {
             const users = getUsers();
@@ -685,6 +702,7 @@
             produtos.push({id:nextProdId++, nome, precoCusto:custo, precoVenda:venda, quantidade:qtd, estoqueMin:min, estoqueMax:max, foto:""});
             saveUserData(); renderAllApp();
             document.getElementById('prodNome').value = ''; document.getElementById('prodCusto').value = ''; document.getElementById('prodVenda').value = '';
+            document.getElementById('prodQtd').value = '1';
         }
         
         function registrarVenda() {
@@ -747,7 +765,15 @@
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "vendas.csv"; a.click();
         }
         
-        function renderAllApp() { atualizarResumo(); renderEstoque(); atualizarSelect(); renderHistorico(); renderRelatorioVendas(); atualizarGraficos(); carregarRelatorioMensal(); }
+        function renderAllApp() { 
+            atualizarResumo(); 
+            renderEstoque(); 
+            atualizarSelect(); 
+            renderHistorico(); 
+            renderRelatorioVendas(); 
+            atualizarGraficos(); 
+            carregarRelatorioMensal(); 
+        }
         
         function afterLogin(user) {
             currentUser = user;
@@ -763,7 +789,7 @@
         
         function checkAutoLogin() { const s = loadSavedSession(); if(s) { afterLogin(s); return true; } return false; }
         
-        // Eventos
+        // ---------- Eventos e inicialização ----------
         document.getElementById('showRegister')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; });
         document.getElementById('showLogin')?.addEventListener('click',()=>{ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; });
         document.getElementById('btnEmailLogin')?.addEventListener('click',()=>{ const r = loginUser(document.getElementById('loginEmail').value, document.getElementById('loginSenha').value); if(r.success) afterLogin(r.user); else document.getElementById('loginError').innerText = r.error; });
@@ -775,16 +801,16 @@
         document.getElementById('btnFiltrarVendas')?.addEventListener('click',()=>{ filtroMesAtual = document.getElementById('filtroMesVendas')?.value||null; renderRelatorioVendas(); });
         document.getElementById('btnLimparFiltro')?.addEventListener('click',()=>{ if(document.getElementById('filtroMesVendas')) document.getElementById('filtroMesVendas').value=''; filtroMesAtual=null; renderRelatorioVendas(); });
         
-        // Menu
+        // menu mobile
         const items = document.querySelectorAll('.menu-item');
         const panels = document.querySelectorAll('.panel');
         items.forEach(i=>{i.addEventListener('click',()=>{const pid=i.getAttribute('data-panel'); items.forEach(x=>x.classList.remove('active')); i.classList.add('active'); panels.forEach(p=>p.classList.remove('active-panel')); document.getElementById(`${pid}Panel`).classList.add('active-panel'); if(window.innerWidth<=768) closeMenu();});});
-        
         const toggle = document.getElementById('menuToggle'), sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay');
         const closeMenu = () => { sidebar?.classList.remove('open'); if(overlay) overlay.style.display='none'; if(toggle) toggle.innerHTML='☰'; };
         if(toggle) toggle.addEventListener('click',()=>{if(sidebar?.classList.contains('open'))closeMenu(); else{sidebar?.classList.add('open'); if(overlay) overlay.style.display='block'; toggle.innerHTML='✕';}});
         if(overlay) overlay.addEventListener('click',closeMenu);
         
+        // tema
         const themeToggle = document.getElementById('themeToggle');
         if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark');
         if(themeToggle) themeToggle.addEventListener('click',()=>{document.body.classList.toggle('dark'); localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');});
@@ -795,6 +821,9 @@
         
         if(!checkAutoLogin()) document.getElementById('loginScreen').style.display = 'flex';
         else document.getElementById('loginScreen').style.display = 'none';
+        
+        // Redesenha gráficos ao redimensionar a tela (responsivo)
+        window.addEventListener('resize', () => { if(currentUser) atualizarGraficos(); });
     </script>
 </body>
     </html>
