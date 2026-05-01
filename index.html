@@ -122,20 +122,25 @@
             transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             z-index: 99; padding: 100px 0 32px;
             border-right: 1px solid var(--border-color);
+            overflow-y: auto;
         }
         .sidebar.open { transform: translateX(0); }
         .sidebar ul { list-style: none; padding: 0 20px; }
         .sidebar li {
             margin: 12px 0; padding: 14px 20px; border-radius: 60px;
             cursor: pointer; display: flex; align-items: center; gap: 14px;
+            transition: 0.2s;
         }
-        .sidebar li:hover { background: var(--primary); color: white; }
+        .sidebar li:hover { background: var(--primary); color: white; transform: translateX(8px); }
+        .sidebar li i { width: 24px; }
         .main-content { min-height: 600px; }
         .card-premium {
             background: var(--card-bg); border-radius: 32px; padding: 28px;
             margin-bottom: 28px; box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+        .card-premium:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
         .card-title {
             font-size: 1.5rem; font-weight: 600; margin-bottom: 20px;
             display: flex; align-items: center; gap: 12px;
@@ -148,17 +153,21 @@
             background: var(--card-bg); border-radius: 28px; padding: 24px;
             text-align: center; border: 1px solid var(--border-color);
         }
+        .stat-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 12px; }
+        .stat-card h3 { font-size: 1rem; font-weight: 500; opacity: 0.8; }
         .stat-card p { font-size: 2rem; font-weight: 700; margin-top: 8px; }
         .charts-row { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; }
-        .chart-box { flex: 1; background: var(--card-bg); border-radius: 28px; padding: 20px; }
+        .chart-box { flex: 1; min-width: 280px; background: var(--card-bg); border-radius: 28px; padding: 20px; border: 1px solid var(--border-color); }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
         th { color: var(--primary); }
         .btn-primary {
             background: var(--primary); color: white; border: none;
             padding: 12px 24px; border-radius: 40px; cursor: pointer;
+            transition: 0.2s;
         }
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 60px; font-size: 0.75rem; }
+        .btn-primary:hover { background: var(--primary-dark); transform: scale(1.02); }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 60px; font-size: 0.75rem; font-weight: 600; }
         .badge-success { background: var(--success); color: white; }
         .badge-warning { background: var(--warning); color: #1e293b; }
         .form-group { margin-bottom: 20px; }
@@ -252,7 +261,7 @@
         else localStorage.removeItem('lojapro_session');
     }
 
-    // Produtos iniciais com novos campos
+    // Produtos iniciais
     if (produtos.length === 0) {
         produtos = [
             { id: 1, nome: "Smartphone X", descricao: "Smartphone de última geração com 128GB", codigoBarras: "7891234567890", precoCompra: 800, precoVenda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40, dataEntrada: "2025-01-15" },
@@ -350,14 +359,45 @@
     const menuToggle = document.getElementById('menuToggle');
     const sidebarEl = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
-    function openSidebar() { sidebarEl.classList.add('open'); backdrop.classList.add('active'); if(menuToggle) menuToggle.innerHTML = '<i class="fas fa-times"></i>'; }
-    function closeSidebar() { sidebarEl.classList.remove('open'); backdrop.classList.remove('active'); if(menuToggle) menuToggle.innerHTML = '<i class="fas fa-bars"></i>'; }
-    function toggleSidebar() { if(sidebarEl.classList.contains('open')) closeSidebar(); else openSidebar(); }
+    
+    function openSidebar() {
+        sidebarEl.classList.add('open');
+        backdrop.classList.add('active');
+        if(menuToggle) menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+    }
+    
+    function closeSidebar() {
+        sidebarEl.classList.remove('open');
+        backdrop.classList.remove('active');
+        if(menuToggle) menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    }
+    
+    function toggleSidebar() {
+        if(sidebarEl.classList.contains('open')) closeSidebar();
+        else openSidebar();
+    }
+    
     if(menuToggle) menuToggle.addEventListener('click', toggleSidebar);
     if(backdrop) backdrop.addEventListener('click', closeSidebar);
-    document.querySelectorAll('.sidebar li').forEach(li => {
-        li.addEventListener('click', () => { const view = li.getAttribute('data-view'); if(view) renderCurrentView(view); closeSidebar(); });
-    });
+    
+    // Garantir que todos os itens do menu tenham evento de clique
+    function attachMenuEvents() {
+        document.querySelectorAll('.sidebar li').forEach(li => {
+            // Remove eventos antigos para evitar duplicação
+            li.removeEventListener('click', li._handler);
+            const handler = () => {
+                const view = li.getAttribute('data-view');
+                if(view) {
+                    renderCurrentView(view);
+                    closeSidebar();
+                }
+            };
+            li._handler = handler;
+            li.addEventListener('click', handler);
+        });
+    }
+    
+    attachMenuEvents();
 
     // Tema
     const themeToggleBtn = document.getElementById('themeToggle');
@@ -368,14 +408,17 @@
         else body.classList.remove('dark');
         themeToggleBtn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
-    themeToggleBtn.addEventListener('click', () => { body.classList.toggle('dark'); localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light'); applyTheme(); });
+    themeToggleBtn.addEventListener('click', () => { 
+        body.classList.toggle('dark'); 
+        localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light'); 
+        applyTheme(); 
+    });
     applyTheme();
 
-    // Modal para cadastro/edição de produto (profissional)
+    // Modal para cadastro/edição de produto
     let produtoModal = null;
 
     function abrirModalProduto(produto = null) {
-        // Remove modal existente
         if(produtoModal) produtoModal.remove();
         
         const isEditing = produto !== null;
@@ -435,21 +478,19 @@
         document.body.appendChild(modalDiv);
         produtoModal = modalDiv;
         
-        // Eventos do modal
         document.getElementById('salvarProdutoBtn').addEventListener('click', () => {
             const nome = document.getElementById('prodNome').value.trim();
             const descricao = document.getElementById('prodDescricao').value.trim();
             const codigoBarras = document.getElementById('prodCodigoBarras').value.trim();
             const dataEntrada = document.getElementById('prodDataEntrada').value;
-            const precoCompra = parseFloat(document.getElementById('prodPrecoCompra').value);
+            const precoCompra = parseFloat(document.getElementById('prodPrecoCompra').value) || 0;
             const precoVenda = parseFloat(document.getElementById('prodPrecoVenda').value);
-            const estoque = parseInt(document.getElementById('prodEstoque').value);
-            const estoqueMin = parseInt(document.getElementById('prodEstoqueMin').value);
-            const estoqueMax = parseInt(document.getElementById('prodEstoqueMax').value);
+            const estoque = parseInt(document.getElementById('prodEstoque').value) || 0;
+            const estoqueMin = parseInt(document.getElementById('prodEstoqueMin').value) || 0;
+            const estoqueMax = parseInt(document.getElementById('prodEstoqueMax').value) || 0;
             
             if(!nome) { alert('Nome do produto é obrigatório!'); return; }
             if(isNaN(precoVenda) || precoVenda <= 0) { alert('Preço de venda deve ser maior que zero!'); return; }
-            if(isNaN(estoque)) { alert('Estoque inválido!'); return; }
             
             if(isEditing) {
                 produto.nome = nome;
@@ -485,6 +526,7 @@
 
     // Renderização das telas
     let salesChart = null, topProductsChart = null;
+    
     function renderCurrentView(view) {
         if(view === 'dashboard') renderDashboard();
         else if(view === 'estoque') renderEstoque();
@@ -499,10 +541,18 @@
     function renderDashboard() {
         const main = document.getElementById('mainContent');
         const totalFaturamento = vendas.reduce((s,v)=>s+v.total,0);
-        const lucroTotal = vendas.reduce((acc, v) => {
-            const p = produtos.find(prod => prod.id === v.produtoId);
-            return acc + (p ? v.quantidade * (p.precoVenda - p.precoCompra) : 0);
+        
+        // CÁLCULO CORRETO DO LUCRO LÍQUIDO
+        const lucroTotal = vendas.reduce((acc, venda) => {
+            const produto = produtos.find(p => p.id === venda.produtoId);
+            if(produto) {
+                const custoTotal = venda.quantidade * (produto.precoCompra || 0);
+                const lucroVenda = venda.total - custoTotal;
+                return acc + lucroVenda;
+            }
+            return acc;
         }, 0);
+        
         const baixoEstoque = produtos.filter(p => p.estoque <= p.estoqueMin).length;
         const vendasPorMes = {};
         vendas.forEach(v => {
@@ -524,7 +574,10 @@
                 <div class="stat-card"><i class="fas fa-boxes"></i><h3>Produtos em Estoque</h3><p>${produtos.reduce((s,p)=>s+p.estoque,0)}</p></div>
                 <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p>${baixoEstoque}</p></div>
             </div>
-            <div class="charts-row"><div class="chart-box"><canvas id="monthlySalesChart"></canvas></div><div class="chart-box"><canvas id="topProductsChart"></canvas></div></div>
+            <div class="charts-row">
+                <div class="chart-box"><canvas id="monthlySalesChart"></canvas></div>
+                <div class="chart-box"><canvas id="topProductsChart"></canvas></div>
+            </div>
             <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div>
             <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>
             ${[...vendas].reverse().slice(0,5).map(v => {
@@ -539,13 +592,13 @@
             const ctx2 = document.getElementById('topProductsChart')?.getContext('2d');
             if(ctx1) {
                 if(salesChart) salesChart.destroy();
-                salesChart = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Faturamento (R$)', data: valores, backgroundColor: '#3b82f6', borderRadius: 12 }] }, options: { responsive: true } });
+                salesChart = new Chart(ctx1, { type: 'bar', data: { labels, datasets: [{ label: 'Faturamento (R$)', data: valores, backgroundColor: '#3b82f6', borderRadius: 12 }] }, options: { responsive: true, maintainAspectRatio: true } });
             }
             if(ctx2) {
                 if(topProductsChart) topProductsChart.destroy();
                 topProductsChart = new Chart(ctx2, { type: 'doughnut', data: { labels: topLabels, datasets: [{ data: topQtde, backgroundColor: ['#3b82f6','#10b981','#f59e0b'] }] }, options: { responsive: true } });
             }
-        }, 50);
+        }, 100);
     }
 
     function renderEstoque() {
@@ -561,7 +614,7 @@
                             <tr>
                                 <td><strong>${p.nome}</strong><br><small style="opacity:0.7;">${(p.descricao || '').substring(0,30)}${(p.descricao || '').length>30 ? '...' : ''}</small></td>
                                 <td>${p.codigoBarras || '-'}</td>
-                                <td>${formatarMoeda(p.precoCompra)}</td>
+                                <td>${formatarMoeda(p.precoCompra)}</td>${p.precoCompra ? '' : ''}
                                 <td>${formatarMoeda(p.precoVenda)}</td>
                                 <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
                                 <td>${p.estoqueMin}</td>
@@ -598,32 +651,70 @@
                 <div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
                 <div class="form-group">
                     <label>Cliente</label>
-                    <select id="clienteVenda">${clientesOptions}<option value="novo">+ Novo Cliente</option></select>
+                    <select id="clienteVenda">
+                        <option value="">-- Selecione um cliente --</option>
+                        ${clientesOptions}
+                        <option value="novo">+ Novo Cliente</option>
+                    </select>
                     <button id="btnNovoClienteRapido" class="btn-primary" style="margin-top:8px">Cadastrar Cliente</button>
-                    <div id="novoClienteFields" style="display:none; margin-top:12px;"></div>
+                </div>
+                <div id="novoClienteFields" style="display:none; margin-top:12px;">
+                    <input type="text" id="novoClienteNome" placeholder="Nome do cliente" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
+                    <input type="email" id="novoClienteEmail" placeholder="E-mail" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
+                    <input type="tel" id="novoClienteTelefone" placeholder="Telefone" style="width:100%; margin-bottom:8px; padding:10px; border-radius:60px;">
+                    <button id="salvarNovoCliente" class="btn-primary">Salvar Cliente</button>
                 </div>
                 <div class="form-group"><label>Produto</label><select id="produtoVenda">${produtos.map(p => `<option value="${p.id}">${p.nome} - ${formatarMoeda(p.precoVenda)} (${p.estoque} un)</option>`).join('')}</select></div>
                 <div class="form-group"><label>Quantidade</label><input type="number" id="qtdVenda" min="1" value="1"></div>
                 <div class="form-group"><label>Data da Venda</label><input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}"></div>
-                <div class="form-group"><label>Forma de Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option><option>Pix</option></select></div>
-                <button id="venderBtn" class="btn-primary">Registrar Venda</button>
-                <div id="vendaMsg"></div>
+                <div class="form-group"><label>Forma de Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option><option>Pix</option><option>Boleto</option></select></div>
+                <button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button>
+                <div id="vendaMsg" style="margin-top:20px;"></div>
             </div>
         `;
+        
+        const clienteSelect = document.getElementById('clienteVenda');
+        const novoClienteDiv = document.getElementById('novoClienteFields');
+        const btnNovo = document.getElementById('btnNovoClienteRapido');
+        
+        btnNovo.addEventListener('click', () => {
+            novoClienteDiv.style.display = 'block';
+        });
+        
+        document.getElementById('salvarNovoCliente')?.addEventListener('click', () => {
+            const nome = document.getElementById('novoClienteNome').value.trim();
+            const email = document.getElementById('novoClienteEmail').value.trim();
+            const telefone = document.getElementById('novoClienteTelefone').value.trim();
+            if(!nome) return alert('Nome é obrigatório');
+            const novoId = Date.now();
+            clientes.push({ id: novoId, nome, email, telefone });
+            saveAll();
+            const option = new Option(nome, novoId);
+            clienteSelect.add(option, 'novo');
+            clienteSelect.value = novoId;
+            novoClienteDiv.style.display = 'none';
+            document.getElementById('novoClienteNome').value = '';
+            document.getElementById('novoClienteEmail').value = '';
+            document.getElementById('novoClienteTelefone').value = '';
+            alert('Cliente cadastrado com sucesso!');
+        });
+        
         document.getElementById('venderBtn').addEventListener('click', () => {
             let clienteId = parseInt(document.getElementById('clienteVenda').value);
             if(isNaN(clienteId)) clienteId = null;
             const prodId = parseInt(document.getElementById('produtoVenda').value);
             const qtd = parseInt(document.getElementById('qtdVenda').value);
+            const dataVenda = document.getElementById('dataVenda').value;
+            const formaPagamento = document.getElementById('formaPagamento').value;
             const prod = produtos.find(p=>p.id===prodId);
-            if(!prod || qtd<=0) return alert('Selecione produto válido');
+            if(!prod || qtd<=0) return alert('Selecione produto e quantidade válida');
             if(qtd > prod.estoque) return alert('Estoque insuficiente');
             prod.estoque -= qtd;
             const total = qtd * prod.precoVenda;
-            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date(document.getElementById('dataVenda').value).toISOString(), clienteId, formaPagamento: document.getElementById('formaPagamento').value });
+            vendas.push({ id: Date.now(), produtoId: prodId, quantidade: qtd, total, data: new Date(dataVenda).toISOString(), clienteId, formaPagamento });
             saveAll();
-            document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px;">✅ Venda realizada! Total ${formatarMoeda(total)}</div>`;
-            renderVenda();
+            document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px; border-radius:60px;">✅ Venda realizada! Total ${formatarMoeda(total)}</div>`;
+            setTimeout(() => { renderVenda(); }, 1500);
         });
     }
 
@@ -631,7 +722,7 @@
         const main = document.getElementById('mainContent');
         const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
         main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-chart-simple"></i> Relatório de Vendas</div>
-            <table><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
+            </td><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
             ${vendas.map(v => {
                 const p = produtos.find(prod=>prod.id===v.produtoId);
                 const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
@@ -643,7 +734,7 @@
     function renderRelatorioMensal() {
         const porMes = {};
         vendas.forEach(v => { const d = new Date(v.data); const chave = `${d.getMonth()+1}/${d.getFullYear()}`; porMes[chave] = (porMes[chave]||0)+v.total; });
-        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div><table><thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
+        let html = `<div class="card-premium"><div class="card-title"><i class="fas fa-calendar-week"></i> Relatório Mensal</div> table<thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
         for(let [mes, total] of Object.entries(porMes)) html += `<tr><td>${mes}</td><td>${formatarMoeda(total)}</td></tr>`;
         html += `</tbody></table></div>`;
         document.getElementById('mainContent').innerHTML = html;
@@ -651,23 +742,23 @@
 
     function renderAlertas() {
         const alertas = produtos.filter(p => p.estoque <= p.estoqueMin);
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-bell"></i> Alertas de Estoque</div>${alertas.length ? alertas.map(p => `<div class="badge-warning" style="margin:8px 0; padding:12px;">⚠️ ${p.nome}: ${p.estoque} un (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta ativo</p>'}</div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-bell"></i> Alertas de Estoque</div>${alertas.length ? alertas.map(p => `<div class="badge-warning" style="margin:8px 0; padding:12px; border-radius:60px;">⚠️ ${p.nome}: ${p.estoque} un (mínimo: ${p.estoqueMin})</div>`).join('') : '<p>✅ Nenhum alerta ativo</p>'}</div>`;
     }
 
     function renderHistorico() {
         const items = [...vendas].reverse().map(v => {
             const p = produtos.find(prod=>prod.id===v.produtoId);
             const cliente = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
-            return `<li> Venda: ${p?.nome} - ${v.quantidade} un - ${formatarMoeda(v.total)} - ${new Date(v.data).toLocaleString()} - Cliente: ${cliente?cliente.nome:'N/C'} - Pagamento: ${v.formaPagamento}</li>`;
+            return `<li style="margin-bottom:12px;"><i class="fas fa-receipt"></i> Venda: ${p?.nome} - ${v.quantidade} un - ${formatarMoeda(v.total)} - ${new Date(v.data).toLocaleString()} - Cliente: ${cliente?cliente.nome:'N/C'} - Pagamento: ${v.formaPagamento}</li>`;
         });
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-history"></i> Histórico</div><ul>${items.length?items.join(''):'<li>Nenhuma venda</li>'}</ul></div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-history"></i> Histórico de Movimentações</div><ul>${items.length?items.join(''):'<li>Nenhuma venda registrada</li>'}</ul></div>`;
     }
 
     function renderClientes() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px">Novo Cliente</button><table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
-        document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome:'); if(nome){ clientes.push({ id:Date.now(), nome, email:prompt('Email:')||'', telefone:prompt('Telefone:')||'' }); saveAll(); renderClientes(); } });
-        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover?')){ clientes = clientes.filter(c => c.id != e.target.closest('button').dataset.id); saveAll(); renderClientes(); } }));
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button></td><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div>`;
+        document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome do cliente:'); if(nome){ const email = prompt('E-mail (opcional):'); const telefone = prompt('Telefone (opcional):'); clientes.push({ id:Date.now(), nome, email:email||'', telefone:telefone||'' }); saveAll(); renderClientes(); } });
+        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover cliente?')){ const id = parseInt(e.target.closest('button').dataset.id); clientes = clientes.filter(c => c.id !== id); saveAll(); renderClientes(); } }));
     }
 </script>
 </body>
