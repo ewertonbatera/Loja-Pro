@@ -7,10 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
-    <!-- Google Identity Services Library -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
     <style>
         /* ========== RESET E TEMAS ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,6 +28,7 @@
             --shadow-md: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.02);
             --backdrop-bg: rgba(0,0,0,0.3);
             --menu-icon-color: #1e293b;
+            --input-bg: #ffffff;
         }
         body.dark {
             --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -43,6 +40,7 @@
             --shadow-sm: 0 10px 25px -5px rgba(0,0,0,0.3);
             --backdrop-bg: rgba(0,0,0,0.6);
             --menu-icon-color: #ffffff;
+            --input-bg: #0f172a;
         }
         /* ========== COMPONENTES ========== */
         .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-gradient); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
@@ -51,82 +49,259 @@
         .login-header { text-align: center; margin-bottom: 32px; }
         .login-header i { font-size: 3.5rem; background: linear-gradient(135deg, var(--primary), var(--info)); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .login-header h2 { font-size: 2rem; font-weight: 700; margin-top: 12px; background: linear-gradient(135deg, var(--primary), var(--info)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .login-header p { font-size: 0.9rem; opacity: 0.7; margin-top: 8px; }
         .input-group { position: relative; margin-bottom: 20px; }
         .input-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--primary); }
-        .input-group input { width: 100%; padding: 16px 16px 16px 48px; border-radius: 60px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); }
+        .input-group input { width: 100%; padding: 16px 16px 16px 48px; border-radius: 60px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none; transition: 0.2s; }
+        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
         .login-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-        .login-btn, .signup-btn, .google-btn { width: 100%; padding: 14px; font-weight: 600; border-radius: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; transition: 0.2s; }
-        .login-btn { background: var(--primary); color: white; border: none; }
+        .login-btn, .signup-btn { width: 100%; padding: 14px; font-weight: 600; border-radius: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; transition: 0.2s; border: none; }
+        .login-btn { background: var(--primary); color: white; }
         .login-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
         .signup-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); }
-        .signup-btn:hover { background: var(--button-bg); transform: translateY(-2px); }
-        .google-btn { background: #ffffff; border: 1px solid var(--border-color); color: #1e293b; }
-        .google-btn:hover { background: #f8f9fa; transform: translateY(-2px); }
-        .google-btn i { font-size: 1.2rem; }
-        body.dark .google-btn { background: #2d3748; color: #e2e8f0; border-color: #4a5568; }
-        .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
-        .divider span { padding: 0 10px; font-size: 0.8rem; opacity: 0.7; }
+        .signup-btn:hover { background: var(--card-bg); transform: translateY(-2px); }
         .login-message { text-align: center; margin-top: 16px; font-size: 0.8rem; color: var(--danger); }
         
-        /* App principal */
+        /* App principal - HEADER REFINADO */
         .app-container { display: none; }
         .app-container.visible { display: block; }
-        .main-header { background: var(--header-bg); backdrop-filter: blur(12px); border-radius: 60px; padding: 12px 28px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); }
-        .menu-btn { background: var(--card-bg); border: 1px solid var(--border-color); font-size: 24px; width: 48px; height: 48px; border-radius: 40px; display: flex; align-items: center; justify-content: center; color: var(--menu-icon-color); cursor: pointer; transition: 0.2s; }
-        .page-title { font-size: 1.4rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--info)); -webkit-background-clip: text; background-clip: text; color: transparent; flex-grow: 1; text-align: center; }
-        .right-area { display: flex; gap: 16px; align-items: center; }
-        .user-area { display: flex; align-items: center; gap: 12px; background: var(--card-bg); padding: 6px 20px 6px 12px; border-radius: 60px; border: 1px solid var(--border-color); }
-        .avatar { width: 42px; height: 42px; background: linear-gradient(135deg, var(--primary), var(--info)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
-        .theme-toggle, .logout-btn { background: var(--card-bg); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 40px; cursor: pointer; }
-        .logout-btn { background: var(--danger); color: white; border: none; }
+        .main-header {
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 12px 24px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        /* Menu button - SEMPRE ÍCONE HAMBÚRGUER */
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            font-size: 22px;
+            width: 44px;
+            height: 44px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        /* Título centralizado */
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            flex: 1;
+            text-align: center;
+            white-space: nowrap;
+            overflow-x: auto;
+            padding: 0 8px;
+        }
+        /* Área direita */
+        .right-area {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            padding: 5px 16px 5px 8px;
+            border-radius: 60px;
+            border: 1px solid var(--border-color);
+        }
+        .avatar-wrapper {
+            position: relative;
+            cursor: pointer;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: var(--primary);
+        }
+        .avatar-edit-icon {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: var(--primary);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: white;
+            border: 2px solid var(--card-bg);
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+        }
+        .avatar-wrapper:hover .avatar-edit-icon {
+            opacity: 1;
+        }
+        .theme-toggle, .logout-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+        }
+        /* Sidebar com botão X */
         .sidebar-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--backdrop-bg); z-index: 98; display: none; }
         .sidebar-backdrop.active { display: block; }
-        .sidebar { position: fixed; top: 0; left: 0; width: 300px; height: 100%; background: var(--sidebar-bg); transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); z-index: 99; padding: 20px 0 32px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100%;
+            background: var(--sidebar-bg);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            z-index: 99;
+            padding: 20px 0 32px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
         .sidebar.open { transform: translateX(0); }
-        .sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; text-align: center; }
+        .sidebar-header {
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
         .sidebar-header h2 { font-size: 1.2rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--info)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .sidebar-header p { font-size: 0.7rem; opacity: 0.7; margin-top: 4px; }
+        .close-sidebar-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: 0.2s;
+        }
+        .close-sidebar-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
         .sidebar ul { list-style: none; padding: 0 20px; flex: 1; }
-        .sidebar li { margin: 8px 0; padding: 14px 20px; border-radius: 60px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: 0.2s; }
+        .sidebar li { margin: 8px 0; padding: 14px 20px; border-radius: 60px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: 0.2s; font-weight: 500; }
         .sidebar li:hover { background: var(--primary); color: white; transform: translateX(5px); }
         .sidebar li.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(59,130,246,0.3); }
-        .sidebar li.active i { color: white; }
         .main-content { min-height: 600px; }
         .card-premium { background: var(--card-bg); border-radius: 32px; padding: 28px; margin-bottom: 28px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); transition: 0.2s; }
-        .card-premium:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
         .card-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
-        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 32px; }
-        .stat-card { background: var(--card-bg); border-radius: 28px; padding: 24px; text-align: center; border: 1px solid var(--border-color); }
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .stat-card { background: var(--card-bg); border-radius: 28px; padding: 24px; text-align: center; border: 1px solid var(--border-color); transition: 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
         .stat-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 12px; }
         .stat-card p { font-size: 2rem; font-weight: 700; margin-top: 8px; }
         .charts-row { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; }
         .chart-box { flex: 1; min-width: 280px; background: var(--card-bg); border-radius: 28px; padding: 20px; border: 1px solid var(--border-color); }
-        .chart-container { position: relative; height: 280px; width: 100%; display: flex; justify-content: center; align-items: center; }
-        canvas { max-width: 100%; max-height: 100%; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        th { color: var(--primary); }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
-        .btn-danger { background: var(--danger); color: white; border: none; }
+        .chart-container { position: relative; height: 280px; width: 100%; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
         .badge { display: inline-block; padding: 4px 12px; border-radius: 60px; font-size: 0.75rem; font-weight: 600; }
         .badge-success { background: var(--success); color: white; }
         .badge-warning { background: var(--warning); color: #1e293b; }
+        .badge-info { background: var(--info); color: white; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); outline: none; transition: 0.2s; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
         .flex-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--backdrop-bg); align-items: center; justify-content: center; z-index: 200; }
         .modal.active { display: flex; }
         .modal-content { background: var(--card-bg); border-radius: 32px; padding: 32px; width: 90%; max-width: 550px; max-height: 90vh; overflow-y: auto; }
-        .modal-actions { display: flex; gap: 16px; justify-content: flex-end; margin-top: 24px; }
-        @media (max-width: 700px) {
-            body { padding: 16px; }
-            .main-header { flex-direction: column; align-items: stretch; }
-            .right-area { justify-content: flex-end; }
-            .chart-container { height: 220px; }
-            .sidebar { width: 85%; }
+        .table-responsive { overflow-x: auto; border-radius: 24px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--primary); font-weight: 600; }
+        .search-box { margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .search-box input { flex: 1; padding: 12px; border-radius: 40px; border: 1px solid var(--border-color); background: var(--input-bg); }
+        .produto-info-card { background: var(--card-bg); border-radius: 24px; padding: 16px; margin: 16px 0; border: 1px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        @media (max-width: 760px) {
+            .main-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                padding: 16px;
+            }
+            .page-title {
+                text-align: center;
+                white-space: normal;
+                order: 1;
+            }
+            .right-area {
+                justify-content: flex-end;
+                order: 2;
+            }
+            .menu-btn {
+                order: 0;
+                width: 40px;
+                height: 40px;
+                align-self: flex-start;
+            }
+            .user-area span {
+                display: none;
+            }
+            .user-area {
+                padding: 5px 8px;
+            }
+        }
+        @media (max-width: 480px) {
+            .right-area {
+                gap: 8px;
+            }
+            .theme-toggle span, .logout-btn span {
+                display: none;
+            }
+            .theme-toggle i, .logout-btn i {
+                margin: 0;
+            }
+            .theme-toggle, .logout-btn {
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
@@ -136,27 +311,13 @@
 <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
         <div class="login-header"><i class="fas fa-store"></i><h2>Loja Pro</h2><p>Gestão inteligente para seu negócio</p></div>
-        
-        <!-- Login com Google (container) -->
-        <div id="googleLoginBtn" style="display: flex; justify-content: center; margin-bottom: 16px;"></div>
-        
-        <!-- Botão alternativo caso o Google não carregue -->
-        <button id="googleFallbackBtn" class="google-btn" style="display: none;">
-            <i class="fab fa-google"></i> Continuar com Google (Demo)
-        </button>
-        
-        <div class="divider"><span>ou</span></div>
-        
-        <!-- Login tradicional -->
-        <div class="input-group"><i class="fas fa-user"></i><input type="text" id="loginName" placeholder="Nome completo (para cadastro)"></div>
+        <div class="input-group"><i class="fas fa-user"></i><input type="text" id="loginName" placeholder="Nome completo"></div>
         <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" placeholder="E-mail"></div>
         <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="Senha"></div>
-        
         <div class="login-actions">
             <button id="doLoginBtn" class="login-btn"><i class="fas fa-sign-in-alt"></i> Entrar</button>
             <button id="doSignupBtn" class="signup-btn"><i class="fas fa-user-plus"></i> Criar Conta</button>
         </div>
-        
         <div id="loginMessage" class="login-message"></div>
     </div>
 </div>
@@ -167,14 +328,25 @@
         <button class="menu-btn" id="menuToggle"><i class="fas fa-bars"></i></button>
         <div class="page-title"><i class="fas fa-chart-line"></i> Loja Pro • Gestão Inteligente</div>
         <div class="right-area">
-            <div class="user-area"><div class="avatar" id="userAvatar">U</div><span id="userNameDisplay"></span></div>
-            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
-            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            <div class="user-area">
+                <div class="avatar-wrapper" id="avatarWrapper">
+                    <div class="avatar" id="userAvatar">U</div>
+                    <div class="avatar-edit-icon"><i class="fas fa-camera"></i></div>
+                </div>
+                <span id="userNameDisplay"></span>
+                <input type="file" id="avatarUpload" accept="image/*" style="display:none">
+            </div>
+            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span>Modo</span></button>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></button>
         </div>
     </div>
     <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><h2><i class="fas fa-chart-line"></i> Loja Pro</h2><p>Gestão Inteligente</p></div>
+        <div class="sidebar-header">
+            <h2><i class="fas fa-chart-line"></i> Loja Pro</h2>
+            <p>Gestão Inteligente</p>
+            <button class="close-sidebar-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+        </div>
         <ul>
             <li data-view="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
             <li data-view="estoque"><i class="fas fa-boxes"></i> Estoque</li>
@@ -201,15 +373,15 @@
         <div class="form-group"><label>Estoque Atual *</label><input type="number" id="prodEstoque" step="1" placeholder="0"></div>
         <div class="form-group"><label>Estoque Mínimo *</label><input type="number" id="prodEstoqueMin" step="1" placeholder="0"></div>
         <div class="form-group"><label>Estoque Máximo *</label><input type="number" id="prodEstoqueMax" step="1" placeholder="0"></div>
-        <div class="modal-actions"><button id="cancelModalBtn" style="background:var(--danger); color:white">Cancelar</button><button id="saveProdutoBtn" class="btn-primary">Salvar</button></div>
+        <div class="modal-actions"><button id="cancelModalBtn" style="background:var(--danger); color:white; padding:10px 20px; border-radius:40px; border:none;">Cancelar</button><button id="saveProdutoBtn" class="btn-primary">Salvar</button></div>
     </div>
 </div>
 
 <script>
-    // ==================== FUNÇÕES GLOBAIS ====================
+    // ========== UTIL ==========
     function formatMoney(value) { if (isNaN(value)) return 'R$ 0,00'; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
-
-    // ==================== DADOS PERSISTENTES ====================
+    
+    // ========== DADOS ==========
     let users = JSON.parse(localStorage.getItem('lojapro_users')) || [];
     let produtos = JSON.parse(localStorage.getItem('lojapro_produtos')) || [];
     let vendas = JSON.parse(localStorage.getItem('lojapro_vendas')) || [];
@@ -251,18 +423,36 @@
         saveAll();
     }
 
-    // ==================== LOGIN TRADICIONAL ====================
+    // ========== LOGIN ==========
     const loginOverlay = document.getElementById('loginOverlay');
     const appContainer = document.getElementById('appContainer');
     const loginMsg = document.getElementById('loginMessage');
+
+    function updateAvatarDisplay() {
+        const avatarDiv = document.getElementById('userAvatar');
+        if (currentSession && currentSession.avatarImage && currentSession.avatarImage.startsWith('data:image')) {
+            avatarDiv.style.backgroundImage = `url(${currentSession.avatarImage})`;
+            avatarDiv.style.backgroundSize = 'cover';
+            avatarDiv.style.backgroundPosition = 'center';
+            avatarDiv.innerText = '';
+        } else {
+            avatarDiv.style.backgroundImage = '';
+            avatarDiv.innerText = currentSession ? currentSession.avatar : 'U';
+        }
+    }
 
     function loginUser(email, password) {
         const user = users.find(u => u.email === email);
         if (!user) { loginMsg.innerText = "E-mail não cadastrado. Crie uma conta."; return false; }
         if (user.password !== password) { loginMsg.innerText = "Senha incorreta."; return false; }
-        currentSession = { name: user.name, email: user.email, avatar: user.name.charAt(0).toUpperCase() };
+        currentSession = { 
+            name: user.name, 
+            email: user.email, 
+            avatar: user.name.charAt(0).toUpperCase(),
+            avatarImage: user.avatarImage || null
+        };
         saveAll();
-        document.getElementById('userAvatar').innerText = currentSession.avatar;
+        updateAvatarDisplay();
         document.getElementById('userNameDisplay').innerText = currentSession.name;
         loginOverlay.style.display = 'none';
         appContainer.classList.add('visible');
@@ -275,11 +465,16 @@
     function signupUser(name, email, password) {
         if (!name || !email || !password) { loginMsg.innerText = "Preencha todos os campos."; return false; }
         if (users.find(u => u.email === email)) { loginMsg.innerText = "E-mail já cadastrado. Faça login."; return false; }
-        users.push({ name, email, password });
+        users.push({ name, email, password, avatarImage: null });
         saveAll();
-        currentSession = { name, email, avatar: name.charAt(0).toUpperCase() };
+        currentSession = { 
+            name, 
+            email, 
+            avatar: name.charAt(0).toUpperCase(),
+            avatarImage: null
+        };
         saveAll();
-        document.getElementById('userAvatar').innerText = currentSession.avatar;
+        updateAvatarDisplay();
         document.getElementById('userNameDisplay').innerText = currentSession.name;
         loginOverlay.style.display = 'none';
         appContainer.classList.add('visible');
@@ -292,104 +487,10 @@
     document.getElementById('doLoginBtn').onclick = () => loginUser(document.getElementById('loginEmail').value.trim(), document.getElementById('loginPassword').value.trim());
     document.getElementById('doSignupBtn').onclick = () => signupUser(document.getElementById('loginName').value.trim(), document.getElementById('loginEmail').value.trim(), document.getElementById('loginPassword').value.trim());
 
-    // ==================== LOGIN COM GOOGLE ====================
-    function demoGoogleLogin() {
-        const demoEmail = prompt("Digite seu e-mail para login:", "usuario@gmail.com");
-        if (demoEmail && demoEmail.includes('@')) {
-            const demoName = demoEmail.split('@')[0];
-            const demoAvatar = demoName.charAt(0).toUpperCase();
-            
-            let user = users.find(u => u.email === demoEmail);
-            if (!user) {
-                user = { name: demoName, email: demoEmail, password: 'google_demo_' + Math.random().toString(36) };
-                users.push(user);
-                saveAll();
-            }
-            currentSession = { name: user.name, email: user.email, avatar: demoAvatar };
-            saveAll();
-            document.getElementById('userAvatar').innerText = currentSession.avatar;
-            document.getElementById('userNameDisplay').innerText = currentSession.name;
-            loginOverlay.style.display = 'none';
-            appContainer.classList.add('visible');
-            applyTheme();
-            renderCurrentView('dashboard');
-            closeSidebar();
-            alert(`Bem-vindo(a) ${demoName}!`);
-        } else {
-            alert("Por favor, informe um e-mail válido.");
-        }
-    }
-
-    function initGoogleLogin() {
-        if (typeof google !== 'undefined' && google.accounts) {
-            try {
-                google.accounts.id.initialize({
-                    client_id: '1080623653395-0pdbfiir1um6bngta99m4c5rtu6jpsbs.apps.googleusercontent.com',
-                    callback: (response) => {
-                        if (response.credential) {
-                            const payload = JSON.parse(atob(response.credential.split('.')[1]));
-                            const email = payload.email;
-                            const name = payload.name;
-                            let user = users.find(u => u.email === email);
-                            if (!user) {
-                                user = { name: name, email: email, password: 'google_auth_' + Math.random().toString(36) };
-                                users.push(user);
-                                saveAll();
-                            }
-                            currentSession = { name: user.name, email: user.email, avatar: user.name.charAt(0).toUpperCase() };
-                            saveAll();
-                            document.getElementById('userAvatar').innerText = currentSession.avatar;
-                            document.getElementById('userNameDisplay').innerText = currentSession.name;
-                            loginOverlay.style.display = 'none';
-                            appContainer.classList.add('visible');
-                            applyTheme();
-                            renderCurrentView('dashboard');
-                            closeSidebar();
-                        }
-                    },
-                    auto_select: false,
-                    cancel_on_tap_outside: true
-                });
-                google.accounts.id.renderButton(
-                    document.getElementById('googleLoginBtn'),
-                    { theme: 'outline', size: 'large', width: '100%', text: 'continue_with', shape: 'pill' }
-                );
-                document.getElementById('googleFallbackBtn').style.display = 'none';
-            } catch(e) {
-                console.error('Erro ao inicializar Google:', e);
-                showFallbackButton();
-            }
-        } else {
-            showFallbackButton();
-        }
-    }
-    
-    function showFallbackButton() {
-        document.getElementById('googleLoginBtn').style.display = 'none';
-        const fallbackBtn = document.getElementById('googleFallbackBtn');
-        fallbackBtn.style.display = 'flex';
-        fallbackBtn.onclick = demoGoogleLogin;
-    }
-    
-    if (typeof google !== 'undefined' && google.accounts) {
-        initGoogleLogin();
-    } else {
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                if (typeof google !== 'undefined' && google.accounts) {
-                    initGoogleLogin();
-                } else {
-                    showFallbackButton();
-                }
-            }, 1000);
-        });
-    }
-
-    // Verifica sessão existente
     if (currentSession) {
         loginOverlay.style.display = 'none';
         appContainer.classList.add('visible');
-        document.getElementById('userAvatar').innerText = currentSession.avatar;
+        updateAvatarDisplay();
         document.getElementById('userNameDisplay').innerText = currentSession.name;
         renderCurrentView('dashboard');
     }
@@ -405,169 +506,239 @@
         loginMsg.innerText = '';
     };
 
-    // ==================== MENU SANDUÍCHE ====================
+    // ========== FOTO DE PERFIL ==========
+    const avatarWrapper = document.getElementById('avatarWrapper');
+    const avatarUpload = document.getElementById('avatarUpload');
+    avatarWrapper.onclick = () => avatarUpload.click();
+    avatarUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const imgBase64 = ev.target.result;
+                currentSession.avatarImage = imgBase64;
+                const userIndex = users.findIndex(u => u.email === currentSession.email);
+                if (userIndex !== -1) users[userIndex].avatarImage = imgBase64;
+                saveAll();
+                updateAvatarDisplay();
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'badge-success';
+                msgDiv.style.position = 'fixed';
+                msgDiv.style.bottom = '20px';
+                msgDiv.style.right = '20px';
+                msgDiv.style.padding = '8px 16px';
+                msgDiv.style.borderRadius = '40px';
+                msgDiv.style.zIndex = '999';
+                msgDiv.innerText = 'Foto de perfil atualizada!';
+                document.body.appendChild(msgDiv);
+                setTimeout(() => msgDiv.remove(), 2000);
+            };
+            reader.readAsDataURL(file);
+        } else if (file) {
+            alert('Por favor, selecione uma imagem válida (jpg, png, gif).');
+        }
+        avatarUpload.value = '';
+    });
+
+    // ========== MENU HAMBÚRGUER COM X ==========
     const menuToggle = document.getElementById('menuToggle');
     const sidebarEl = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
     
-    function openSidebar() { sidebarEl.classList.add('open'); backdrop.classList.add('active'); menuToggle.innerHTML = '<i class="fas fa-times"></i>'; }
-    function closeSidebar() { sidebarEl.classList.remove('open'); backdrop.classList.remove('active'); menuToggle.innerHTML = '<i class="fas fa-bars"></i>'; }
-    function toggleSidebar() { if (sidebarEl.classList.contains('open')) closeSidebar(); else openSidebar(); }
-    menuToggle.onclick = toggleSidebar;
+    function openSidebar() { 
+        sidebarEl.classList.add('open'); 
+        backdrop.classList.add('active'); 
+    }
+    function closeSidebar() { 
+        sidebarEl.classList.remove('open'); 
+        backdrop.classList.remove('active'); 
+    }
+    // Botão hambúrguer: alterna
+    menuToggle.onclick = () => { 
+        if (sidebarEl.classList.contains('open')) closeSidebar(); 
+        else openSidebar(); 
+    };
+    // Botão X dentro da sidebar: fecha
+    closeSidebarBtn.onclick = closeSidebar;
+    // Backdrop: fecha
     backdrop.onclick = closeSidebar;
 
-    function setActiveMenuItem(viewId) {
-        document.querySelectorAll('.sidebar li').forEach(item => {
-            if (item.getAttribute('data-view') === viewId) item.classList.add('active');
-            else item.classList.remove('active');
-        });
+    function setActiveMenuItem(viewId) { 
+        document.querySelectorAll('.sidebar li').forEach(item => { 
+            if (item.getAttribute('data-view') === viewId) item.classList.add('active'); 
+            else item.classList.remove('active'); 
+        }); 
+    }
+    function refreshSidebarEvents() { 
+        document.querySelectorAll('.sidebar li').forEach(li => { 
+            li.onclick = () => { renderCurrentView(li.getAttribute('data-view')); closeSidebar(); }; 
+        }); 
     }
 
-    function refreshSidebarEvents() {
-        document.querySelectorAll('.sidebar li').forEach(li => {
-            li.onclick = () => { renderCurrentView(li.getAttribute('data-view')); closeSidebar(); };
-        });
-    }
-
-    // ==================== TEMA ====================
+    // ========== TEMA ==========
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
-    function applyTheme() { const dark = localStorage.getItem('theme') === 'dark'; if(dark) body.classList.add('dark'); else body.classList.remove('dark'); themeToggle.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>'; }
+    function applyTheme() { const dark = localStorage.getItem('theme') === 'dark'; if(dark) body.classList.add('dark'); else body.classList.remove('dark'); themeToggle.innerHTML = dark ? '<i class="fas fa-sun"></i> <span>Claro</span>' : '<i class="fas fa-moon"></i> <span>Escuro</span>'; }
     themeToggle.onclick = () => { body.classList.toggle('dark'); localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light'); applyTheme(); };
     applyTheme();
 
-    // ==================== MODAL PRODUTO ====================
+    // ========== MODAL PRODUTO ==========
     let editingProdId = null;
     const produtoModal = document.getElementById('produtoModal');
-    const modalTitle = document.getElementById('modalTitle');
-    
     function openProdutoModal(id = null) {
         editingProdId = id;
-        if (id) {
-            const prod = produtos.find(p => p.id === id);
-            if (prod) {
-                modalTitle.innerText = 'Editar Produto';
-                document.getElementById('prodNome').value = prod.nome || '';
-                document.getElementById('prodCodigoBarras').value = prod.codigoBarras || '';
-                document.getElementById('prodCodigoInterno').value = prod.codigoInterno || '';
-                document.getElementById('prodCusto').value = prod.custo;
-                document.getElementById('prodVenda').value = prod.venda;
-                document.getElementById('prodEstoque').value = prod.estoque;
-                document.getElementById('prodEstoqueMin').value = prod.estoqueMin;
-                document.getElementById('prodEstoqueMax').value = prod.estoqueMax;
-            }
-        } else {
-            modalTitle.innerText = 'Novo Produto';
-            document.getElementById('prodNome').value = '';
-            document.getElementById('prodCodigoBarras').value = '';
-            document.getElementById('prodCodigoInterno').value = '';
-            document.getElementById('prodCusto').value = '';
-            document.getElementById('prodVenda').value = '';
-            document.getElementById('prodEstoque').value = '';
-            document.getElementById('prodEstoqueMin').value = '';
-            document.getElementById('prodEstoqueMax').value = '';
-        }
+        const prod = produtos.find(p => p.id === id);
+        document.getElementById('modalTitle').innerText = id ? 'Editar Produto' : 'Novo Produto';
+        document.getElementById('prodNome').value = prod?.nome || '';
+        document.getElementById('prodCodigoBarras').value = prod?.codigoBarras || '';
+        document.getElementById('prodCodigoInterno').value = prod?.codigoInterno || '';
+        document.getElementById('prodCusto').value = prod?.custo || '';
+        document.getElementById('prodVenda').value = prod?.venda || '';
+        document.getElementById('prodEstoque').value = prod?.estoque || '';
+        document.getElementById('prodEstoqueMin').value = prod?.estoqueMin || '';
+        document.getElementById('prodEstoqueMax').value = prod?.estoqueMax || '';
         produtoModal.classList.add('active');
     }
-    
-    function closeProdutoModal() { produtoModal.classList.remove('active'); editingProdId = null; }
-    document.getElementById('cancelModalBtn').onclick = closeProdutoModal;
+    document.getElementById('cancelModalBtn').onclick = () => produtoModal.classList.remove('active');
     document.getElementById('saveProdutoBtn').onclick = () => {
         const nome = document.getElementById('prodNome').value.trim();
-        if (!nome) return alert('Descrição é obrigatória');
-        const codigoBarras = document.getElementById('prodCodigoBarras').value.trim();
-        const codigoInterno = document.getElementById('prodCodigoInterno').value.trim();
-        const custo = parseFloat(document.getElementById('prodCusto').value);
-        const venda = parseFloat(document.getElementById('prodVenda').value);
-        const estoque = parseInt(document.getElementById('prodEstoque').value);
-        const estoqueMin = parseInt(document.getElementById('prodEstoqueMin').value);
-        const estoqueMax = parseInt(document.getElementById('prodEstoqueMax').value);
-        if (isNaN(custo)||isNaN(venda)||isNaN(estoque)||isNaN(estoqueMin)||isNaN(estoqueMax)) return alert('Preencha valores numéricos');
-        const novoProd = { id: editingProdId || Date.now(), nome, codigoBarras, codigoInterno, custo, venda, estoque, estoqueMin, estoqueMax };
+        if (!nome) return alert('Descrição obrigatória');
+        const novoProd = {
+            id: editingProdId || Date.now(),
+            nome,
+            codigoBarras: document.getElementById('prodCodigoBarras').value.trim(),
+            codigoInterno: document.getElementById('prodCodigoInterno').value.trim(),
+            custo: parseFloat(document.getElementById('prodCusto').value),
+            venda: parseFloat(document.getElementById('prodVenda').value),
+            estoque: parseInt(document.getElementById('prodEstoque').value),
+            estoqueMin: parseInt(document.getElementById('prodEstoqueMin').value),
+            estoqueMax: parseInt(document.getElementById('prodEstoqueMax').value)
+        };
+        if (isNaN(novoProd.custo) || isNaN(novoProd.venda) || isNaN(novoProd.estoque) || isNaN(novoProd.estoqueMin) || isNaN(novoProd.estoqueMax)) return alert('Preencha valores numéricos');
         if (editingProdId) { const idx = produtos.findIndex(p => p.id === editingProdId); if (idx !== -1) produtos[idx] = novoProd; }
         else produtos.push(novoProd);
         saveAll();
-        closeProdutoModal();
+        produtoModal.classList.remove('active');
         renderCurrentView('estoque');
     };
 
-    // ==================== RENDERIZAÇÃO DAS TELAS ====================
-    let fatChart = null, lucroChart = null, topChart = null;
-    
+    // ========== DASHBOARD ==========
+    let dailyChart = null, marginChart = null, productPieChart = null;
     function renderDashboard() {
-        const main = document.getElementById('mainContent');
         const hoje = new Date();
-        const mesAtual = hoje.getMonth(), anoAtual = hoje.getFullYear();
-        const mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1;
-        const anoAnterior = mesAtual === 0 ? anoAtual - 1 : anoAtual;
-        const fatAtual = vendas.filter(v => new Date(v.data).getMonth() === mesAtual && new Date(v.data).getFullYear() === anoAtual).reduce((s,v)=>s+v.total,0);
-        const fatAnterior = vendas.filter(v => new Date(v.data).getMonth() === mesAnterior && new Date(v.data).getFullYear() === anoAnterior).reduce((s,v)=>s+v.total,0);
-        const lucroAtual = vendas.filter(v => new Date(v.data).getMonth() === mesAtual && new Date(v.data).getFullYear() === anoAtual).reduce((acc,v)=>{ const p=produtos.find(prod=>prod.id===v.produtoId); return acc+(p?v.quantidade*(p.venda-p.custo):0); },0);
-        const lucroAnterior = vendas.filter(v => new Date(v.data).getMonth() === mesAnterior && new Date(v.data).getFullYear() === anoAnterior).reduce((acc,v)=>{ const p=produtos.find(prod=>prod.id===v.produtoId); return acc+(p?v.quantidade*(p.venda-p.custo):0); },0);
-        const topVendas = {};
-        vendas.forEach(v => topVendas[v.produtoId] = (topVendas[v.produtoId] || 0) + v.quantidade);
-        const top5 = Object.entries(topVendas).sort((a,b)=>b[1]-a[1]).slice(0,5);
-        const topLabels = top5.map(([id])=> { const p = produtos.find(prod=>prod.id==id); return p ? p.nome : '?'; });
-        const topQtde = top5.map(([_,qtd])=>qtd);
-        
+        const ultimos30Dias = Array.from({ length: 30 }, (_, i) => { const d = new Date(); d.setDate(hoje.getDate() - (29 - i)); return d.toISOString().slice(0,10); });
+        const vendasPorDia = ultimos30Dias.map(dia => vendas.filter(v => v.data.startsWith(dia)).reduce((s,v)=>s+v.total,0));
+        const totalFaturamento = vendas.reduce((s,v)=>s+v.total,0);
+        const totalLucro = vendas.reduce((acc,v)=>{ const p=produtos.find(prod=>prod.id===v.produtoId); return acc+(p?v.quantidade*(p.venda-p.custo):0); },0);
+        const ticketMedio = vendas.length ? totalFaturamento / vendas.length : 0;
+        const produtosEstoque = produtos.reduce((s,p)=>s+p.estoque,0);
+        const alertasCount = produtos.filter(p=>p.estoque<=p.estoqueMin).length;
+        const produtosMargem = produtos.map(p => ({ nome: p.nome, margem: p.venda ? ((p.venda - p.custo)/p.venda*100).toFixed(1) : 0 })).sort((a,b)=>b.margem-a.margem).slice(0,5);
+        const receitaPorProduto = {};
+        vendas.forEach(v => { receitaPorProduto[v.produtoId] = (receitaPorProduto[v.produtoId] || 0) + v.total; });
+        const sortedProdutos = Object.entries(receitaPorProduto).sort((a,b)=>b[1]-a[1]).slice(0,5);
+        const pieLabels = sortedProdutos.map(([id]) => { const p = produtos.find(pr=>pr.id==id); return p ? p.nome : 'Desconhecido'; });
+        const pieData = sortedProdutos.map(([,valor]) => valor);
+        const main = document.getElementById('mainContent');
         main.innerHTML = `
             <div class="grid-stats">
-                <div class="stat-card"><i class="fas fa-chart-line"></i><h3>Faturamento Total</h3><p>${formatMoney(vendas.reduce((s,v)=>s+v.total,0))}</p></div>
-                <div class="stat-card"><i class="fas fa-coins"></i><h3>Lucro Total</h3><p>${formatMoney(vendas.reduce((acc,v)=>{ const p=produtos.find(prod=>prod.id===v.produtoId); return acc+(p?v.quantidade*(p.venda-p.custo):0); },0))}</p></div>
-                <div class="stat-card"><i class="fas fa-boxes"></i><h3>Produtos em Estoque</h3><p>${produtos.reduce((s,p)=>s+p.estoque,0)}</p></div>
-                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p>${produtos.filter(p=>p.estoque<=p.estoqueMin).length}</p></div>
+                <div class="stat-card"><i class="fas fa-chart-line"></i><h3>Faturamento Total</h3><p>${formatMoney(totalFaturamento)}</p></div>
+                <div class="stat-card"><i class="fas fa-coins"></i><h3>Lucro Total</h3><p>${formatMoney(totalLucro)}</p></div>
+                <div class="stat-card"><i class="fas fa-ticket-alt"></i><h3>Ticket Médio</h3><p>${formatMoney(ticketMedio)}</p></div>
+                <div class="stat-card"><i class="fas fa-boxes"></i><h3>Estoque Total</h3><p>${produtosEstoque}</p></div>
+                <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p>${alertasCount}</p></div>
             </div>
             <div class="charts-row">
-                <div class="chart-box"><h4>📊 Faturamento</h4><div class="chart-container"><canvas id="fatChartCanvas"></canvas></div></div>
-                <div class="chart-box"><h4>💰 Lucro</h4><div class="chart-container"><canvas id="lucroChartCanvas"></canvas></div></div>
+                <div class="chart-box"><h4>📈 Evolução Diária (últimos 30 dias)</h4><div class="chart-container"><canvas id="dailyChartCanvas"></canvas></div></div>
+                <div class="chart-box"><h4>💰 Margem por Produto (Top 5)</h4><div class="chart-container"><canvas id="marginChartCanvas"></canvas></div></div>
             </div>
             <div class="charts-row">
-                <div class="chart-box"><h4>🏆 Produtos Mais Vendidos</h4><div class="chart-container"><canvas id="topChartCanvas"></canvas></div></div>
-                <div class="chart-box"><h4>📈 Resumo do Mês Atual</h4><div style="padding:20px; text-align:center"><p><strong>Faturamento:</strong> ${formatMoney(fatAtual)}</p><p><strong>Lucro:</strong> ${formatMoney(lucroAtual)}</p><p><strong>Margem média:</strong> ${fatAtual ? ((lucroAtual/fatAtual)*100).toFixed(1) : 0}%</p></div></div>
+                <div class="chart-box"><h4>🥧 Faturamento por Produto (Top 5)</h4><div class="chart-container"><canvas id="pieChartCanvas"></canvas></div></div>
+                <div class="chart-box"><h4>📊 Indicadores Rápidos</h4><div style="padding:20px"><p><strong>Vendas realizadas:</strong> ${vendas.length}</p><p><strong>Produtos diferentes vendidos:</strong> ${new Set(vendas.map(v=>v.produtoId)).size}</p><p><strong>Lucratividade média:</strong> ${totalFaturamento ? ((totalLucro/totalFaturamento)*100).toFixed(1) : 0}%</p><p><strong>Clientes cadastrados:</strong> ${clientes.length}</p></div></div>
             </div>
-            <div class="card-premium"><div class="card-title"><i class="fas fa-clock"></i> Últimas Vendas</div><div style="overflow-x:auto">${' <tr><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Total</th></tr></thead><tbody>' + [...vendas].reverse().slice(0,5).map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cli ? cli.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleDateString()}</td><td>${formatMoney(v.total)}</td></td>`; }).join('') + '</tbody></table>' }</div></div>
+            <div class="chart-box"><h4>📊 Últimas 5 Vendas</h4><div class="table-responsive"><table style="width:100%"><thead><tr><th>Produto</th><th>Valor</th><th>Data</th></tr></thead><tbody>${vendas.slice(-5).reverse().map(v=>{ const p=produtos.find(pr=>pr.id===v.produtoId); return `<tr><td>${p?.nome||'-'}</td><td>${formatMoney(v.total)}</td><td>${new Date(v.data).toLocaleDateString()}</td></tr>`; }).join('')}</tbody></table></div></div>
         `;
         setTimeout(() => {
-            const ctxFat = document.getElementById('fatChartCanvas')?.getContext('2d');
-            if (ctxFat) { if (fatChart) fatChart.destroy(); fatChart = new Chart(ctxFat, { type: 'bar', data: { labels: [`Mês anterior (${mesAnterior+1}/${anoAnterior})`, `Mês atual (${mesAtual+1}/${anoAtual})`], datasets: [{ label: 'Faturamento (R$)', data: [fatAnterior, fatAtual], backgroundColor: ['#f59e0b', '#3b82f6'] }] }, options: { responsive: true } }); }
-            const ctxLucro = document.getElementById('lucroChartCanvas')?.getContext('2d');
-            if (ctxLucro) { if (lucroChart) lucroChart.destroy(); lucroChart = new Chart(ctxLucro, { type: 'bar', data: { labels: [`Mês anterior (${mesAnterior+1}/${anoAnterior})`, `Mês atual (${mesAtual+1}/${anoAtual})`], datasets: [{ label: 'Lucro (R$)', data: [lucroAnterior, lucroAtual], backgroundColor: ['#f59e0b', '#10b981'] }] }, options: { responsive: true } }); }
-            const ctxTop = document.getElementById('topChartCanvas')?.getContext('2d');
-            if (ctxTop) { if (topChart) topChart.destroy(); topChart = new Chart(ctxTop, { type: 'doughnut', data: { labels: topLabels, datasets: [{ data: topQtde, backgroundColor: ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444'] }] }, options: { responsive: true, plugins: { legend: { position: 'bottom' } } } }); }
+            const ctxDaily = document.getElementById('dailyChartCanvas')?.getContext('2d');
+            if (ctxDaily) { if (dailyChart) dailyChart.destroy(); dailyChart = new Chart(ctxDaily, { type: 'line', data: { labels: ultimos30Dias.map(d=>d.slice(5)), datasets: [{ label: 'Faturamento Diário (R$)', data: vendasPorDia, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, fill: true }] }, options: { responsive: true, plugins: { tooltip: { callbacks: { label: (ctx) => `R$ ${ctx.raw.toFixed(2)}` } } } } }); }
+            const ctxMargin = document.getElementById('marginChartCanvas')?.getContext('2d');
+            if (ctxMargin) { if (marginChart) marginChart.destroy(); marginChart = new Chart(ctxMargin, { type: 'bar', data: { labels: produtosMargem.map(p=>p.nome), datasets: [{ label: 'Margem (%)', data: produtosMargem.map(p=>p.margem), backgroundColor: '#10b981' }] }, options: { responsive: true, scales: { y: { title: { display: true, text: '%' } } } } }); }
+            const ctxPie = document.getElementById('pieChartCanvas')?.getContext('2d');
+            if (ctxPie) { if (productPieChart) productPieChart.destroy(); productPieChart = new Chart(ctxPie, { type: 'doughnut', data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'], borderWidth: 0 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatMoney(ctx.raw)}` } } } } }); }
         }, 100);
     }
-    
+
+    // ========== DEMAIS TELAS (estoque, venda, relatórios, etc) ==========
     function renderEstoque() {
         const main = document.getElementById('mainContent');
         main.innerHTML = `
-            <div class="card-premium"><div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
-            <button id="novoProdutoBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Produto</button>
-            <div style="overflow-x:auto"><table style="min-width:700px;"><thead><tr><th>Cód. Interno</th><th>Descrição</th><th>Cód. Barras</th><th>Preço Custo</th><th>Preço Venda</th><th>Margem (%)</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody>
-                ${produtos.map(p => { const margem = p.venda > 0 ? ((p.venda - p.custo) / p.venda * 100).toFixed(1) : 0; return `<tr><td>${p.codigoInterno || '-'}</td><td>${p.nome}</td><td>${p.codigoBarras || '-'}</td><td>${formatMoney(p.custo)}</td><td>${formatMoney(p.venda)}</td><td><span class="badge ${margem>30?'badge-success':margem>15?'badge-warning':''}">${margem}%</span></td><td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td><td><button class="editProd" data-id="${p.id}"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}"><i class="fas fa-trash"></i></button></td></tr>`; }).join('')}
-            </tbody></table></div></div>
+            <div class="card-premium">
+                <div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
+                <div class="search-box"><input type="text" id="searchEstoque" placeholder="🔍 Buscar por nome, código..."><button id="novoProdutoBtn" class="btn-primary"><i class="fas fa-plus"></i> Novo Produto</button></div>
+                <div class="table-responsive"><table style="min-width:700px;"><thead><tr><th>Cód. Interno</th><th>Descrição</th><th>Preço Venda</th><th>Margem</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody id="estoqueTableBody"></tbody><table></div>
+            </div>
         `;
-        document.getElementById('novoProdutoBtn')?.addEventListener('click', () => openProdutoModal());
-        document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', (e) => openProdutoModal(parseInt(e.target.closest('button').dataset.id))));
-        document.querySelectorAll('.delProd').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Excluir produto?')) { produtos = produtos.filter(p => p.id != e.target.closest('button').dataset.id); saveAll(); renderEstoque(); } }));
+        function renderTable(filter='') {
+            const filtered = produtos.filter(p => p.nome.toLowerCase().includes(filter.toLowerCase()) || (p.codigoInterno||'').toLowerCase().includes(filter));
+            document.getElementById('estoqueTableBody').innerHTML = filtered.map(p => {
+                const margem = p.venda > 0 ? ((p.venda - p.custo) / p.venda * 100).toFixed(1) : 0;
+                return `<tr>
+                    <td>${p.codigoInterno || '-'}</td>
+                    <td><strong>${p.nome}</strong><br><small class="badge-info">${p.codigoBarras || 'sem código'}</small></td>
+                    <td>${formatMoney(p.venda)}</td>
+                    <td><span class="badge ${margem>30?'badge-success':margem>15?'badge-warning':''}">${margem}%</span></td>
+                    <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
+                    <td>${p.estoqueMin}</td>
+                    <td>${p.estoqueMax}</td>
+                    <td><button class="editProd" data-id="${p.id}" style="background:none; border:none; color:var(--primary); cursor:pointer;"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+            }).join('');
+            document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', (e) => openProdutoModal(parseInt(btn.dataset.id))));
+            document.querySelectorAll('.delProd').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Excluir produto?')) { produtos = produtos.filter(p => p.id != btn.dataset.id); saveAll(); renderEstoque(); } }));
+        }
+        document.getElementById('searchEstoque').addEventListener('input', (e) => renderTable(e.target.value));
+        document.getElementById('novoProdutoBtn').onclick = () => openProdutoModal();
+        renderTable();
     }
-    
+
     function renderVenda() {
-        const main = document.getElementById('mainContent');
         const clientesOptions = clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+        const main = document.getElementById('mainContent');
         main.innerHTML = `
             <div class="card-premium">
                 <div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
-                <div class="form-group"><label>Cliente</label><div class="flex-row"><select id="clienteVenda" style="flex:1">${clientesOptions}<option value="novo">+ Novo Cliente</option></select><button id="btnNovoClienteRapido" class="btn-primary">Cadastrar</button></div>
-                <div id="novoClienteFields" style="display:none; margin-top:12px;"><input type="text" id="novoClienteNome" placeholder="Nome"><input type="email" id="novoClienteEmail" placeholder="E-mail"><input type="tel" id="novoClienteTelefone" placeholder="Telefone"><button id="salvarNovoCliente" class="btn-primary" style="margin-top:8px">Salvar</button></div></div>
-                <div class="form-group"><label>Produto</label><select id="produtoVenda">${produtos.map(p => `<option value="${p.id}">${p.nome} - ${formatMoney(p.venda)} (estoque: ${p.estoque})</option>`).join('')}</select></div>
-                <div class="form-group"><label>Quantidade</label><input type="number" id="qtdVenda" min="1" value="1"></div>
-                <div class="form-group"><label>Data da Venda</label><input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}"></div>
-                <div class="form-group"><label>Forma de Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão Crédito</option><option>Cartão Débito</option><option>Pix</option><option>Boleto</option></select></div>
-                <button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button>
+                <div class="form-group"><label>Cliente</label><select id="clienteVenda" style="margin-bottom:8px">${clientesOptions}<option value="novo">+ Novo Cliente</option></select>
+                <div id="novoClienteFields" style="display:none; margin-top:12px; padding:12px; background:var(--card-bg); border-radius:20px;"><input type="text" id="novoClienteNome" placeholder="Nome completo"><input type="email" id="novoClienteEmail" placeholder="E-mail"><input type="tel" id="novoClienteTelefone" placeholder="Telefone"><button id="salvarNovoCliente" class="btn-primary" style="margin-top:8px">Salvar Cliente</button></div></div>
+                <div class="form-group"><label>Selecione o Produto</label><select id="produtoVenda"></select></div>
+                <div id="produtoInfo" class="produto-info-card" style="display:none;"></div>
+                <div class="flex-row"><div class="form-group" style="flex:2"><label>Quantidade</label><input type="number" id="qtdVenda" min="1" value="1"></div>
+                <div class="form-group" style="flex:1"><label>Data</label><input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}"></div></div>
+                <div class="form-group"><label>Forma de Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão Crédito</option><option>Pix</option><option>Boleto</option></select></div>
+                <div class="flex-row"><button id="venderBtn" class="btn-primary"><i class="fas fa-check"></i> Registrar Venda</button><button id="calcularBtn" class="btn-primary" style="background:var(--info)"><i class="fas fa-calculator"></i> Calcular Total</button></div>
                 <div id="vendaMsg" style="margin-top:20px;"></div>
             </div>
         `;
-        document.getElementById('btnNovoClienteRapido').onclick = () => document.getElementById('novoClienteFields').style.display = 'block';
+        const productSelect = document.getElementById('produtoVenda');
+        function updateProductSelect() { productSelect.innerHTML = produtos.map(p => `<option value="${p.id}" data-price="${p.venda}" data-stock="${p.estoque}">${p.nome} - ${formatMoney(p.venda)} (estoque: ${p.estoque})</option>`).join(''); }
+        updateProductSelect();
+        document.getElementById('produtoVenda').addEventListener('change', () => {
+            const selected = productSelect.options[productSelect.selectedIndex];
+            const price = selected?.dataset.price;
+            const stock = selected?.dataset.stock;
+            const infoDiv = document.getElementById('produtoInfo');
+            infoDiv.style.display = 'block';
+            infoDiv.innerHTML = `<strong>Produto selecionado:</strong> ${selected?.text.split(' - ')[0]}<br>💰 Preço: ${formatMoney(price)}<br>📦 Estoque disponível: ${stock}`;
+        });
+        document.getElementById('calcularBtn').onclick = () => {
+            const qtd = parseInt(document.getElementById('qtdVenda').value);
+            const selected = productSelect.options[productSelect.selectedIndex];
+            const price = parseFloat(selected?.dataset.price);
+            if (qtd && price) document.getElementById('vendaMsg').innerHTML = `<div class="badge-info" style="padding:12px;">💰 Total da venda: ${formatMoney(qtd * price)}</div>`;
+        };
+        document.getElementById('clienteVenda').addEventListener('change', (e) => {
+            document.getElementById('novoClienteFields').style.display = e.target.value === 'novo' ? 'block' : 'none';
+        });
         document.getElementById('salvarNovoCliente').onclick = () => {
             const nome = document.getElementById('novoClienteNome').value.trim();
             if (!nome) return alert('Nome obrigatório');
@@ -577,7 +748,7 @@
             clientes.push({ id: novoId, nome, email, telefone });
             saveAll();
             const select = document.getElementById('clienteVenda');
-            select.add(new Option(nome, novoId), 'novo');
+            select.add(new Option(nome, novoId));
             select.value = novoId;
             document.getElementById('novoClienteFields').style.display = 'none';
             alert('Cliente cadastrado!');
@@ -585,7 +756,7 @@
         document.getElementById('venderBtn').onclick = () => {
             let clienteId = parseInt(document.getElementById('clienteVenda').value);
             if (isNaN(clienteId)) clienteId = null;
-            const prodId = parseInt(document.getElementById('produtoVenda').value);
+            const prodId = parseInt(productSelect.value);
             const qtd = parseInt(document.getElementById('qtdVenda').value);
             const dataVenda = document.getElementById('dataVenda').value;
             const formaPagamento = document.getElementById('formaPagamento').value;
@@ -599,20 +770,19 @@
             document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px;">✅ Venda realizada! Total ${formatMoney(total)}</div>`;
             setTimeout(() => renderVenda(), 1500);
         };
+        productSelect.dispatchEvent(new Event('change'));
     }
-    
+
     function renderRelatorioVendas() {
-        const main = document.getElementById('mainContent');
         const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
-        main.innerHTML = `<div class="card-premium"><div class="card-title">📈 Relatório de Vendas</div><div style="overflow-x:auto;"><table style="min-width:600px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>
-            ${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr><td>${p?p.nome:'-'}</td><td>${v.quantidade}</td><td>${cli ? cli.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento || '-'}</td><td>${formatMoney(v.total)}</td></tr>`; }).join('')}
-        </tbody></table></div><div style="margin-top:20px;"><strong>Total Geral: ${formatMoney(totalGeral)}</strong></div></div>`;
+        const main = document.getElementById('mainContent');
+        main.innerHTML = `<div class="card-premium"><div class="card-title">📈 Relatório de Vendas</div><div class="table-responsive"><tr><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr><td>${p?.nome||'-'}</td><td>${v.quantidade}</td><td>${cli ? cli.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento || '-'}</td><td>${formatMoney(v.total)}</td></tr>`; }).join('')}</tbody></table></div><div style="margin-top:20px;"><strong>Total Geral: ${formatMoney(totalGeral)}</strong></div></div>`;
     }
     
     function renderRelatorioMensal() {
         const porMes = {};
         vendas.forEach(v => { const d = new Date(v.data); const chave = `${d.getMonth()+1}/${d.getFullYear()}`; porMes[chave] = (porMes[chave] || 0) + v.total; });
-        let html = `<div class="card-premium"><div class="card-title">📅 Relatório Mensal</div><div style="overflow-x:auto;"><tr><thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
+        let html = `<div class="card-premium"><div class="card-title">📅 Relatório Mensal</div><div class="table-responsive"><table><thead><tr><th>Mês/Ano</th><th>Faturamento</th></tr></thead><tbody>`;
         for (let [mes, total] of Object.entries(porMes)) html += `<tr><td>${mes}</td><td>${formatMoney(total)}</td></tr>`;
         html += `</tbody></table></div></div>`;
         document.getElementById('mainContent').innerHTML = html;
@@ -624,21 +794,44 @@
     }
     
     function renderHistorico() {
-        const items = [...vendas].reverse().map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<li><i class="fas fa-receipt"></i> Venda: ${p?.nome} - ${v.quantidade} un - ${formatMoney(v.total)} - ${new Date(v.data).toLocaleString()} - Cliente: ${cli?cli.nome:'Não cadastrado'} - Pagamento: ${v.formaPagamento}</li>`; });
-        const totalVendas = vendas.length;
-        const faturamentoTotal = vendas.reduce((s,v)=>s+v.total,0);
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title">📜 Histórico</div><div style="margin-bottom:20px;"><strong>Total de vendas:</strong> ${totalVendas} | <strong>Faturamento total:</strong> ${formatMoney(faturamentoTotal)}</div><ul>${items.length?items.join(''):'<li>Nenhuma venda registrada</li>'}</ul><button id="limparHistoricoBtn" class="btn-danger" style="margin-top:20px;"><i class="fas fa-trash"></i> Limpar Histórico</button></div>`;
+        const main = document.getElementById('mainContent');
+        main.innerHTML = `
+            <div class="card-premium">
+                <div class="card-title">📜 Histórico de Vendas</div>
+                <div class="search-box"><input type="text" id="filterHistorico" placeholder="🔍 Buscar por produto ou cliente..."></div>
+                <div class="table-responsive"><table style="min-width:600px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th><tr></thead><tbody id="historicoBody"></tbody></table></div>
+                <button id="limparHistoricoBtn" class="btn-danger" style="margin-top:20px;"><i class="fas fa-trash"></i> Limpar Histórico</button>
+            </div>
+        `;
+        function renderHistory(filter='') {
+            const filtered = vendas.filter(v => {
+                const p = produtos.find(prod=>prod.id===v.produtoId);
+                const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
+                return p?.nome.toLowerCase().includes(filter.toLowerCase()) || (cli?.nome.toLowerCase().includes(filter.toLowerCase()) || false);
+            }).reverse();
+            document.getElementById('historicoBody').innerHTML = filtered.map(v => {
+                const p = produtos.find(prod=>prod.id===v.produtoId);
+                const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null;
+                return `<tr>
+                    <td>${p?.nome||'-'}</td>
+                    <td>${v.quantidade}</td>
+                    <td>${cli ? cli.nome : 'Não cadastrado'}</td>
+                    <td>${new Date(v.data).toLocaleString()}</td>
+                    <td>${v.formaPagamento || '-'}</td>
+                    <td>${formatMoney(v.total)}</table>
+                </tr>`;
+            }).join('');
+        }
+        document.getElementById('filterHistorico')?.addEventListener('input', (e) => renderHistory(e.target.value));
         document.getElementById('limparHistoricoBtn')?.addEventListener('click', () => { if(confirm('Apagar todas as vendas?')) { vendas = []; saveAll(); renderHistorico(); renderDashboard(); } });
+        renderHistory();
     }
     
     function renderClientes() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button><div style="overflow-x:auto"><td><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div></div>`;
-        document.getElementById('novoClienteBtn')?.addEventListener('click', () => {
-            const nome = prompt('Nome do cliente:');
-            if (nome) { const email = prompt('E-mail (opcional):'); const telefone = prompt('Telefone (opcional):'); clientes.push({ id: Date.now(), nome, email: email||'', telefone: telefone||'' }); saveAll(); renderClientes(); }
-        });
-        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover cliente?')) { clientes = clientes.filter(c => c.id != e.target.closest('button').dataset.id); saveAll(); renderClientes(); } }));
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Cadastro de Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-user-plus"></i> Novo Cliente</button><div class="table-responsive"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div></div>`;
+        document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome do cliente:'); if(nome){ const email = prompt('E-mail:'); const telefone = prompt('Telefone:'); clientes.push({ id: Date.now(), nome, email: email||'', telefone: telefone||'' }); saveAll(); renderClientes(); } });
+        document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', (e) => { if(confirm('Remover cliente?')) { clientes = clientes.filter(c => c.id != btn.dataset.id); saveAll(); renderClientes(); } }));
     }
     
     function renderCurrentView(view) {
