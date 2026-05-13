@@ -259,6 +259,9 @@
         .search-box { margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
         .search-box input { flex: 1; padding: 12px; border-radius: 40px; border: 1px solid var(--border-color); background: var(--input-bg); font-size: 0.9rem; }
         .produto-info-card { background: var(--card-bg); border-radius: 20px; padding: 16px; margin: 16px 0; border: 1px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .month-selector { background: var(--card-bg); border-radius: 28px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border: 1px solid var(--border-color); }
+        .month-selector label { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .month-selector select { padding: 10px 16px; border-radius: 40px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); font-size: 0.95rem; cursor: pointer; }
         @media (max-width: 760px) {
             body { padding: 16px; }
             .main-header {
@@ -292,6 +295,7 @@
             .flex-row .form-group { width: 100%; }
             .card-title { font-size: 1.2rem; }
             .stat-card p { font-size: 1.2rem; }
+            .month-selector { flex-direction: column; align-items: stretch; }
         }
         @media (max-width: 480px) {
             .right-area { gap: 8px; }
@@ -378,7 +382,7 @@
     // ========== UTIL ==========
     function formatMoney(value) { if (isNaN(value)) return 'R$ 0,00'; return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value); }
     
-    // ========== DADOS PADRÃO (usados apenas na primeira inicialização) ==========
+    // ========== DADOS PADRÃO ==========
     const DEFAULT_PRODUTOS = [
         { id: 1, nome: "Smartphone X", codigoBarras: "7891234567890", codigoInterno: "SPX-001", custo: 800, venda: 1299, estoque: 8, estoqueMin: 3, estoqueMax: 40 },
         { id: 2, nome: "Fone Bluetooth Pro", codigoBarras: "7891234567891", codigoInterno: "FBP-002", custo: 45, venda: 149, estoque: 15, estoqueMin: 5, estoqueMax: 60 },
@@ -395,17 +399,15 @@
         { id: 2, nome: "Maria Oliveira", email: "maria@email.com", telefone: "11988888888" }
     ];
     
-    // Flag para saber se é primeira execução
     const isFirstRun = localStorage.getItem('lojapro_initialized') === null;
-    
-    // ========== CARREGAR DADOS ==========
     let users = JSON.parse(localStorage.getItem('lojapro_users')) || [];
     let produtos = JSON.parse(localStorage.getItem('lojapro_produtos')) || [];
     let vendas = JSON.parse(localStorage.getItem('lojapro_vendas')) || [];
     let clientes = JSON.parse(localStorage.getItem('lojapro_clientes')) || [];
     let currentSession = JSON.parse(localStorage.getItem('lojapro_session')) || null;
+    let selectedMonth = new Date().getMonth();
+    let selectedYear = new Date().getFullYear();
 
-    // Só carrega dados padrão se for primeira execução E não houver dados
     if (isFirstRun) {
         if (produtos.length === 0) produtos = [...DEFAULT_PRODUTOS];
         if (vendas.length === 0) vendas = [...DEFAULT_VENDAS];
@@ -423,9 +425,8 @@
         else localStorage.removeItem('lojapro_session');
     }
 
-    // Função para resetar dados (opcional, via configurações)
     function resetToDefaultData() {
-        if (confirm('ATENÇÃO: Isso irá apagar TODOS os seus dados atuais (produtos, vendas, clientes) e restaurar os dados padrão. Essa ação não pode ser desfeita. Deseja continuar?')) {
+        if (confirm('ATENÇÃO: Isso irá apagar TODOS os seus dados atuais e restaurar os dados padrão. Essa ação não pode ser desfeita. Deseja continuar?')) {
             produtos = [...DEFAULT_PRODUTOS];
             vendas = [...DEFAULT_VENDAS];
             clientes = [...DEFAULT_CLIENTES];
@@ -600,28 +601,50 @@
         renderCurrentView('estoque');
     };
 
-    // ========== DASHBOARD COM FATURAMENTO E LUCRO DO MÊS ATUAL ==========
+    // ========== DASHBOARD COM SELETOR DE MÊS ==========
     let dailyChart = null, marginChart = null, productPieChart = null;
-    function renderDashboard() {
-        const hoje = new Date();
-        const mesAtual = hoje.getMonth();
-        const anoAtual = hoje.getFullYear();
-        
-        // Faturamento e Lucro do Mês Atual
-        const faturamentoMesAtual = vendas.filter(v => {
+    
+    function getFaturamentoPorMes(mes, ano) {
+        return vendas.filter(v => {
             const dataVenda = new Date(v.data);
-            return dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual;
+            return dataVenda.getMonth() === mes && dataVenda.getFullYear() === ano;
         }).reduce((s, v) => s + v.total, 0);
-        
-        const lucroMesAtual = vendas.filter(v => {
+    }
+    
+    function getLucroPorMes(mes, ano) {
+        return vendas.filter(v => {
             const dataVenda = new Date(v.data);
-            return dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual;
+            return dataVenda.getMonth() === mes && dataVenda.getFullYear() === ano;
         }).reduce((acc, v) => {
             const p = produtos.find(prod => prod.id === v.produtoId);
             return acc + (p ? v.quantidade * (p.venda - p.custo) : 0);
         }, 0);
+    }
+    
+    function getAllMonthsWithData() {
+        const monthsSet = new Set();
+        vendas.forEach(v => {
+            const d = new Date(v.data);
+            monthsSet.add(`${d.getMonth()}-${d.getFullYear()}`);
+        });
+        if (monthsSet.size === 0) {
+            const hoje = new Date();
+            monthsSet.add(`${hoje.getMonth()}-${hoje.getFullYear()}`);
+        }
+        return Array.from(monthsSet).map(key => {
+            const [mes, ano] = key.split('-');
+            return { mes: parseInt(mes), ano: parseInt(ano) };
+        }).sort((a, b) => {
+            if (a.ano !== b.ano) return b.ano - a.ano;
+            return b.mes - a.mes;
+        });
+    }
+    
+    function renderDashboard() {
+        const hoje = new Date();
+        const faturamentoSelecionado = getFaturamentoPorMes(selectedMonth, selectedYear);
+        const lucroSelecionado = getLucroPorMes(selectedMonth, selectedYear);
         
-        // Demais indicadores
         const totalFaturamento = vendas.reduce((s, v) => s + v.total, 0);
         const totalLucro = vendas.reduce((acc, v) => {
             const p = produtos.find(prod => prod.id === v.produtoId);
@@ -631,7 +654,6 @@
         const produtosEstoque = produtos.reduce((s, p) => s + p.estoque, 0);
         const alertasCount = produtos.filter(p => p.estoque <= p.estoqueMin).length;
         
-        // Gráficos
         const ultimos30Dias = Array.from({ length: 30 }, (_, i) => {
             const d = new Date();
             d.setDate(hoje.getDate() - (29 - i));
@@ -657,16 +679,25 @@
         });
         const pieData = sortedProdutos.map(([, valor]) => valor);
         
+        const monthsOptions = getAllMonthsWithData();
+        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        
         const main = document.getElementById('mainContent');
         main.innerHTML = `
+            <div class="month-selector">
+                <label><i class="fas fa-calendar-alt"></i> Visualizar Mês:</label>
+                <select id="monthSelect">
+                    ${monthsOptions.map(({mes, ano}) => `<option value="${mes}-${ano}" ${selectedMonth === mes && selectedYear === ano ? 'selected' : ''}>${monthNames[mes]} de ${ano}</option>`).join('')}
+                </select>
+            </div>
             <div class="grid-stats">
                 <div class="stat-card"><i class="fas fa-chart-line"></i><h3>Faturamento Total</h3><p>${formatMoney(totalFaturamento)}</p></div>
                 <div class="stat-card"><i class="fas fa-coins"></i><h3>Lucro Total</h3><p>${formatMoney(totalLucro)}</p></div>
                 <div class="stat-card"><i class="fas fa-ticket-alt"></i><h3>Ticket Médio</h3><p>${formatMoney(ticketMedio)}</p></div>
                 <div class="stat-card"><i class="fas fa-boxes"></i><h3>Estoque Total</h3><p>${produtosEstoque}</p></div>
                 <div class="stat-card"><i class="fas fa-exclamation-triangle"></i><h3>Alertas Baixo Estoque</h3><p>${alertasCount}</p></div>
-                <div class="stat-card"><i class="fas fa-calendar-alt"></i><h3>Faturamento do Mês</h3><p>${formatMoney(faturamentoMesAtual)}</p><small>${hoje.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}</small></div>
-                <div class="stat-card"><i class="fas fa-chart-simple"></i><h3>Lucro do Mês</h3><p>${formatMoney(lucroMesAtual)}</p><small>${hoje.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}</small></div>
+                <div class="stat-card"><i class="fas fa-calendar-alt"></i><h3>📅 Faturamento do Mês</h3><p>${formatMoney(faturamentoSelecionado)}</p><small>${monthNames[selectedMonth]} de ${selectedYear}</small></div>
+                <div class="stat-card"><i class="fas fa-coins"></i><h3>💰 Lucro do Mês</h3><p>${formatMoney(lucroSelecionado)}</p><small>${monthNames[selectedMonth]} de ${selectedYear}</small></div>
             </div>
             <div class="charts-row">
                 <div class="chart-box"><h4>📈 Evolução Diária (últimos 30 dias)</h4><div class="chart-container"><canvas id="dailyChartCanvas"></canvas></div></div>
@@ -678,9 +709,16 @@
             </div>
             <div class="chart-box"><h4>📊 Últimas 5 Vendas</h4><div class="table-responsive"><table style="width:100%"><thead><tr><th>Produto</th><th>Valor</th><th>Data</th></tr></thead><tbody>${vendas.slice(-5).reverse().map(v => {
                 const p = produtos.find(pr => pr.id === v.produtoId);
-                return `<tr><td>${p?.nome || '-'}</td><td>${formatMoney(v.total)}</td><td>${new Date(v.data).toLocaleDateString()}</td></tr>`;
+                return `<tr><td>${p?.nome || '-'}</td><td>${formatMoney(v.total)}</td><td>${new Date(v.data).toLocaleDateString()}</td><tr>`;
             }).join('')}</tbody></table></div></div>
         `;
+        
+        document.getElementById('monthSelect')?.addEventListener('change', (e) => {
+            const [mes, ano] = e.target.value.split('-');
+            selectedMonth = parseInt(mes);
+            selectedYear = parseInt(ano);
+            renderDashboard();
+        });
         
         setTimeout(() => {
             const ctxDaily = document.getElementById('dailyChartCanvas')?.getContext('2d');
@@ -743,18 +781,14 @@
                 <div class="card-title"><i class="fas fa-shopping-cart"></i> Nova Venda</div>
                 <div class="form-group"><label>Cliente</label><select id="clienteVenda">${clientesOptions}<option value="novo">+ Novo Cliente</option></select>
                 <div id="novoClienteFields" style="display:none; margin-top:12px; padding:12px; background:var(--card-bg); border-radius:20px;"><input type="text" id="novoClienteNome" placeholder="Nome completo"><input type="email" id="novoClienteEmail" placeholder="E-mail"><input type="tel" id="novoClienteTelefone" placeholder="Telefone"><button id="salvarNovoCliente" class="btn-primary" style="margin-top:8px; width:100%">Salvar Cliente</button></div></div>
-                
                 <div class="form-group"><label>Produto</label><select id="produtoVenda"></select></div>
                 <div id="produtoInfo" class="produto-info-card" style="display:none;"></div>
-                
                 <div class="flex-row">
                     <div class="form-group"><label>Quantidade</label><input type="number" id="qtdVenda" min="1" value="1"></div>
                     <div class="form-group"><label>Preço Unitário (R$)</label><input type="number" id="precoUnitario" step="0.01" placeholder="Preço negociado"></div>
                     <div class="form-group"><label>Data</label><input type="date" id="dataVenda" value="${new Date().toISOString().slice(0,10)}"></div>
                 </div>
-                
                 <div class="form-group"><label>Forma de Pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Cartão Crédito</option><option>Pix</option><option>Boleto</option></select></div>
-                
                 <div class="flex-row" style="justify-content: space-between; align-items: center;">
                     <div><strong style="font-size:1.2rem;">Total: <span id="totalPreview">R$ 0,00</span></strong></div>
                     <div class="flex-row" style="gap:12px;">
@@ -796,7 +830,6 @@
         productSelect.addEventListener('change', updateProductInfo);
         qtdInput.addEventListener('input', updateTotalPreview);
         precoInput.addEventListener('input', updateTotalPreview);
-        
         document.getElementById('calcularBtn').onclick = () => updateTotalPreview();
         
         document.getElementById('clienteVenda').addEventListener('change', (e) => {
@@ -848,17 +881,25 @@
             document.getElementById('vendaMsg').innerHTML = `<div class="badge-success" style="padding:12px;">✅ Venda realizada! Total ${formatMoney(total)}</div>`;
             setTimeout(() => renderVenda(), 1500);
         };
-        
         updateProductInfo();
     }
 
-    // ========== DEMAIS FUNÇÕES (estoque, relatórios, etc) ==========
+    // ========== DEMAIS FUNÇÕES ==========
     function renderEstoque() {
         const main = document.getElementById('mainContent');
         main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div><div class="search-box"><input type="text" id="searchEstoque" placeholder="🔍 Buscar..."><button id="novoProdutoBtn" class="btn-primary"><i class="fas fa-plus"></i> Novo Produto</button></div><div class="table-responsive"><table style="min-width:700px;"><thead><tr><th>Cód.</th><th>Descrição</th><th>Preço Venda</th><th>Margem</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody id="estoqueTableBody"></tbody></table></div></div>`;
         function renderTable(filter='') {
             const filtered = produtos.filter(p => p.nome.toLowerCase().includes(filter.toLowerCase()) || (p.codigoInterno||'').toLowerCase().includes(filter));
-            document.getElementById('estoqueTableBody').innerHTML = filtered.map(p => { const margem = p.venda > 0 ? ((p.venda - p.custo)/p.venda*100).toFixed(1) : 0; return `<tr><td>${p.codigoInterno||'-'}</td><td><strong>${p.nome}</strong><br><small>${p.codigoBarras||''}</small></td><td>${formatMoney(p.venda)}</td><td><span class="badge ${margem>30?'badge-success':margem>15?'badge-warning':''}">${margem}%</span></td><td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td><td>${p.estoqueMin}</td><td>${p.estoqueMax}</td><td><button class="editProd" data-id="${p.id}" style="background:none; border:none; color:var(--primary); cursor:pointer;"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td></tr>`; }).join('');
+            document.getElementById('estoqueTableBody').innerHTML = filtered.map(p => { const margem = p.venda > 0 ? ((p.venda - p.custo)/p.venda*100).toFixed(1) : 0; return `<tr>
+                <td>${p.codigoInterno||'-'}</td>
+                <td><strong>${p.nome}</strong><br><small>${p.codigoBarras||''}</small></td>
+                <td>${formatMoney(p.venda)}</td>
+                <td><span class="badge ${margem>30?'badge-success':margem>15?'badge-warning':''}">${margem}%</span></td>
+                <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
+                <td>${p.estoqueMin}</td>
+                <td>${p.estoqueMax}</td>
+                <td><button class="editProd" data-id="${p.id}" style="background:none; border:none; color:var(--primary); cursor:pointer;"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+            </tr>`; }).join('');
             document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', () => openProdutoModal(parseInt(btn.dataset.id))));
             document.querySelectorAll('.delProd').forEach(btn => btn.addEventListener('click', () => { if(confirm('Excluir produto?')) { produtos = produtos.filter(p => p.id != btn.dataset.id); saveAll(); renderEstoque(); } }));
         }
@@ -869,7 +910,15 @@
     
     function renderRelatorioVendas() {
         const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title">📈 Relatório de Vendas</div><div class="table-responsive"><table style="min-width:800px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr><td>${p?.nome||'-'}</td><td>${v.quantidade}</td><td>${formatMoney(v.precoUnitario || p?.venda || 0)}</td><td>${cli ? cli.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento || '-'}</td><td>${formatMoney(v.total)}</td></tr>`; }).join('')}</tbody></table></div><div style="margin-top:20px;"><strong>Total Geral: ${formatMoney(totalGeral)}</strong></div></div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title">📈 Relatório de Vendas</div><div class="table-responsive"><table style="min-width:800px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr>
+                <td>${p?.nome||'-'}</td>
+                <td>${v.quantidade}</td>
+                <td>${formatMoney(v.precoUnitario || p?.venda || 0)}</td>
+                <td>${cli ? cli.nome : 'Não cadastrado'}</td>
+                <td>${new Date(v.data).toLocaleString()}</td>
+                <td>${v.formaPagamento || '-'}</td>
+                <td>${formatMoney(v.total)}</td>
+            </table>`; }).join('')}</tbody></table></div><div style="margin-top:20px;"><strong>Total Geral: ${formatMoney(totalGeral)}</strong></div></div>`;
     }
     
     function renderRelatorioMensal() {
@@ -891,7 +940,15 @@
         main.innerHTML = `<div class="card-premium"><div class="card-title">📜 Histórico de Vendas</div><div class="search-box"><input type="text" id="filterHistorico" placeholder="🔍 Buscar..."></div><div class="table-responsive"><table style="min-width:800px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody id="historicoBody"></tbody></table></div><button id="limparHistoricoBtn" class="btn-danger"><i class="fas fa-trash"></i> Limpar Histórico</button></div>`;
         function renderHistory(filter='') {
             const filtered = vendas.filter(v => { const p = produtos.find(p=>p.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return p?.nome.toLowerCase().includes(filter.toLowerCase()) || (cli?.nome.toLowerCase().includes(filter.toLowerCase()) || false); }).reverse();
-            document.getElementById('historicoBody').innerHTML = filtered.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr><td>${p?.nome||'-'}</td><td>${v.quantidade}</td><td>${formatMoney(v.precoUnitario || p?.venda || 0)}</td><td>${cli ? cli.nome : 'Não cadastrado'}</td><td>${new Date(v.data).toLocaleString()}</td><td>${v.formaPagamento || '-'}</td><td>${formatMoney(v.total)}</td></tr>`; }).join('');
+            document.getElementById('historicoBody').innerHTML = filtered.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr>
+                <td>${p?.nome||'-'}</td>
+                <td>${v.quantidade}</td>
+                <td>${formatMoney(v.precoUnitario || p?.venda || 0)}</td>
+                <td>${cli ? cli.nome : 'Não cadastrado'}</td>
+                <td>${new Date(v.data).toLocaleString()}</td>
+                <td>${v.formaPagamento || '-'}</td>
+                <td>${formatMoney(v.total)}</td>
+            </tr>`; }).join('');
         }
         document.getElementById('filterHistorico')?.addEventListener('input', (e) => renderHistory(e.target.value));
         document.getElementById('limparHistoricoBtn')?.addEventListener('click', () => { if(confirm('Apagar todas as vendas?')) { vendas = []; saveAll(); renderHistorico(); renderDashboard(); } });
@@ -900,7 +957,12 @@
     
     function renderClientes() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Cliente</button><div class="table-responsive"><table style="min-width:400px;"><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr><td>${c.nome}</td><td>${c.email||'-'}</td><td>${c.telefone||'-'}</td><td><button class="delCliente" data-id="${c.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div></div>`;
+        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-users"></i> Clientes</div><button id="novoClienteBtn" class="btn-primary" style="margin-bottom:20px"><i class="fas fa-plus"></i> Novo Cliente</button><div class="table-responsive"><table style="min-width:400px;"><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr></thead><tbody>${clientes.map(c => `<tr>
+                <td>${c.nome}</td>
+                <td>${c.email||'-'}</td>
+                <td>${c.telefone||'-'}</td>
+                <td><button class="delCliente" data-id="${c.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+            </tr>`).join('')}</tbody></table></div></div>`;
         document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome:'); if(nome){ const email = prompt('E-mail:'); const telefone = prompt('Telefone:'); clientes.push({ id: Date.now(), nome, email: email||'', telefone: telefone||'' }); saveAll(); renderClientes(); } });
         document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', () => { if(confirm('Remover?')) { clientes = clientes.filter(c => c.id != btn.dataset.id); saveAll(); renderClientes(); } }));
     }
@@ -912,15 +974,14 @@
                 <div class="card-title"><i class="fas fa-cog"></i> Configurações do Sistema</div>
                 <div style="margin-bottom: 20px;">
                     <h3 style="margin-bottom: 15px;">⚠️ Área de Risco</h3>
-                    <p style="margin-bottom: 20px; color: var(--danger);">Abaixo você pode restaurar os dados padrão do sistema. Isso irá apagar todos os seus produtos, vendas e clientes atuais.</p>
+                    <p style="margin-bottom: 20px; color: var(--danger);">Abaixo você pode restaurar os dados padrão do sistema.</p>
                     <button id="resetDataBtn" class="btn-danger" style="padding: 12px 24px;"><i class="fas fa-trash-alt"></i> Restaurar Dados Padrão</button>
                 </div>
                 <hr style="margin: 20px 0; border-color: var(--border-color);">
                 <div>
-                    <h3 style="margin-bottom: 15px;">ℹ️ Informações</h3>
-                    <p><strong>Versão:</strong> 2.0.0</p>
+                    <h3>ℹ️ Informações</h3>
+                    <p><strong>Versão:</strong> 2.1.0</p>
                     <p><strong>Desenvolvido para:</strong> Gestão Inteligente de Vendas</p>
-                    <p><strong>Armazenamento:</strong> Local (os dados ficam salvos no seu navegador)</p>
                 </div>
             </div>
         `;
