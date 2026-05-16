@@ -601,7 +601,7 @@
         renderCurrentView('estoque');
     };
 
-    // ========== DASHBOARD COM SELETOR DE MÊS ==========
+    // ========== DASHBOARD ==========
     let dailyChart = null, marginChart = null, productPieChart = null;
     
     function getFaturamentoPorMes(mes, ano) {
@@ -709,7 +709,7 @@
             </div>
             <div class="chart-box"><h4>📊 Últimas 5 Vendas</h4><div class="table-responsive"><table style="width:100%"><thead><tr><th>Produto</th><th>Valor</th><th>Data</th></tr></thead><tbody>${vendas.slice(-5).reverse().map(v => {
                 const p = produtos.find(pr => pr.id === v.produtoId);
-                return `<tr><td>${p?.nome || '-'}</td><td>${formatMoney(v.total)}</td><td>${new Date(v.data).toLocaleDateString()}</td><tr>`;
+                return `<tr><td>${p?.nome || '-'}</td><td>${formatMoney(v.total)}</td><td>${new Date(v.data).toLocaleDateString()}</td></tr>`;
             }).join('')}</tbody></table></div></div>
         `;
         
@@ -770,6 +770,98 @@
                 });
             }
         }, 100);
+    }
+
+    // ========== ESTOQUE COM PREÇO DE CUSTO ==========
+    function renderEstoque() {
+        const main = document.getElementById('mainContent');
+        main.innerHTML = `
+            <div class="card-premium">
+                <div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div>
+                <div class="search-box">
+                    <input type="text" id="searchEstoque" placeholder="🔍 Buscar por nome, código...">
+                    <button id="novoProdutoBtn" class="btn-primary"><i class="fas fa-plus"></i> Novo Produto</button>
+                </div>
+                <div class="table-responsive">
+                    <table style="min-width:900px;">
+                        <thead>
+                            <tr>
+                                <th>Cód. Interno</th>
+                                <th>Descrição</th>
+                                <th>Preço Custo</th>
+                                <th>Preço Venda</th>
+                                <th>Margem</th>
+                                <th>Estoque</th>
+                                <th>Mín</th>
+                                <th>Máx</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="estoqueTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        
+        function renderTable(filter = '') {
+            const filtered = produtos.filter(p => 
+                p.nome.toLowerCase().includes(filter.toLowerCase()) || 
+                (p.codigoInterno || '').toLowerCase().includes(filter)
+            );
+            
+            document.getElementById('estoqueTableBody').innerHTML = filtered.map(p => {
+                const margem = p.venda > 0 ? ((p.venda - p.custo) / p.venda * 100).toFixed(1) : 0;
+                return `
+                    <tr>
+                        <td>${p.codigoInterno || '-'}</td>
+                        <td>
+                            <strong>${p.nome}</strong><br>
+                            <small class="badge-info">${p.codigoBarras || 'sem código'}</small>
+                        </td>
+                        <td class="preco-custo">${formatMoney(p.custo)}</td>
+                        <td>${formatMoney(p.venda)}</td>
+                        <td>
+                            <span class="badge ${margem > 30 ? 'badge-success' : (margem > 15 ? 'badge-warning' : '')}">
+                                ${margem}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge ${p.estoque <= p.estoqueMin ? 'badge-warning' : 'badge-success'}">
+                                ${p.estoque}
+                            </span>
+                        </td>
+                        <td>${p.estoqueMin}</td>
+                        <td>${p.estoqueMax}</td>
+                        <td>
+                            <button class="editProd" data-id="${p.id}" style="background:none; border:none; color:var(--primary); cursor:pointer;">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button class="delProd" data-id="${p.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.querySelectorAll('.editProd').forEach(btn => {
+                btn.addEventListener('click', () => openProdutoModal(parseInt(btn.dataset.id)));
+            });
+            
+            document.querySelectorAll('.delProd').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (confirm('Excluir produto?')) {
+                        produtos = produtos.filter(p => p.id != btn.dataset.id);
+                        saveAll();
+                        renderEstoque();
+                    }
+                });
+            });
+        }
+        
+        document.getElementById('searchEstoque')?.addEventListener('input', (e) => renderTable(e.target.value));
+        document.getElementById('novoProdutoBtn').onclick = () => openProdutoModal();
+        renderTable();
     }
 
     // ========== NOVA VENDA COM PREÇO MANUAL ==========
@@ -885,32 +977,9 @@
     }
 
     // ========== DEMAIS FUNÇÕES ==========
-    function renderEstoque() {
-        const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title"><i class="fas fa-edit"></i> Gestão de Estoque</div><div class="search-box"><input type="text" id="searchEstoque" placeholder="🔍 Buscar..."><button id="novoProdutoBtn" class="btn-primary"><i class="fas fa-plus"></i> Novo Produto</button></div><div class="table-responsive"><table style="min-width:700px;"><thead><tr><th>Cód.</th><th>Descrição</th><th>Preço Venda</th><th>Margem</th><th>Estoque</th><th>Mín</th><th>Máx</th><th>Ações</th></tr></thead><tbody id="estoqueTableBody"></tbody></table></div></div>`;
-        function renderTable(filter='') {
-            const filtered = produtos.filter(p => p.nome.toLowerCase().includes(filter.toLowerCase()) || (p.codigoInterno||'').toLowerCase().includes(filter));
-            document.getElementById('estoqueTableBody').innerHTML = filtered.map(p => { const margem = p.venda > 0 ? ((p.venda - p.custo)/p.venda*100).toFixed(1) : 0; return `<tr>
-                <td>${p.codigoInterno||'-'}</td>
-                <td><strong>${p.nome}</strong><br><small>${p.codigoBarras||''}</small></td>
-                <td>${formatMoney(p.venda)}</td>
-                <td><span class="badge ${margem>30?'badge-success':margem>15?'badge-warning':''}">${margem}%</span></td>
-                <td><span class="badge ${p.estoque<=p.estoqueMin?'badge-warning':'badge-success'}">${p.estoque}</span></td>
-                <td>${p.estoqueMin}</td>
-                <td>${p.estoqueMax}</td>
-                <td><button class="editProd" data-id="${p.id}" style="background:none; border:none; color:var(--primary); cursor:pointer;"><i class="fas fa-pen"></i></button> <button class="delProd" data-id="${p.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td>
-            </tr>`; }).join('');
-            document.querySelectorAll('.editProd').forEach(btn => btn.addEventListener('click', () => openProdutoModal(parseInt(btn.dataset.id))));
-            document.querySelectorAll('.delProd').forEach(btn => btn.addEventListener('click', () => { if(confirm('Excluir produto?')) { produtos = produtos.filter(p => p.id != btn.dataset.id); saveAll(); renderEstoque(); } }));
-        }
-        document.getElementById('searchEstoque').addEventListener('input', (e) => renderTable(e.target.value));
-        document.getElementById('novoProdutoBtn').onclick = () => openProdutoModal();
-        renderTable();
-    }
-    
     function renderRelatorioVendas() {
         const totalGeral = vendas.reduce((s,v)=>s+v.total,0);
-        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title">📈 Relatório de Vendas</div><div class="table-responsive"><table style="min-width:800px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody>${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr>
+        document.getElementById('mainContent').innerHTML = `<div class="card-premium"><div class="card-title">📈 Relatório de Vendas</div><div class="table-responsive"><table style="min-width:800px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th><tr></thead><tbody>${vendas.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr>
                 <td>${p?.nome||'-'}</td>
                 <td>${v.quantidade}</td>
                 <td>${formatMoney(v.precoUnitario || p?.venda || 0)}</td>
@@ -918,7 +987,7 @@
                 <td>${new Date(v.data).toLocaleString()}</td>
                 <td>${v.formaPagamento || '-'}</td>
                 <td>${formatMoney(v.total)}</td>
-            </table>`; }).join('')}</tbody></table></div><div style="margin-top:20px;"><strong>Total Geral: ${formatMoney(totalGeral)}</strong></div></div>`;
+            </tr>`; }).join('')}</tbody></table></div><div style="margin-top:20px;"><strong>Total Geral: ${formatMoney(totalGeral)}</strong></div></div>`;
     }
     
     function renderRelatorioMensal() {
@@ -937,10 +1006,10 @@
     
     function renderHistorico() {
         const main = document.getElementById('mainContent');
-        main.innerHTML = `<div class="card-premium"><div class="card-title">📜 Histórico de Vendas</div><div class="search-box"><input type="text" id="filterHistorico" placeholder="🔍 Buscar..."></div><div class="table-responsive"><table style="min-width:800px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody id="historicoBody"></tbody></table></div><button id="limparHistoricoBtn" class="btn-danger"><i class="fas fa-trash"></i> Limpar Histórico</button></div>`;
+        main.innerHTML = `<div class="card-premium"><div class="card-title">📜 Histórico de Vendas</div><div class="search-box"><input type="text" id="filterHistorico" placeholder="🔍 Buscar..."></div><div class="table-responsive"><table style="min-width:800px;"><thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Cliente</th><th>Data</th><th>Pagamento</th><th>Total</th></tr></thead><tbody id="historicoBody"></tbody></tr></div><button id="limparHistoricoBtn" class="btn-danger"><i class="fas fa-trash"></i> Limpar Histórico</button></div>`;
         function renderHistory(filter='') {
             const filtered = vendas.filter(v => { const p = produtos.find(p=>p.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return p?.nome.toLowerCase().includes(filter.toLowerCase()) || (cli?.nome.toLowerCase().includes(filter.toLowerCase()) || false); }).reverse();
-            document.getElementById('historicoBody').innerHTML = filtered.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `<tr>
+            document.getElementById('historicoBody').innerHTML = filtered.map(v => { const p = produtos.find(prod=>prod.id===v.produtoId); const cli = v.clienteId ? clientes.find(c=>c.id===v.clienteId) : null; return `</td>
                 <td>${p?.nome||'-'}</td>
                 <td>${v.quantidade}</td>
                 <td>${formatMoney(v.precoUnitario || p?.venda || 0)}</td>
@@ -962,7 +1031,7 @@
                 <td>${c.email||'-'}</td>
                 <td>${c.telefone||'-'}</td>
                 <td><button class="delCliente" data-id="${c.id}" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button></td>
-            </tr>`).join('')}</tbody></table></div></div>`;
+            </table>`).join('')}</tbody></table></div></div>`;
         document.getElementById('novoClienteBtn')?.addEventListener('click', () => { const nome = prompt('Nome:'); if(nome){ const email = prompt('E-mail:'); const telefone = prompt('Telefone:'); clientes.push({ id: Date.now(), nome, email: email||'', telefone: telefone||'' }); saveAll(); renderClientes(); } });
         document.querySelectorAll('.delCliente').forEach(btn => btn.addEventListener('click', () => { if(confirm('Remover?')) { clientes = clientes.filter(c => c.id != btn.dataset.id); saveAll(); renderClientes(); } }));
     }
